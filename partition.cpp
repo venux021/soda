@@ -50,6 +50,26 @@ int main()
 
 vector<int>::size_type partition(vector<int> &v)
 {
+    auto first = v.begin(), last = v.end();
+    if (first == last) {
+        return 0;
+    }
+
+    int k = *first;
+
+    for (auto i = std::next(first); i != last; ++i) {
+        if (*i < k) {
+            std::iter_swap(i, first);
+            ++first;
+        }
+    }
+
+    return std::distance(v.begin(), first);
+}
+
+/*
+vector<int>::size_type partition(vector<int> &v)
+{
     if (v.size() == 0 || v.size() == 1) {
         return 0;
     }
@@ -70,6 +90,7 @@ vector<int>::size_type partition(vector<int> &v)
     swap(v[e], v[i]);
     return i;
 }
+*/
 
 /*
 vector<int>::size_type partition(vector<int> &v)
