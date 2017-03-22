@@ -2,9 +2,9 @@
 #include <vector>
 using namespace std;
 
-bool find_more_than_half(const vector<int> &v, int *result);
+bool find_more_than_half(vector<int> &v, int *result);
 
-void test(const vector<int> &v)
+void test(vector<int> &v)
 {
     int result = 0;
     if (find_more_than_half(v, &result)) {
@@ -33,6 +33,50 @@ int main()
     return 0;
 }
 
-bool find_more_than_half(const vector<int> &v, int *result)
+int partition(vector<int> &v, int start, int end)
 {
+    int k = v[start];
+    int i = start;
+    while (i < end && v[i] < k) {
+        ++i;
+    }
+
+    for (int j = i + 1; j < end; ++j) {
+        if (v[j] < k) {
+            if (i != j) {
+                int temp = v[j];
+                v[j] = v[i];
+                v[i] = temp;
+            }
+            ++i;
+        }
+    }
+
+    return i;
+}
+
+bool find_more_than_half(vector<int> &v, int *result)
+{
+    int N = static_cast<int>(v.size());
+    int mid = (N-1)/2;
+
+    if (N== 0) {
+        return false;
+    } else if (N == 1) {
+        *result = v[0];
+        return true;
+    }
+
+    int b = 0, e = N;
+    int i = partition(v, b, e);
+    while (i != mid) {
+        if (i < mid) {
+            b = i + 1;
+        } else {
+            e = i;
+        }
+        i = partition(v, b, e);
+    }
+    *result = v[mid];
+    return true;
 }
