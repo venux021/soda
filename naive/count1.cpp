@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 using namespace std;
 
@@ -64,8 +65,18 @@ int fk(int n)
     return NumberOf1(strN);
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    cout << fk(21345) << endl;
+    int (*pf)(int);
+    if (argc > 1 && strcmp("fast", argv[1]) == 0) {
+        pf = fk;
+    } else {
+        pf = numberof;
+    }
+
+    int n;
+    while (cin >> n) {
+        cout << pf(n) << endl;
+    }
     return 0;
 }
