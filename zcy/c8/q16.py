@@ -13,9 +13,19 @@ def max_sum(arr):
         max_sm = max(sm, max_sm)
     return max_sm
 
+def max_sum2(arr):
+    n = len(arr)
+    r_max = _max = arr[0]
+    for i in range(1, n):
+        nmax = _max + arr[i]
+        _max = max(nmax, arr[i])
+        r_max = max(_max, r_max)
+    return r_max
+
 def test(arr):
     print 'arr: {}'.format(arr)
     print 'max sum: {}'.format(max_sum(arr))
+    print 'max sum2: {}'.format(max_sum2(arr))
 
 def main():
     '''子数组的最大累加和问题'''
