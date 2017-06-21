@@ -6,14 +6,41 @@ def found(arr, k):
     n = len(arr)
     low = 0
     high = n - 1
+    num = k
     while low <= high:
         mid = (low + high) / 2
         if arr[mid] == k:
             return mid
-        elif k > arr[mid] and k <= arr[high] or k < arr[mid] and k < arr[low]:
-            low = mid + 1
+
+        if arr[mid] == arr[low] and arr[mid] == arr[high]:
+            while mid != low and arr[mid] == arr[low]:
+                low += 1
+            if mid == low:
+                low = mid + 1
+                continue
+
+        if arr[mid] != arr[low]:
+            if arr[mid] > arr[low]:
+                if num >= arr[low] and num < arr[mid]:
+                    high -= 1
+                else:
+                    low += 1
+            else:
+                if num > arr[mid] and num <= arr[high]:
+                    low += 1
+                else:
+                    high -= 1
         else:
-            high = mid - 1
+            if arr[mid] < arr[high]:
+                if num > arr[mid] and num <= arr[high]:
+                    low += 1
+                else:
+                    high -= 1
+            else:
+                if num >= arr[low] and num < arr[mid]:
+                    high -= 1
+                else:
+                    low += 1
 
     return -1
 
@@ -33,6 +60,8 @@ def main():
     test([4,5,6,7,1,2,3], 7)
     test([4,5,6,7,1,2,3], -1)
     test([4,5,6,7,1,2,3], 8)
+    test([7,7,7,7,7,5,7], 5)
+    test([7,5,7,7,7,7,7], 5)
 
 if __name__ == '__main__':
     reload(sys)
