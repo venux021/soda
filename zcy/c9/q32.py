@@ -26,9 +26,10 @@ def test(n, k):
     print 'n: {}, k: {}'.format(n, k)
     if n <= 500:
         mx = [[-1] * (k+1) for i in range(n+1)]
-        print 'steps: {}'.format(drop_chess(n, k, mx))
+        print 'steps 1: {}'.format(drop_chess(n, k, mx))
     print 'steps 2: {}'.format(drop_chess_2(n, k))
     print 'steps 3: {}'.format(drop_chess_3(n, k))
+    print '------'
 
 def log2n(n):
     r = -1
@@ -40,7 +41,7 @@ def log2n(n):
 def drop_chess_3(n, k):
     if n < 1 or k < 1:
         return 0
-    t = log2n(n)
+    t = log2n(n) + 1
     if k >= t:
         return t
 
