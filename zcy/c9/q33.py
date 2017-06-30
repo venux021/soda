@@ -68,11 +68,42 @@ def min_time_3(arr, k):
 
     return dp[k][n-1]
 
+def min_time_4(arr, k):
+    n = len(arr)
+    if n <= k:
+        return max(arr)
+
+    total = sum(arr)
+    a = 0
+    b = total
+    while b - a > 1:
+        mid = (a+b)/2
+        x = cal_num(arr, mid)
+        if x > k:
+            a = mid
+        else:
+            b = mid
+    return b
+
+def cal_num(arr, p):
+    n = len(arr)
+    s = 0
+    num = 1
+    for i in range(n):
+        if arr[i] > p:
+            return 0x7fffffff
+        s += arr[i]
+        if s > p:
+            s = arr[i]
+            num += 1
+    return num
+
 def test(arr, k):
     print 'arr: {}, k: {}'.format(arr, k)
     print 'time 1: {}'.format(min_time_1(arr, k))
     print 'time 2: {}'.format(min_time_2(arr, k))
     print 'time 3: {}'.format(min_time_3(arr, k))
+    print 'time 4: {}'.format(min_time_4(arr, k))
 
 def main():
     '''画匠问题'''
