@@ -5,28 +5,19 @@ import sys
 def min_cut(s):
     n = len(s)
     p = [[False] * n for i in range(n)]
-    for i in range(n):
-        p[i][i] = True
 
-    for L in range(2, n+1):
-        for i in range(0, n-L+1):
-            j = i + L - 1
-            if L == 2 and s[i] == s[j]:
-                p[i][j] = True
-            elif L > 2:
-                if s[i] == s[j] and p[i+1][j-1]:
-                    p[i][j] = True
-
-    dp = [0] * n
+    dp = [0] * (n + 1)
+    dp[-1] = -1
 
     for i in range(1, n):
-        if p[0][i]:
-            continue
         cut = i
-        for j in range(0, i):
-            if p[j+1][i]:
-                cut = min(cut, dp[j] + 1)
+        for j in range(i, -1, -1):
+            if s[i] == s[j] and (i-j<2 or p[j+1][i-1]):
+                p[j][i] = True
+                cut = min(cut, dp[j-1] + 1)
         dp[i] = cut
+
+    print dp
 
     return dp[n-1]
 
