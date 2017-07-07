@@ -83,6 +83,40 @@ def post_order_seq_2(t):
                 r.append(str(n[0].value))
     return r
 
+def post_order_seq_3(t):
+    s1 = [t]
+    s2 = []
+    r = []
+    
+    while s1:
+        n = s1.pop()
+        s2.append(n)
+        if n.left:
+            s1.append(n.left)
+        if n.right:
+            s1.append(n.right)
+    while s2:
+        n = s2.pop()
+        r.append(str(n.value))
+    return r
+
+def post_order_seq_4(t):
+    stack = [t]
+    h = t
+    c = None
+    r = []
+    while stack:
+        c = stack[-1]
+        if c.left and h != c.left and h != c.right:
+            stack.append(c.left)
+        elif c.right and h != c.right:
+            stack.append(c.right)
+        else:
+            r.append(str(c.value))
+            h = c
+            stack.pop()
+    return r
+
 def test(s):
     if isinstance(s, str):
         tree = parse_bitree(s)
@@ -91,6 +125,7 @@ def test(s):
     print('pre order: ', ' '.join(pre_order_seq(tree)), '|', ' '.join(pre_order_seq_2(tree)))
     print('in order:  ', ' '.join(in_order_seq(tree)), '|', ' '.join(in_order_seq_2(tree)))
     print('post order:', ' '.join(post_order_seq(tree)), '|', ' '.join(post_order_seq_2(tree)))
+    print('post new:  ', ' '.join(post_order_seq_3(tree)), '|', ' '.join(post_order_seq_4(tree)))
     print('------')
 
 def main():
