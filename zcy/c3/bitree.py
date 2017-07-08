@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 class BNode:
 
     def __init__(self, value = None):
@@ -43,4 +42,22 @@ def parse_bitree(s, null_str = '##', value_conv = None):
         i += 1
 
     return root
+
+def pre_order_print(tree):
+    def _pre(t):
+        if t:
+            print(t.str_val(), '', end = '')
+            _pre(t.left)
+            _pre(t.right)
+    _pre(tree)
+    print('')
+
+def in_order_print(t):
+    def _in(tree):
+        if tree:
+            _in(tree.left)
+            print(tree.str_val(), '', end = '')
+            _in(tree.right)
+    _in(t)
+    print('')
     
