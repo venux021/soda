@@ -7,6 +7,12 @@ class BNode:
         self.left = None
         self.right = None
 
+    def is_leaf(self):
+        return not self.left and not self.right
+
+    def str_val(self):
+        return str(self.value)
+
 def parse_bitree(s, null_str = '##', value_conv = None):
     if not value_conv:
         value_conv = lambda x: x
