@@ -30,7 +30,10 @@ def parse_list(s, value_conv = None, split = ' ', with_head = False):
 
     return head
 
-def show_list(L):
+def show_list(L, prompt = None):
+    if prompt:
+        print(prompt, '', end='')
+
     if not L:
         print('[]')
         return
