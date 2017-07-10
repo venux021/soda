@@ -43,3 +43,15 @@ def show_list(L):
         L = L.next
     print(']')
 
+def reverse_list(L):
+    if not L:
+        return L
+    h = None
+    p = L
+    while p:
+        t = p
+        p = p.next
+        t.next = h
+        h = t
+    return h
+
