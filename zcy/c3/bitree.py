@@ -60,4 +60,26 @@ def in_order_print(t):
             _in(tree.right)
     _in(t)
     print('')
+
+def level_print(t):
+    if not t:
+        print('Empty tree')
+        return
+    from collections import deque
+    q = deque()
+    q.append((t, 1))
+    level = 1
+    while q:
+        head = q.popleft()
+        if head[1] > level:
+            print()
+            level = head[1]
+        if head[0]:
+            print(head[0].value, '', end = '')
+            q.append((head[0].left, head[1]+1))
+            q.append((head[0].right, head[1]+1))
+        else:
+            print('## ', end = '')
+
+    print()
     
