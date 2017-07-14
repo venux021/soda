@@ -14,37 +14,23 @@ class VexNode:
 
 class AdjList:
 
-    def __init__(self, size):
-        self.size = size
+    def __init__(self, vexes, edges):
         self.list = [None] * size
-        self.d2v = {}
-
-    def add_vex(self, i, data):
-        self.list[i] = VexNode(data)
-        self.d2v[data] = self.list[i]
-
-    def vex_id(self, data):
-        return self.d2v[data]
-
-    def add_edge(self, di, dj):
-        i = self.vex_id(di)
-        j = self.vex_id(dj)
-        anode = AdjNode(j)
-        anode.next = self.list[i].first_arc
-        self.list[i].first_arc = anode
+        d2v = {}
+        for i, v in enumerate(vexes):
+            self.list[i] = VexNode(v)
+            d2v[v] = i
+        for e in edges:
+            i = d2v[e[0]]
+            j = d2v[e[1]]
+            anode = AdjNode(j)
+            anode.next = self.list[i].first_arc
+            self.list[i].first_arc = anode
 
     @staticmethod
     def parse(vexes, edges):
         if isinstance(vexes, str):
             vexes = vexes.split(' ')
-        n = len(vexes)
-        graph = AdjList(n)
-        for i in range(n):
-            graph.add_vex(i, vexes[i])
-
-        for e in edges:
-            graph.add_edge(e[0], e[1])
-
-        return graph
+        return AdjList(vexes, edges)
 
 
