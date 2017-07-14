@@ -3,6 +3,9 @@
 import sys
 import random
 
+MAX = 0x7fffffff
+MIN = -0x7fffffff
+
 def rand_arr(down, up, num):
     a = [random.randint(down, up) for i in range(num)]
     a.sort()
@@ -58,8 +61,58 @@ def k_merge_sort_win(arrs):
 
     return r
 
+class LoseNode:
+
+    def __init__(self, arr, index, k):
+        self.arr = arr
+        self.index = index
+        self.cur = 0
+        self.k = k
+
+    def parent_index(self):
+        return (self.index + self.k) // 2
+
+    def value(self):
+        if self.cur < len(self.arr):
+            return self.arr[self.cur]
+        else:
+            return MAX
+
+    def load_next(self):
+        if self.cur < len(self.arr):
+            self.cur += 1
+
+def adjust_lose_tree(ztree, node):
+    p = node.parent_index()
+    winner = node
+    while p > 0:
+        if ztree[p].value() < winner.value():
+            t = winner
+            winner = ztree[p]
+            ztree[p] = t
+        p = p // 2
+    ztree[0] = winner
+
 def k_merge_sort_lose(arrs):
-    return []
+    k = len(arrs)
+    ztree = [LoseNode([MIN],k,k)] * k
+    nodes = [LoseNode(arrs[i], i, k) for i in range(k)]
+
+    for i in range(k):
+        node = LoseNode(arrs[i], i, k)
+        adjust_lose_tree(ztree, node)
+
+    r = []
+    while True:
+        winner = ztree[0]
+        v = winner.value()
+        if v == MAX:
+            break
+        r.append(v)
+        winner.load_next()
+        adjust_lose_tree(ztree, winner)
+
+    return r
 
 def test(k):
     arrs = []
