@@ -8,9 +8,12 @@ class AdjNode:
         self.next = None
         self.prev = None
 
+Directed = 0
+Undirected = 1
+
 class AdjList:
 
-    def __init__(self, vexes, edges):
+    def __init__(self, vexes, edges, gtype = Directed):
         self.vexes = vexes[:]
         d2v = {}
         for i, v in enumerate(vexes):
@@ -21,13 +24,18 @@ class AdjList:
             i = d2v[e[0]]
             j = d2v[e[1]]
             w = e[2] if len(e) == 3 else None
-            anode = AdjNode(j, w)
-            anode.next = self.list[i].next
-            anode.prev = self.list[i]
-            if self.list[i].next:
-                self.list[i].next.prev = anode
-            self.list[i].next = anode
+            self.add_edge(i, j, w)
+            if gtype == Undirected:
+                self.add_edge(j, i, w)
         self.d2v = d2v
+
+    def add_edge(self, i, j, w):
+        anode = AdjNode(j, w)
+        anode.next = self.list[i].next
+        anode.prev = self.list[i]
+        if self.list[i].next:
+            self.list[i].next.prev = anode
+        self.list[i].next = anode
 
     def vex_id(self, vex):
         return self.d2v[vex]
@@ -72,5 +80,11 @@ class AdjList:
         if isinstance(vexes, str):
             vexes = vexes.split(' ')
         return AdjList(vexes, edges)
+
+    @staticmethod
+    def parse_undirect(vexes, edges):
+        if isinstance(vexes, str):
+            vexes = vexes.split(' ')
+        return AdjList(vexes, edges, Undirected)
 
 
