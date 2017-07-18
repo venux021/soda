@@ -77,14 +77,40 @@ class AdjList:
 
     @staticmethod
     def parse(vexes, edges):
-        if isinstance(vexes, str):
-            vexes = vexes.split(' ')
-        return AdjList(vexes, edges)
+        return AdjList.parse_graph(vexes, edges, Directed)
 
     @staticmethod
     def parse_undirect(vexes, edges):
+        return AdjList.parse_graph(vexes, edges, Undirected)
+
+    @staticmethod
+    def parse_graph(vexes, edges, gtype):
+        vexes = AdjList.parse_vexes(vexes)
+        edges = AdjList.parse_edges(edges)
+        return AdjList(vexes, edges, gtype)
+
+    @staticmethod
+    def parse_vexes(vexes):
         if isinstance(vexes, str):
             vexes = vexes.split(' ')
-        return AdjList(vexes, edges, Undirected)
+        return vexes
+
+    @staticmethod
+    def parse_edges(edges):
+        if isinstance(edges, str):
+            e = []
+            for f in edges.split(';'):
+                f = f.strip()
+                f = f.split(',')
+                if len(f) == 2:
+                    e.append((f[0], f[1]))
+                elif len(f) == 3:
+                    if f[2].find('.') >= 0:
+                        w = float(f[2])
+                    else:
+                        w = int(f[2])
+                    e.append((f[0], f[1], w))
+            edges = e
+        return edges
 
 
