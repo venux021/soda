@@ -69,17 +69,18 @@ def show_optimal(t, p, d):
     L.sort(key = lambda x: x[2])
     t, p, d = zip(*L)
 
-#    print('show_optimal:', _so(0, t, p, d, 0))
-    print('show_optimal:', _so2(n-1, t, p, d, d[-1]))
+    print('show_optimal 1:', _so(0, t, p, d, 0))
+    print('show_optimal 2:', _so2(n-1, t, p, d, d[n-1]))
 
 def _so2(s, t, p, d, T):
     if s == 0:
         return p[0] if T >= t[0] else 0
 
-    a = _so2(s-1, t, p, d, T)
+    a = _so2(s-1, t, p, d, min(d[s-1],T))
 
     if T >= t[s]:
-        return max(a, _so2(s-1, t, p, d, T-t[s]) + p[s])
+        b = _so2(s-1, t, p, d, min(T-t[s],d[s-1])) + p[s]
+        return max(a, b)
     else:
         return a
 
@@ -102,6 +103,7 @@ def test(n):
     d = [0] * n
     for i in range(n):
         d[i] = random.randint(t[i], T)
+#    t,p,d = [45, 45, 26],[123, 168, 90],[84, 57, 30]
     if n <= 10:
         print(optimal_value(t, p, d))
     show_optimal(t, p, d)
@@ -110,6 +112,7 @@ def test(n):
 
 def main():
     '''达到最高效益的调度'''
+    test(3)
     test(7)
     test(20)
     test(24)
