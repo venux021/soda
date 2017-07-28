@@ -51,17 +51,25 @@ def show_opt_dp(t, p, d):
             a = dp[min(j,d[i-1])]
             if j >= t[i]:
                 b = p[i] + dp[min(j-t[i], d[i-1])]
-                if b > a:
-                    select[i][j] = True
             else:
                 b = 0
+            
+            select[i][j] = (b > a)
+
             dp[j] = max(a, b)
 
+    print('total:', n)
     print('from dp:', dp[T])
-    for i in range(n):
-        if select[i][d[i]]:
-            print(i, end = ' ')
-    print()
+    k = T
+    task = []
+    for i in range(n-1, -1, -1):
+        if select[i][k]:
+            task.append(i)
+            k = min(d[i-1], k - t[i])
+        else:
+            k = min(d[i-1], k)
+        
+    print(task[::-1])
 
 def show_optimal(t, p, d):
     n = len(t)
@@ -103,10 +111,13 @@ def test(n):
     d = [0] * n
     for i in range(n):
         d[i] = random.randint(t[i], T)
+
+#    # FIXME: test data, remove it
 #    t,p,d = [45, 45, 26],[123, 168, 90],[84, 57, 30]
-    if n <= 10:
-        print(optimal_value(t, p, d))
-    show_optimal(t, p, d)
+
+#    if n <= 10:
+#        print(optimal_value(t, p, d))
+#    show_optimal(t, p, d)
     show_opt_dp(t, p, d)
     print()
 
@@ -116,6 +127,8 @@ def main():
     test(7)
     test(20)
     test(24)
+    test(50)
+    test(100)
 
 if __name__ == '__main__':
 #    reload(sys)
