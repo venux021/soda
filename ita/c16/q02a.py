@@ -56,10 +56,10 @@ def show_optimal_greedy(capacity, weight, value):
         if capacity >= weight[i]:
             capacity -= weight[i]
             v += value[i]
-            print(uprice[i], weight[i], weight[i])
+            print('u:{} w:{} t:{}'.format(uprice[i], weight[i], weight[i]))
         else:
             v += uprice[i] * capacity
-            print(uprice[i], capacity, capacity)
+            print('u:{} w:{} t:{}'.format(uprice[i], weight[i], capacity))
             break
     print('greedy:', v)
 
