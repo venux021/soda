@@ -49,6 +49,17 @@ class AdjList:
     def first_adj(self, vid):
         return self.list[vid].next
 
+    def adj_of(self, vid):
+        p = self.first_adj(vid)
+        while p:
+            yield p
+            p = p.next
+
+    def iter_edges(self):
+        for i in range(self.size()):
+            for p in self.adj_of(i):
+                yield (i, p.adj, p.weight)
+
     def dump(self):
         print('graph:')
         for i in range(self.size()):
