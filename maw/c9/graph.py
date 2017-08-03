@@ -29,6 +29,12 @@ class AdjList:
                 self.add_edge(j, i, w)
         self.d2v = d2v
 
+    def add_vex(self, v):
+        self.d2v[v] = self.size()
+        self.vexes.append(v)
+        self.list.append(AdjNode(-1))
+        return self.d2v[v]
+
     def add_edge(self, i, j, w):
         anode = AdjNode(j, w)
         anode.next = self.list[i].next
