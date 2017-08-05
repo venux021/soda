@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import sys
+from collections import deque
 sys.path.append('../..')
 
 from maw.c9 import graph
@@ -20,7 +21,8 @@ def max_flow(g, s, t):
         res[i][j] = w
 
     while True:
-        flow, path = dfs_path(res, s, t)
+#        flow, path = dfs_path(res, s, t)
+        flow, path = breadth_first_path(res, s, t)
         if flow == 0:
             break
 
@@ -44,6 +46,46 @@ def max_flow(g, s, t):
     for p in cg.adj_of(s):
         mf += p.weight
     print('max flow:', mf)
+
+def breadth_first_path(res, s, t):
+    n = len(res)
+    q = deque()
+
+    visited = [False] * n
+    prev = [-1] * n
+
+    q.append(s)
+    while q:
+        i = q.popleft()
+        visited[i] = True
+        reach_end = False
+        for j in range(n):
+            if res[i][j] > 0 and not visited[j]:
+                prev[j] = i
+                if j == t:
+                    reach_end = True
+                    break
+                q.append(j)
+        if reach_end:
+            break
+    else:
+        return (0, [])
+
+    seq = []
+    i = t
+    while i >= 0:
+        seq.append(i)
+        i = prev[i]
+
+    seq = seq[::-1]
+
+    path = []
+    flow = MAX
+    for i in range(len(seq)-1):
+        path.append((seq[i], seq[i+1]))
+        flow = min(flow, res[seq[i]][seq[i+1]])
+
+    return (flow, path)
 
 def dfs_path(res, s, t):
     ps = []
