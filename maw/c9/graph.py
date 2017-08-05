@@ -66,6 +66,12 @@ class AdjList:
             for p in self.adj_of(i):
                 yield (i, p.adj, p.weight)
 
+    def remove_adj_node(self, p):
+        prv = p.prev
+        prv.next = p.next
+        if p.next:
+            p.next.prev = prv
+
     def dump(self):
         print('graph:')
         for i in range(self.size()):
