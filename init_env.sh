@@ -1,0 +1,2 @@
+SELF_DIR=$(pwd)
+echo $PYTHONPATH | grep -q $SELF_DIR || export PYTHONPATH="$SELF_DIR:$PYTHONPATH"
