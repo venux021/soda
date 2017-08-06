@@ -116,7 +116,7 @@ class AdjList:
     def parse_edges(edges):
         if isinstance(edges, str):
             e = []
-            for f in edges.split(';'):
+            for f in edges.split(' '):
                 f = f.strip()
                 f = f.split(',')
                 if len(f) == 2:
