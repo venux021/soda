@@ -35,7 +35,7 @@ class AdjList:
         self.list.append(AdjNode(-1))
         return self.d2v[v]
 
-    def add_edge(self, i, j, w):
+    def add_edge(self, i, j, w = None):
         anode = AdjNode(j, w)
         anode.next = self.list[i].next
         anode.prev = self.list[i]
@@ -72,7 +72,10 @@ class AdjList:
             print('[{}] ->'.format(self.vex_name(i)), end=' ')
             p = self.first_adj(i)
             while p:
-                print('{}:{}'.format(self.vex_name(p.adj), p.weight), end=' ')
+                if p.weight is None:
+                    print(self.vex_name(p.adj), end=' ')
+                else:
+                    print('{}:{}'.format(self.vex_name(p.adj), p.weight), end=' ')
                 p = p.next
             print()
 
