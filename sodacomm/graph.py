@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+
+MAX = sys.maxsize
 
 class AdjNode:
 
@@ -94,6 +97,22 @@ class AdjList:
         vexes = self.vexes[:]
         edges = []
         return AdjList(vexes, edges)
+
+    def adj_matrix(self):
+        n = self.size()
+        es = list(self.iter_edges())
+        if len(es) == 0:
+            return [[None] * n for i in range(n)]
+        elif es[0][2] is None: # no weight
+            mx = [[False] * n for i in range(n)]
+            for e in es:
+                mx[e[0]][e[1]] = True
+            return mx
+        else:
+            mx = [[MAX] * n for i in range(n)]
+            for e in es:
+                mx[e[0]][e[1]] = e[2]
+            return mx
 
     @staticmethod
     def parse(vexes, edges):
