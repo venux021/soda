@@ -4,6 +4,13 @@ class Node:
         self.value = value
         self.prev = self.next = None
 
+def print_list(L):
+    p = L
+    while p:
+        print(p.value, end = ' ')
+        p = p.next
+    print('')
+
 def new_slist(values):
     h = p = None
     for v in values:
