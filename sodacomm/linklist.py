@@ -46,3 +46,10 @@ def new_dlist_h(values):
     h.next = k
     k.prev = h
     return h
+
+def iter_nodes(L):
+    p = L
+    while p:
+        yield p
+        p = p.next
+
