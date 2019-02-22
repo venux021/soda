@@ -1,8 +1,9 @@
 class Node:
 
-    def __init__(self, value = None):
+    def __init__(self, value = None, *, prev = None, next = None):
         self.value = value
-        self.prev = self.next = None
+        self.prev = prev
+        self.next = next
 
 def print_list(L):
     p = L
