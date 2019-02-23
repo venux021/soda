@@ -53,3 +53,14 @@ def iter_nodes(L):
         yield p
         p = p.next
 
+def find_first(L, v):
+    for p in iter_nodes(L):
+        if p.value == v:
+            return p
+
+def get_tail(L):
+    last = None
+    for p in iter_nodes(L):
+        last = p
+    return last
+
