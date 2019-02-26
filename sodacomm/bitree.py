@@ -7,6 +7,10 @@ class Node:
         self.lc = lc
         self.rc = rc
 
+    @property
+    def isleaf(self):
+        return not self.lc and not self.rc
+
 def new_bitree_level(seq):
     if not seq:
         return
@@ -61,4 +65,9 @@ def print_tree(tree):
     print('\nin:  ', end = ' ')
     _in(tree)
     print('')
+
+def get_height(t):
+    if not t:
+        return 0
+    return max(get_height(t.lc), get_height(t.rc)) + 1
 
