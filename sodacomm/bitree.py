@@ -1,9 +1,34 @@
+from collections import deque
+
 class Node:
 
     def __init__(self, value = None, *, lc = None, rc = None):
         self.value = value
         self.lc = lc
         self.rc = rc
+
+def new_bitree_level(seq):
+    if not seq:
+        return
+    q = deque()
+    it = iter(seq)
+    first = next(it)
+    root = Node(value = first)
+    q.append(root)
+    while q:
+        parent = q.popleft()
+        try:
+            lv = next(it)
+            if lv is not None:
+                parent.lc = Node(lv)
+                q.append(parent.lc)
+            rv = next(it)
+            if rv is not None:
+                parent.rc = Node(rv)
+                q.append(parent.rc)
+        except StopIteration:
+            break
+    return root
 
 def new_bitree(pre_seq, in_seq):
     root_value = pre_seq[0]
