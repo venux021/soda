@@ -71,3 +71,10 @@ def get_height(t):
         return 0
     return max(get_height(t.lc), get_height(t.rc)) + 1
 
+def find_node_by_value(t, v):
+    if not t:
+        return
+    if t.value == v:
+        return t
+    return find_node_by_value(t.lc, v) or find_node_by_value(t.rc, v)
+
