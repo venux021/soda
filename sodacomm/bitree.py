@@ -78,3 +78,16 @@ def find_node_by_value(t, v):
         return t
     return find_node_by_value(t.lc, v) or find_node_by_value(t.rc, v)
 
+def get_all_nodes(t):
+    nodes = []
+    if not t:
+        return nodes
+    def _pre(r):
+        if not r:
+            return
+        nodes.append(r)
+        _pre(r.lc)
+        _pre(r.rc)
+    _pre(t)
+    return nodes
+
