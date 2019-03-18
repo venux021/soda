@@ -16,7 +16,7 @@ def longest_common_seq(a1, a2):
             dp[0][i] = 1
     for i, j in itertools.product(range(1,m), range(1,n)):
         if a1[i] == a2[j]:
-            dp[i][j] = dp[i-1][j-1] + 1
+            dp[i][j] = max(dp[i-1][j-1] + 1, dp[i-1][j], dp[i][j-1])
         else:
             dp[i][j] = max(dp[i-1][j], dp[i][j-1])
 
