@@ -18,10 +18,22 @@ def find_dual(arr, k):
             i += 1
     return r
 
+def find_triple(arr, k):
+    n = len(arr)
+    if n == 2:
+        return []
+    result = []
+    for i in range(n-2):
+        r = find_dual(arr[i+1:], k - arr[i])
+        for a,b in r:
+            result.append((arr[i],a,b))
+    return result
+
 @testwrapper
 def test(arr, k):
     print(arr, k)
     print(find_dual(arr, k))
+    print(find_triple(arr, k))
 
 def main():
     test([-8,-4,-3,0,1,2,4,5,8,9], 10)
