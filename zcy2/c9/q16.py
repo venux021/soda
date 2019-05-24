@@ -5,7 +5,6 @@ from sodacomm.tools import testwrapper
 
 def count_1(n):
     if n == 0:
-        print('haha')
         return 0
     if n < 10:
         return 1
