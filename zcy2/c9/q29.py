@@ -21,9 +21,9 @@ def manacher(s):
     for i in range(1,N):
         if i > rbound:
             R = dofind(buf, i)
-            index = i
             radius[i] = R
             rbound = i + R - 1
+            index = i
         else:
             _i = index * 2 - i
             _r = radius[_i]
@@ -32,7 +32,9 @@ def manacher(s):
             elif i + _r - 1 > rbound:
                 radius[i] = rbound - i + 1
             else:
-                radius[i] = dofind(buf, i, rbound - i + 1)
+                R = radius[i] = dofind(buf, i, rbound - i + 1)
+                rbound = i + R - 1
+                index = i
 
     return max(radius) - 1
 
@@ -97,6 +99,7 @@ def main():
     test('CabaddabaC')
     test('abacabd')
     test('dabacabac')
+    test('222020221')
 
 if __name__ == '__main__':
     main()
