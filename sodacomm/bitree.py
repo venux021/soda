@@ -11,6 +11,18 @@ class Node:
     def isleaf(self):
         return not self.lc and not self.rc
 
+    @property
+    def left(self):
+        return self.lc
+
+    @property
+    def right(self):
+        return self.rc
+
+    @property
+    def val(self):
+        return self.value
+
 def new_bitree_level(seq):
     if not seq:
         return
