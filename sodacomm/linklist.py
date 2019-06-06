@@ -5,6 +5,10 @@ class Node:
         self.prev = prev
         self.next = next
 
+    @property
+    def val(self):
+        return self.value
+
 def print_list(L):
     p = L
     while p:
