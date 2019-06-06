@@ -1,4 +1,4 @@
-class Node:
+class ListNode:
 
     def __init__(self, value = None, *, prev = None, next = None):
         self.value = value
@@ -8,6 +8,8 @@ class Node:
     @property
     def val(self):
         return self.value
+
+Node = ListNode
 
 def print_list(L):
     p = L

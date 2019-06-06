@@ -1,6 +1,6 @@
 from collections import deque
 
-class Node:
+class TreeNode:
 
     def __init__(self, value = None, *, lc = None, rc = None):
         self.value = value
@@ -22,6 +22,8 @@ class Node:
     @property
     def val(self):
         return self.value
+
+Node = TreeNode
 
 def new_bitree_level(seq):
     if not seq:
