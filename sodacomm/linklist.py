@@ -9,6 +9,10 @@ class ListNode:
     def val(self):
         return self.value
 
+    @val.setter
+    def val(self, v):
+        self.value = v
+
 Node = ListNode
 
 def print_list(L):

@@ -15,13 +15,25 @@ class TreeNode:
     def left(self):
         return self.lc
 
+    @left.setter
+    def left(self, p):
+        self.lc = p
+
     @property
     def right(self):
         return self.rc
 
+    @right.setter
+    def right(self, p):
+        self.rc = p
+
     @property
     def val(self):
         return self.value
+
+    @val.setter
+    def val(self, v):
+        self.value = v
 
 Node = TreeNode
 
@@ -78,6 +90,22 @@ def print_tree(tree):
     _pre(tree)
     print('\nin:  ', end = ' ')
     _in(tree)
+    print('')
+
+def print_tree_level(tree):
+    if not tree:
+        print('Empty tree')
+        return
+    qu = deque([(tree,1)])
+    while qu:
+        node, level = qu.popleft()
+        left_val = node.left.val if node.left else 'null'
+        right_val = node.right.val if node.right else 'null'
+        print(f'[{level}]:{node.val}:({left_val},{right_val})', end = ' ')
+        if node.left:
+            qu.append((node.left, level+1))
+        if node.right:
+            qu.append((node.right, level+1))
     print('')
 
 def get_height(t):
