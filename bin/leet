@@ -28,7 +28,6 @@ create_file()
 
 run_leetcode()
 {
-    echo leetcode: "$@"
     [ $# -eq 0 ] && usage
     g++ "$@" -o leetcode_solution && ./leetcode_solution
 }
