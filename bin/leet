@@ -29,7 +29,8 @@ create_file()
 run_leetcode()
 {
     [ $# -eq 0 ] && usage
-    g++ "$@" -o leetcode_solution && ./leetcode_solution
+    include_dir=$top_dir/leetcode/include
+    g++ "$@" -I$include_dir -o leetcode_solution && ./leetcode_solution
 }
 
 subcmd=$1
