@@ -1,0 +1,51 @@
+#!/bin/bash
+
+self_dir=$(cd $(dirname $0) && pwd)
+top_dir=$(dirname $self_dir)
+
+usage()
+{
+    cat <<EOF
+usage:
+    leet new <file>
+    leet run [gcc options] <file>...
+EOF
+    exit 1
+}
+
+create_file()
+{
+    [ $# -eq 0 ] && usage
+    filename=$1
+    template=$self_dir/template/template.cpp
+    if [ -e $filename ]; then
+        echo "ERROR: $filename exists"
+        exit 10
+    else
+        cp $template $filename && echo $filename OK
+    fi
+}
+
+run_leetcode()
+{
+    echo leetcode: "$@"
+    [ $# -eq 0 ] && usage
+    g++ "$@" -o leetcode_solution && ./leetcode_solution
+}
+
+subcmd=$1
+
+case $subcmd in
+    new)
+        shift
+        create_file "$@"
+        ;;
+    run)
+        shift
+        run_leetcode "$@"
+        ;;
+    *)
+        usage
+        ;;
+esac
+
