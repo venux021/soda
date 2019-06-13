@@ -4,36 +4,41 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <fstream>
 using namespace std;
+
+#include "array.h"
+#include "string.h"
+using namespace leetcode;
 
 class Leetcode {
 public:
 
-    void trimLeftTrailingSpaces(string &input) {
-        input.erase(input.begin(), find_if(input.begin(), input.end(), [](int ch) {
-            return !isspace(ch);
-        }));
+    static int readInt(ifstream &in) {
+        string line;
+        getline(in, line);
+        return stoi(trim(line));
+    }
+
+    static vector<int> readIntArray(ifstream &in) {
+        return Array::loadIntArray(in);
+    }
+
+    static string trim(const string &str) {
+        return String::trim(str);
+    }
+
+    static void trimLeftTrailingSpaces(string &input) {
+        String::trimLeftTrailingSpaces(input);
     }
     
-    void trimRightTrailingSpaces(string &input) {
-        input.erase(find_if(input.rbegin(), input.rend(), [](int ch) {
-            return !isspace(ch);
-        }).base(), input.end());
+    static void trimRightTrailingSpaces(string &input) {
+        String::trimRightTrailingSpaces(input);
     }
     
-    vector<int> stringToIntegerVector(const string &input) {
-        vector<int> output;
-        trimLeftTrailingSpaces(input);
-        trimRightTrailingSpaces(input);
-        input = input.substr(1, input.length() - 2);
-        stringstream ss;
-        ss.str(input);
-        string item;
-        char delim = ',';
-        while (getline(ss, item, delim)) {
-            output.push_back(stoi(item));
-        }
-        return output;
+    static vector<int> stringToIntegerVector(string &input) {
+        return Array::loadIntArray(input);
     }
 
     template <typename T>
