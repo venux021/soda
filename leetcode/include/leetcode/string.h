@@ -2,7 +2,7 @@
 #define _LEETCODE_STRIGN
 
 #include <string>
-using namespacet std;
+using namespace std;
 
 namespace leetcode {
 

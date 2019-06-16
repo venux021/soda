@@ -2,8 +2,11 @@
 #define _LEETCODE_ARRAY
 
 #include <iostream>
+#include <sstream>
 #include <string>
 using namespace std;
+
+#include "string.h"
 
 namespace leetcode {
 
@@ -11,13 +14,13 @@ class Array {
 public:
     static vector<int> loadIntArray(istream &in) {
         string line;
-        return getline(in, line) ? loadIntArray(line) : {};
+        return getline(in, line) ? loadIntArray(line) : vector<int>();
     }
 
     static vector<int> loadIntArray(string &input) {
         vector<int> output;
-        trimLeftTrailingSpaces(input);
-        trimRightTrailingSpaces(input);
+        String::trimLeftTrailingSpaces(input);
+        String::trimRightTrailingSpaces(input);
         input = input.substr(1, input.length() - 2);
         stringstream ss;
         ss.str(input);
