@@ -2,6 +2,7 @@
 #define _LEETCODE_BITREE
 
 #include <queue>
+#include <sstream>
 using namespace std;
 
 #include "string.h"
@@ -17,7 +18,7 @@ struct TreeNode {
 
 class BiTree {
 public:
-    TreeNode* load(string input) {
+    static TreeNode* load(string input) {
         String::trimLeftTrailingSpaces(input);
         String::trimRightTrailingSpaces(input);
         input = input.substr(1, input.length() - 2);
@@ -42,7 +43,7 @@ public:
                 break;
             }
     
-            trimLeftTrailingSpaces(item);
+            String::trimLeftTrailingSpaces(item);
             if (item != "null") {
                 int leftNumber = stoi(item);
                 node->left = new TreeNode(leftNumber);
@@ -53,7 +54,7 @@ public:
                 break;
             }
     
-            trimLeftTrailingSpaces(item);
+            String::trimLeftTrailingSpaces(item);
             if (item != "null") {
                 int rightNumber = stoi(item);
                 node->right = new TreeNode(rightNumber);
