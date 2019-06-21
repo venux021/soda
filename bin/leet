@@ -26,11 +26,16 @@ create_file()
     fi
 }
 
-run_leetcode()
+build_leetcode()
 {
     [ $# -eq 0 ] && usage
     include_dir=$top_dir/leetcode/include
-    g++ "$@" -Wreturn-type -fsanitize=address -I$include_dir -o leetcode_solution && ./leetcode_solution
+    g++ -Wreturn-type -fsanitize=address -I$include_dir -o leetcode_solution "$@"
+}
+
+run_leetcode()
+{
+    build_leetcode "$@" && ./leetcode_solution
 }
 
 subcmd=$1
@@ -43,6 +48,10 @@ case $subcmd in
     run)
         shift
         run_leetcode "$@"
+        ;;
+    make | build | compile)
+        shift
+        build_leetcode "$@"
         ;;
     *)
         usage
