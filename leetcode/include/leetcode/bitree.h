@@ -63,6 +63,46 @@ public:
         }
         return root;
     }
+
+    static string toString(TreeNode *root) {
+        string res = "[";
+        if (root) {
+            vector<TreeNode*> buf;
+            std::queue<TreeNode*> qu;
+            qu.push(root);
+            while (!qu.empty()) {
+                auto node = qu.front();
+                qu.pop();
+                buf.push_back(node);
+                if (node) {
+                    qu.push(node->left);
+                    qu.push(node->right);
+                }
+            }
+            while (buf.size() && !buf.back()) {
+                buf.pop_back();
+            }
+            for (int i = 0; i < int(buf.size()) - 1; ++i) {
+                if (buf[i]) {
+                    res.append(to_string(buf[i]->val));
+                } else {
+                    res.append("null");
+                }
+                res.push_back(',');
+            }
+            res.append(to_string(buf.back()->val));
+        }
+        res.push_back(']');
+        return res;
+    }
+
+    static void destroy(TreeNode *root) {
+        if (root) {
+            destroy(root->left);
+            destroy(root->right);
+        }
+        delete root;
+    }
 };
 
 
