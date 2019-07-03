@@ -30,7 +30,7 @@ build_leetcode()
 {
     [ $# -eq 0 ] && usage
     include_dir=$top_dir/leetcode/include
-    g++ -Wreturn-type -fsanitize=address -I$include_dir -o leetcode_solution "$@"
+    g++ -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow -I$include_dir -o leetcode_solution "$@"
 }
 
 run_leetcode()
