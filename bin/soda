@@ -16,7 +16,7 @@ create_file()
 {
     [ $# -eq 0 ] && usage
     filename=$1
-    template=$top_dir/template.py
+    template=$top_dir/bin/template/template.py
     if [ -e $filename ]; then
         echo "ERROR: $filename exists"
         exit 10
