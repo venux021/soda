@@ -1,5 +1,5 @@
 #ifndef _LEETCODE_STRING
-#define _LEETCODE_STRIGN
+#define _LEETCODE_STRING
 
 #include <string>
 using namespace std;

@@ -1,13 +1,11 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <unordered_map>
-#include <unordered_set>
+#include <bits/stdc++.h>
+#include "leetcode/leetcode.h"
 using namespace std;
+using namespace leetcode;
 
+auto _io_optimize = [](){ios_base::sync_with_stdio(false);cin.tie(nullptr);return 0;}();
 
+// -- Solution here --
 
 int main()
 {
