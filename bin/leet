@@ -30,6 +30,7 @@ build_leetcode()
 {
     [ $# -eq 0 ] && usage
     include_dir=$top_dir/leetcode/include
+    export ASAN_OPTIONS="detect_leaks=0"
     g++ -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow -I$include_dir -o leetcode_solution "$@"
 }
 
