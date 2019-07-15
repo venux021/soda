@@ -1,6 +1,7 @@
 #ifndef _LEETCODE_ARRAY
 #define _LEETCODE_ARRAY
 
+#include <functional>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -12,13 +13,32 @@ namespace leetcode {
 
 class Array {
 public:
-    static vector<int> loadIntArray(istream &in) {
-        string line;
-        return getline(in, line) ? loadIntArray(line) : vector<int>();
+    template <typename T> static vector<T> load(istream &in);
+    template <typename T> static vector<T> load(string input) {
+        istringstream _sin(input);
+        return load<T>(_sin);
     }
 
-    static vector<int> loadIntArray(string input) {
-        vector<int> output;
+    template <typename T> static string dump(const vector<T> &arr) {
+        return dump<T>(arr, [](const T &elem){ return to_string(elem); });
+    }
+    template <typename T> static string dump(const vector<vector<T>> &arr) {
+        return dump<vector<T>>(arr, [](const vector<T> &elem){ return Array::dump<T>(elem); });
+    }
+
+    template <typename T>
+    static vector<T> load(istream &in, function<T(const string &)> conv) {
+        string line;
+        if (getline(in, line)) {
+            return load(line, conv);
+        } else {
+            throw "Invalid json list format";
+        }
+    }
+
+    template <typename T>
+    static vector<T> load(string input, function<T(const string&)> conv) {
+        vector<T> output;
         String::trimLeftTrailingSpaces(input);
         String::trimRightTrailingSpaces(input);
         input = input.substr(1, input.length() - 2);
@@ -27,66 +47,115 @@ public:
         string item;
         char delim = ',';
         while (getline(ss, item, delim)) {
-            output.push_back(stoi(item));
+            String::trimLeftTrailingSpaces(item);
+            String::trimRightTrailingSpaces(item);
+            if (item.size() == 0) {
+                break;
+            }
+            output.push_back(conv(item));
         }
         return output;
     }
 
-    static string toString(const vector<int> &list, int length = -1) {
-        if (length == -1) {
-            length = list.size();
-        }
-
-        if (length == 0) {
-            return "[]";
-        }
-
-        string result;
-        for(int index = 0; index < length; index++) {
-            int number = list[index];
-            result += to_string(number) + ", ";
-        }
-        return "[" + result.substr(0, result.length() - 2) + "]";
-    }
-
-    static string toString(const vector<vector<int>> &arr2d) {
-        if (arr2d.size() == 0) {
-            return "[]";
-        }
-
-        string s;
-        for (int index = 0; index < int(arr2d.size()); ++index) {
-            s += toString(arr2d[index]) + ", ";
-        }
-        return "[" + s.substr(0, s.size()-2) + "]";
-    }
-
-    static vector<vector<int>> loadIntArray2D(istream &in) {
+    template <typename T>
+    static vector<vector<T>> load2d(istream &in) {
         string line;
-        return getline(in, line) ? loadIntArray2D(line) : vector<vector<int>>();
+        if (getline(in, line)) {
+            return load2d<T>(line);
+        } else {
+            throw "Invalid json list format";
+        }
     }
 
-    static vector<vector<int>> loadIntArray2D(string input) {
-        String::trimLeftTrailingSpaces(input);
-        String::trimRightTrailingSpaces(input);
-        vector<vector<int>> arr2d;
-        int i = 1; // skip '['
-        while (input[i] != ']') {
-            while (input[i] != '[' && input[i] != ']') {
-                ++i;
+    template <typename T>
+    static vector<vector<T>> load2d(const string &input) {
+        vector<vector<T>> output;
+        int pos = 0, end = int(input.size());
+        auto skipW = [end](const string &s, int &pos) {
+            while (pos < end && s[pos] == ' ') {
+                ++pos;
             }
-            if (input[i] == '[') {
-                int j = i+1;
-                while (input[j] != ']') {
-                    ++j;
-                }
-                arr2d.push_back(loadIntArray(input.substr(i,j-i+1)));
-                i = j + 1;
+        };
+        if (pos == end) {
+            throw "Invalid json array format";
+        }
+        skipW(input, pos);
+        ++pos;
+        skipW(input, pos);
+        if (input[pos] == ']') {
+            return output;
+        }
+        while (true) {
+            skipW(input, pos);
+            int start = pos;
+            while (input[pos++] != ']')
+                ;;
+            output.push_back(load<T>(input.substr(start, pos-start)));
+            skipW(input, pos);
+            if (input[pos] == ']') {
+                break;
+            }
+            ++pos;  // skip ','
+        }
+        return output;
+    }
+
+    template <typename T>
+    static string dump(const vector<T> &list, function<string(const T&)> conv) {
+        string buffer("[");
+        for (int i = 0; i < int(list.size()); ++i) {
+            buffer.append(conv(list[i]));
+            if (i < int(list.size()) - 1) {
+                buffer.append(", ");
             }
         }
-        return arr2d;
+        buffer.push_back(']');
+        return buffer;
     }
 };
+
+template <>
+vector<int> Array::load(istream &in)
+{
+    return load<int>(in, [](const string &s){ return stoi(s); });
+}
+
+template <>
+vector<double> Array::load(istream &in)
+{
+    return load<double>(in, [](const string &s){ return stod(s); });
+}
+
+template <>
+vector<float> Array::load(istream &in)
+{
+    return load<float>(in, [](const string &s){ return stof(s); });
+}
+
+template <>
+vector<string> Array::load(istream &in)
+{
+    auto conv = [](const string &s) {
+        string elem = s;
+        String::trimLeftTrailingSpaces(elem);
+        String::trimRightTrailingSpaces(elem);
+        return elem.substr(1, elem.size()-2);
+    };
+    return load<string>(in, conv);
+}
+
+template <>
+string Array::dump(const vector<string> &arr)
+{
+    auto conv = [](const string &elem) {
+        string buf;
+        buf.push_back('"');
+        buf.append(elem);
+        buf.push_back('"');
+        return buf;
+    };
+    return dump<string>(arr, conv);
+}
 
 } // namespace leetcode
 

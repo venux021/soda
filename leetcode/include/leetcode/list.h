@@ -25,7 +25,7 @@ public:
     
     static ListNode *load(string input) {
         // Generate list from the input
-        vector<int> list = Array::loadIntArray(input);
+        vector<int> list = Array::load<int>(input);
 
         // Now convert that list into linked list
         ListNode* dummyRoot = new ListNode(0);

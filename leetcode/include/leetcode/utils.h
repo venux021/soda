@@ -21,10 +21,6 @@ public:
         return stoi(trim(line));
     }
 
-    static vector<int> readIntArray(ifstream &in) {
-        return Array::loadIntArray(in);
-    }
-
     static string trim(const string &str) {
         return String::trim(str);
     }
@@ -37,10 +33,6 @@ public:
         String::trimRightTrailingSpaces(input);
     }
     
-    static vector<int> stringToIntegerVector(string &input) {
-        return Array::loadIntArray(input);
-    }
-
     template <typename T>
     static void print(const vector<T> &vec) {
         print1d(vec);
