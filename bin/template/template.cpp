@@ -3,7 +3,13 @@
 using namespace std;
 using namespace leetcode;
 
-auto _io_optimize = [](){ios_base::sync_with_stdio(false);cin.tie(nullptr);return 0;}();
+namespace {
+    const auto __ = []() {
+        ios_base::sync_with_stdio(false);
+        cin.tie(nullptr);
+        return 0;
+    }();
+}
 
 // -- Solution here --
 
