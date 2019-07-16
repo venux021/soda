@@ -2,6 +2,7 @@
 
 self_dir=$(cd $(dirname $0) && pwd)
 top_dir=$(dirname $self_dir)
+genmake=$self_dir/gen-leetcode-makefile.sh
 
 usage()
 {
@@ -29,14 +30,17 @@ create_file()
 build_leetcode()
 {
     [ $# -eq 0 ] && usage
-    include_dir=$top_dir/leetcode/include
-    export ASAN_OPTIONS="detect_leaks=0"
-    g++ -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow -I$include_dir -o leetcode_solution "$@"
+    local case_name=${1%.cpp}
+    local makefile=Makefile_.$case_name
+    bash $genmake -b $top_dir -c $case_name > $makefile
+    make -f $makefile
 }
 
 run_leetcode()
 {
-    build_leetcode "$@" && ./leetcode_solution
+    local case_name=${1%.cpp}
+    export LD_LIBRARY_PATH=$top_dir/lib/leetcode:$LD_LIBRARY_PATH
+    ASAN_OPTIONS="detect_leaks=0" ./${case_name}.out
 }
 
 subcmd=$1
