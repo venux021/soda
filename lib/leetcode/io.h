@@ -9,10 +9,7 @@ namespace leetcode {
 
 class IO {
 public:
-    static int loadInt(istream &in) {
-        string line;
-        return getline(in, line) ? stoi(line) : 0;
-    }
+    static int loadInt(istream &in);
 };
 
 }  // namespace leetcode
