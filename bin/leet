@@ -8,8 +8,9 @@ usage()
 {
     cat <<EOF
 usage:
-    leet new <file>
-    leet run [gcc options] <file>...
+    leet new <name or file>
+    leet run <name or file>
+    leet clean <name or file>
 EOF
     exit 1
 }
@@ -31,7 +32,7 @@ build_leetcode()
 {
     [ $# -eq 0 ] && usage
     local case_name=${1%.cpp}
-    local makefile=Makefile_.$case_name
+    local makefile=Makefile.gen.$case_name
     bash $genmake -b $top_dir -c $case_name > $makefile
     make -f $makefile
 }
@@ -41,6 +42,13 @@ run_leetcode()
     local case_name=${1%.cpp}
     export LD_LIBRARY_PATH=$top_dir/lib/leetcode:$LD_LIBRARY_PATH
     ASAN_OPTIONS="detect_leaks=0" ./${case_name}.out
+}
+
+clean_leetcode()
+{
+    local case_name=${1%.cpp}
+    local makefile=Makefile.gen.$case_name
+    make -f $makefile clean
 }
 
 subcmd=$1
@@ -57,6 +65,10 @@ case $subcmd in
     make | build | compile)
         shift
         build_leetcode "$@"
+        ;;
+    clean)
+        shift
+        clean_leetcode "$@"
         ;;
     *)
         usage

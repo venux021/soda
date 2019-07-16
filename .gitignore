@@ -2,4 +2,4 @@
 *.d
 *.o
 *.pyc
-Makefile_.*
+Makefile.gen.*
