@@ -11,6 +11,7 @@ usage:
     leet new <name or file>
     leet run <name or file>
     leet clean <name or file>
+    leet data <seq number>
 EOF
     exit 1
 }
@@ -51,6 +52,27 @@ clean_leetcode()
     make -f $makefile clean
 }
 
+link_data()
+{
+    local data_num=$1
+    [ -z $data_num ] && usage
+    local test_file="input.data"
+    local source_file=$test_file.$data_num
+    if [ ! -e $source_file ]; then
+        echo "Error: $source_file not exist"
+        exit 4
+    fi
+    if [ -e $test_file ]; then
+        if [ -L $test_file ]; then
+            rm $test_file
+        else
+            echo "Error: $test_file is not a symbol link"
+            exit 3
+        fi
+    fi
+    ln -v -s $source_file $test_file
+}
+
 subcmd=$1
 
 case $subcmd in
@@ -69,6 +91,10 @@ case $subcmd in
     clean)
         shift
         clean_leetcode "$@"
+        ;;
+    data)
+        shift
+        link_data "$@"
         ;;
     *)
         usage
