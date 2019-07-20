@@ -43,6 +43,12 @@ public:
     static string dump(const vector<T> &list, function<string(const T&)> conv);
 };
 
+template <> vector<int> Array::load(istream &in);
+template <> vector<double> Array::load(istream &in);
+template <> vector<float> Array::load(istream &in);
+template <> vector<string> Array::load(istream &in);
+template <> string Array::dump(const vector<string> &arr);
+
 #include "array_impl.h"
 
 } // namespace leetcode
