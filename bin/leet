@@ -45,6 +45,11 @@ run_leetcode()
     ASAN_OPTIONS="detect_leaks=0" ./${case_name}.out
 }
 
+go_leetcode()
+{
+    build_leetcode "$@" && run_leetcode "$@"
+}
+
 clean_leetcode()
 {
     local case_name=${1%.cpp}
@@ -83,6 +88,10 @@ case $subcmd in
     run)
         shift
         run_leetcode "$@"
+        ;;
+    go)
+        shift
+        go_leetcode "$@"
         ;;
     make | build | compile)
         shift
