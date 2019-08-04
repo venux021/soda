@@ -3,6 +3,7 @@
 self_dir=$(cd $(dirname $0) && pwd)
 top_dir=$(dirname $self_dir)
 genmake=$self_dir/gen-leetcode-makefile.sh
+Test_File="input.data"
 
 usage()
 {
@@ -41,8 +42,14 @@ build_leetcode()
 run_leetcode()
 {
     local case_name=${1%.cpp}
+    local input_seq=$2
     export LD_LIBRARY_PATH=$top_dir/lib/leetcode:$LD_LIBRARY_PATH
-    ASAN_OPTIONS="detect_leaks=0" ./${case_name}.out
+    if [ -z $input_seq ]; then
+        ASAN_OPTIONS="detect_leaks=0" ./${case_name}.out
+    else
+        export ASAN_OPTIONS="detect_leaks=0"
+        cat ${Test_File}.$input_seq | ./${case_name}.out
+    fi
 }
 
 go_leetcode()
@@ -61,7 +68,7 @@ link_data()
 {
     local data_num=$1
     [ -z $data_num ] && usage
-    local test_file="input.data"
+    local test_file="$Test_File"
     local source_file=$test_file.$data_num
     if [ ! -e $source_file ]; then
         echo "Error: $source_file not exist"

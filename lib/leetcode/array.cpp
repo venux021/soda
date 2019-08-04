@@ -45,4 +45,23 @@ string Array::dump(const vector<string> &arr)
     return dump<string>(arr, conv);
 }
 
+template <> vector<char> Array::load(istream &in)
+{
+    vector<string> strArr = load<string>(in);
+    vector<char> chars(strArr.size());
+    for (int i = 0; i < int(strArr.size()); ++i) {
+        chars[i] = strArr[i][0];
+    }
+    return chars;
+}
+
+template <> string Array::dump(const vector<char> &arr)
+{
+    vector<string> strArr(arr.size());
+    for (int i = 0; i < int(arr.size()); ++i) {
+        strArr[i].push_back(arr[i]);
+    }
+    return dump(strArr);
+}
+
 } // namespace leetcode
