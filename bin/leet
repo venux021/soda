@@ -10,7 +10,9 @@ usage()
     cat <<EOF
 usage:
     leet new <name or file>
+    leet make|build|compile <name or file>
     leet run <name or file>
+    leet go <name or file>
     leet clean <name or file>
     leet data <seq number>
 EOF
