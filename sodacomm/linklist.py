@@ -13,8 +13,6 @@ class ListNode:
     def val(self, v):
         self.value = v
 
-Node = ListNode
-
 def print_list(L):
     p = L
     while p:
@@ -22,10 +20,18 @@ def print_list(L):
         p = p.next
     print('')
 
-def new_slist(values):
+def new_slist(values, *, with_head = False, cls = ListNode, builder = None):
+    if not builder:
+        builder = lambda c, v: c(v)
+
+    if with_head:
+        h = builder(cls, None)
+        h.next = new_slist(values, cls = cls, builder = builder)
+        return h
+
     h = p = None
     for v in values:
-        n = Node(v)
+        n = builder(cls, v)
         if not p:
             h = p = n
         else:
@@ -33,15 +39,15 @@ def new_slist(values):
             p = n
     return h
 
-def new_slist_h(values):
-    h = Node()
-    h.next = new_slist(values)
-    return h
+def new_slist_h(values, *, cls = ListNode, builder = None):
+    return new_slist(values, cls = cls, builder = builder)
 
-def new_dlist(values):
+def new_dlist(values, with_head = False):
+    if with_head:
+        return new_dlist_h(values)
     h = p = None
     for v in values:
-        n = Node(v)
+        n = ListNode(v)
         if not p:
             h = p = n
         else:
@@ -51,7 +57,7 @@ def new_dlist(values):
     return h
 
 def new_dlist_h(values):
-    h = Node()
+    h = ListNode()
     k = new_dlist(values)
     h.next = k
     k.prev = h

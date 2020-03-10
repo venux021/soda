@@ -35,8 +35,6 @@ class TreeNode:
     def val(self, v):
         self.value = v
 
-Node = TreeNode
-
 def new_bitree_level(seq):
     if not seq:
         return

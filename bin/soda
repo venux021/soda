@@ -16,7 +16,9 @@ create_file()
 {
     [ $# -eq 0 ] && usage
     filename=$1
-    template=$top_dir/bin/template/template.py
+    ext=${filename##*.}
+    template=$top_dir/bin/template/template.$ext
+    [ -e $template ] || { echo "Unsupported file type: $ext"; exit 2; }
     if [ -e $filename ]; then
         echo "ERROR: $filename exists"
         exit 10
