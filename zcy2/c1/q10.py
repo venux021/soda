@@ -22,14 +22,17 @@ def get_num(arr, num):
             qmin.pop()
         qmin.append(k)
     while i < n:
-        _max = qmax[0]
-        _min = qmin[0]
+        _max = arr[qmax[0]]
+        _min = arr[qmin[0]]
         if _max - _min <= num and j < n:
             _update_max(j)
             _update_min(j)
             j += 1
         else:
-            total += (j - i)
+            if j < n:
+                total += (j - i - 1)
+            else:
+                total += j - i
             i += 1
             if qmax[0] < i:
                 qmax.popleft()
