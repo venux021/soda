@@ -35,7 +35,7 @@ class TreeNode:
     def val(self, v):
         self.value = v
 
-def new_bitree_level(seq, *, cls = TreeNode):
+def new_bitree_level(seq, *, cls = TreeNode, display = False):
     Node = cls
     if not seq:
         return
@@ -57,6 +57,8 @@ def new_bitree_level(seq, *, cls = TreeNode):
                 q.append(parent.rc)
         except StopIteration:
             break
+    if display:
+        print_tree_level(root)
     return root
 
 def new_bitree(pre_seq, in_seq):
