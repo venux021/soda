@@ -15,10 +15,14 @@ class ListNode:
 
 def print_list(L):
     p = L
+    print('LinkedList[', end = '')
     while p:
-        print(p.value, end = ' ')
+        if p.next:
+            print(p.value, end = ', ')
+        else:
+            print(p.value, end = '')
         p = p.next
-    print('')
+    print(']')
 
 def new_slist(values, *, with_head = False, cls = ListNode, builder = None):
     if not builder:
