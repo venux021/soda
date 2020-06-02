@@ -6,7 +6,7 @@ import sys
 from sodacomm.bitree import *
 from sodacomm.graph import *
 from sodacomm.linklist import *
-from sodacomm.tools import simpletest, sodatest, testrun
+from sodacomm.tools import simpletest, sodatest, testrun, testcall
 
 # Solution here
 def solution():
@@ -14,6 +14,7 @@ def solution():
 
 def main():
     # testrun(solution, a, b, c, d=e, f=g)
+    # testcall(solution, (a,b,c), {d:e, f:g}, validator=lambda x: x > 0)
     pass
 
 # Template for simple test
@@ -24,11 +25,11 @@ def main():
 #    print(res)
 
 # Template for complex test
-#@sodatest(repeat=5)
+#@sodatest(repeat=5, show_args=True, show_result=True, validator=None)
 #def test(*args,**kwargs):
-#    print('input:', args, kwargs)
 #    res = solution(*args, **kwargs)
-#    print('result:' res)
+#    # Do something with res
+#    return res
 
 if __name__ == '__main__':
     main()
