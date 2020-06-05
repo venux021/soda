@@ -66,3 +66,34 @@ def testcall(func, args=(), kwargs={}, *, show_args=True, show_result=True, vali
         validator = validator
     )
 
+class Validator:
+
+    @classmethod
+    def seq(cls, seq):
+        def validate(res):
+            s = list(seq)
+            i = 0
+            n = len(s)
+            for r in res:
+                if i == n or s[i] != r:
+                    return False
+                i += 1
+            return i == n
+        return validate
+
+    @classmethod
+    def set(cls, seq):
+        def validate(res):
+            s = set(seq)
+            n = len(s)
+            count = 0
+            for r in res:
+                if r not in s:
+                    return False
+                s.remove(r)
+                count += 1
+            return count == n
+        return validate
+
+
+

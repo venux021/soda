@@ -13,6 +13,18 @@ class ListNode:
     def val(self, v):
         self.value = v
 
+class LinkList:
+
+    @classmethod
+    def new_s(cls, *args, **kwargs):
+        return new_slist(*args, **kwargs)
+
+    @classmethod
+    def show(cls, L):
+        print_list(L)
+
+LinkedList = LinkList
+
 def print_list(L):
     p = L
     print('LinkedList[', end = '')
