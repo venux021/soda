@@ -6,7 +6,7 @@ import sys
 from sodacomm.bitree import *
 from sodacomm.graph import *
 from sodacomm.linklist import *
-from sodacomm.tools import simpletest, sodatest, testrun, testcall, Validator
+from sodacomm.tools import *
 
 # Solution here
 def solution():

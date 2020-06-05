@@ -5,27 +5,53 @@ import time
 __test_number = 0
 
 def execute(func, args, kwargs, *, show_args=True, show_result=True, validator=None):
+    # show test number
     global __test_number
     __test_number += 1
     print(f'**[{__test_number}]**')
-    if show_args:
-        if args:
-            print('args:', args)
-        if kwargs:
-            print('kwargs:', kwargs)
+
+    # show args and kwargs
+    def print_args(*_args, **_kwargs):
+        print('args:', _args)
+        print('kwargs:', _kwargs)
+    if show_args is True:
+        show_args = print_args
+    if callable(show_args):
+        print('input:')
+        show_args(*args, **kwargs)
+
+    # record start time
     t1 = time.time()
+
+    # execute testing procedure
     res = func(*args, **kwargs)
+
+    # record end time
+    t2 = time.time()
+
+    # validate result object
     if validator is not None:
         if callable(validator):
             if not validator(res):
                 raise Exception(f'Wrong answer {res}, failed to the validator')
         elif res != validator:
             raise Exception(f'Wrong answer {res}, but {validator} expected')
-    t2 = time.time()
-    if show_result:
+
+    # show result
+    def print_result(_res):
         print(f'result:', res)
+    if show_result is True:
+        show_result = print_result
+    if callable(show_result):
+        print('output:')
+        show_result(res)
+
+    # show end flag
     print(f'----')
+
+    # show time elapsed
     print(f'{(t2-t1)*1000:.3f} ms\n')
+
     return res
 
 def simpletest(func):
@@ -95,5 +121,12 @@ class Validator:
             return count == n
         return validate
 
+class ObjectDumper:
 
+    @classmethod
+    def matrix(cls, mx):
+        print('[')
+        for row in mx:
+            print(' ', row)
+        print(']')
 
