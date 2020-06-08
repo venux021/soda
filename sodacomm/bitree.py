@@ -35,6 +35,16 @@ class TreeNode:
     def val(self, v):
         self.value = v
 
+class BiTree:
+
+    @classmethod
+    def new(cls, *args, **kwargs):
+        return new_bitree_level(*args, **kwargs)
+
+    @classmethod
+    def show(cls, root):
+        print_tree_level(root)
+
 def new_bitree_level(seq, *, cls = TreeNode, display = False):
     Node = cls
     if not seq:

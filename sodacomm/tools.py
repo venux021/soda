@@ -12,8 +12,7 @@ def execute(func, args, kwargs, *, show_args=True, show_result=True, validator=N
 
     # show args and kwargs
     def print_args(*_args, **_kwargs):
-        print('args:', _args)
-        print('kwargs:', _kwargs)
+        print('args:', _args, 'kwargs:', _kwargs)
     if show_args is True:
         show_args = print_args
     if callable(show_args):
@@ -39,7 +38,7 @@ def execute(func, args, kwargs, *, show_args=True, show_result=True, validator=N
 
     # show result
     def print_result(_res):
-        print(f'result:', res)
+        print(res)
     if show_result is True:
         show_result = print_result
     if callable(show_result):
@@ -81,9 +80,9 @@ def testrun(func, *args, **kwargs):
     execute(func, args, kwargs)
 
 def testcall(func, args=(), kwargs={}, *, show_args=True, show_result=True, validator=None, answer=None):
-    if not isinstance(args, (list, tuple)):
+    if not isinstance(args, (tuple)):
         args = (args,)
-    if answer is not None:
+    if validator is None and answer is not None:
         validator = answer
     execute(
         func, args, kwargs,
@@ -91,6 +90,10 @@ def testcall(func, args=(), kwargs={}, *, show_args=True, show_result=True, vali
         show_result = show_result,
         validator = validator
     )
+
+def justtest(args, answer):
+    func = sys.modules['__main__'].solution
+    testcall(func, args, answer=answer)
 
 class Validator:
 

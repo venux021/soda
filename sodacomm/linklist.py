@@ -1,7 +1,7 @@
 class ListNode:
 
-    def __init__(self, value = None, *, prev = None, next = None):
-        self.value = value
+    def __init__(self, value = None, *, val = None, prev = None, next = None):
+        self.value = value or val
         self.prev = prev
         self.next = next
 
