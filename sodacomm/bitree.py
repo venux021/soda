@@ -38,7 +38,7 @@ class TreeNode:
 class BiTree:
 
     @classmethod
-    def new(cls, *args, **kwargs):
+    def new(clazz, *args, **kwargs):
         return new_bitree_level(*args, **kwargs)
 
     @classmethod
