@@ -45,7 +45,7 @@ cat <<"EOF"
 %.d: %.cpp
 	@set -e; rm -f $@; \
 	$(CC) $(CPPFLAGS) -MM $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
 sinclude $(SOURCES:.cpp=.d)
