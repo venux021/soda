@@ -6,5 +6,6 @@
 #include "io.h"
 #include "list.h"
 #include "string.h"
+#include "unittest.h"
 
 #endif
