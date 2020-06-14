@@ -25,6 +25,52 @@ class LinkList:
     def show(cls, L):
         print_list(L)
 
+    @classmethod
+    def find_nth(cls, head, n):
+        # zero based
+        if n < 0:
+            return None
+        c = 0
+        while head and c < n:
+            head = head.next
+            c += 1
+        return head
+
+    @classmethod
+    def build_cycle_s(cls, nums, pos):
+        head = cls.new_s(nums)
+        tail = get_tail(head)
+        if head and pos >= 0:
+            node = cls.find_nth(head, pos)
+            tail.next = node
+        return head
+
+    @classmethod
+    def show_cycle(cls, head):
+        pos = 0
+        n2p = {}
+        while head:
+            if head in n2p:
+                print(f' cycle entry [{n2p[head]}]', end = ' ')
+                break
+            print(f'[{pos}]{head.val}', end = ' ')
+            n2p[head] = pos
+            pos += 1
+            head = head.next
+        print()
+
+    @classmethod
+    def get_tail(cls, head):
+        return get_tail(head)
+
+    @classmethod
+    def skip(cls, head, step):
+        for i in range(step):
+            if not head:
+                break
+            head = head.next
+        return head
+
 LinkedList = LinkList
 
 def print_list(L):
