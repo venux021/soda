@@ -1,7 +1,7 @@
 SOURCES := $(wildcard *.cpp)
 OBJS = $(SOURCES:.cpp=.o)
 CC = g++
-CPPFLAGS = -shared -fPIC -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow
+CPPFLAGS = -shared -fPIC -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow -std=c++17
 
 LIB_DIR = .
 LIB_NAME = libleetcode.so
@@ -12,7 +12,7 @@ all: $(TARGET)
 
 %.d: %.cpp
 	@set -e; rm -f $@; \
-	$(CC) -MM $< > $@.$$$$; \
+	$(CC) -std=c++17 -MM $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 

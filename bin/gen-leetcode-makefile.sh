@@ -30,7 +30,7 @@ OBJS = \$(SOURCES:.cpp=.o)
 INCLUDE = -I. -I${base_path}/lib
 LIBRARY = -L${base_path}/lib/leetcode -lleetcode
 CC = g++
-CPPFLAGS = \$(INCLUDE) -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow
+CPPFLAGS = -std=c++17 \$(INCLUDE) -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow
 TARGET = ${case_name}.out
 
 all: \$(TARGET)
