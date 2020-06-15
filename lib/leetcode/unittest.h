@@ -1,95 +1,104 @@
 #ifndef _LEETCODE_UNITTEST
 #define _LEETCODE_UNITTEST
 
+#include <any>
 #include <chrono>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <unordered_map>
 #include <utility>
+
+#include "array.h"
 
 namespace leetcode {
 
-void show_args();
-
-template <typename T>
-struct Serializer
+class IdGen
 {
-    static std::string serialize(const T &t)
-    {
-        std::ostringstream out;
-        out << t;
-        return out.str();
+    static int seq;
+public:
+    static int nextId() {
+        return ++seq;
     }
 };
 
-template <typename T, typename ...Args>
-void show_args(const T &t, Args&&... args)
+template <typename T>
+class TypeId
 {
-    std::cout << Serializer<T>::serialize(t) << std::endl;
-    show_args(std::forward<Args>(args)...);
-}
+    static int _id;
+public:
+    static int id();
+};
 
+template <typename T>
+struct DefaultSerializer
+{
+    static std::string serialize(const T &t);
+};
+
+template <typename T>
+struct DefaultSerializer<vector<T>>
+{
+    static std::string serialize(const vector<T> &v);
+};
+
+// Test case counter
+extern int __testNumber;
+
+template <typename R, typename... Args>
 class Tester {
 
-    static int testNumber;
+    std::unordered_map<int,std::any> serialMap;
 
 public:
+    // if show args
     bool showArgs {true};
+    // function to show args
+    std::function<void(Args&&...)> argsPlayer;
+
+    // if show result
     bool showResult {true};
+    // function to show result
+    std::function<void(const R&)> resultPlayer;
 
-    template <typename R, typename TFunc, typename ...Args>
-    void test(const R &correct, TFunc func, Args&&... args)
-    {
-        auto validateFunc = [&] (const R &res) { 
-            if (res != correct) {
-                std::cerr << "Wrong answer " << res << ", but " << correct << " expected" << std::endl;
-                return false;
-            }
-            return true;
-        };
-        validate(validateFunc, func, std::forward<Args>(args)...);
+    // function to validate result
+    std::function<bool(const R&)> validator;
+
+    Tester();
+
+    void test(std::function<R(Args&&...)> solution, Args&&... args, const R &correct);
+
+    void test(std::function<R(Args&&...)> solution, Args&&... args) {
+        execute(solution, std::forward<Args>(args)..., validator);
     }
 
-    template <typename TFunc, typename ...Args>
-    void test(TFunc func, Args&&... args)
-    {
-        validate([](auto &res){return true;}, func, std::forward<Args>(args)...);
-    }
+    // set serializer, the return old
+    template <typename T> std::function<std::string(const T&)> serializer(std::function <std::string(const T&)> s);
 
-    template <typename VFunc, typename TFunc, typename ...Args>
-    void validate(VFunc validate, TFunc func, Args&&... args)
-    {
-        execute(validate, func, std::forward<Args>(args)...);
-    }
+    // get serializer
+    template <typename T> std::function<std::string(const T&)> serializer();
 
 private:
 
-    template <typename VFunc, typename TFunc, typename ...Args>
-    void execute(VFunc validate, TFunc func, Args&&... args)
+    void execute(std::function<R(Args&&...)> solution, Args&&... args, std::function<bool(const R&)> validateFunc);
+
+    void default_args_player(Args&&... args);
+
+    void default_result_player(const R &res);
+
+    void show_args() {}
+
+    template <typename T, typename... _Args>
+    void show_args(const T &t, _Args&&... args)
     {
-        ++testNumber;
-        std::cout << "**[" << testNumber << "]**\n";
-
-        if (showArgs) {
-            std::cout << "input:" << std::endl;
-            show_args(std::forward<Args>(args)...);
-        }
-
-        auto start = std::chrono::steady_clock::now();
-        auto res = func(std::forward<Args>(args)...);
-        auto end = std::chrono::steady_clock::now();
-
-        ;
-
-        if (!validate(res)) {
-            std::cerr << "Test failed\n";
-            return;
-        }
-
-        auto elapse_us = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        std::cout << std::fixed << std::setprecision(3) << (elapse_us / 1000.0) << " ms\n";
+        std::cout << serializer<T>()(t) << std::endl;
+        show_args(std::forward<_Args>(args)...);
     }
 };
+
+#include "unittest_impl.h"
 
 }
 

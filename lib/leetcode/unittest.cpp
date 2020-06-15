@@ -4,6 +4,8 @@ namespace leetcode {
     
 void show_args() {}
 
-int Tester::testNumber = 0;
+int __testNumber = 0;
+
+int IdGen::seq = 0;
 
 }
