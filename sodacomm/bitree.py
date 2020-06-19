@@ -45,6 +45,10 @@ class BiTree:
     def show(cls, root):
         print_tree_level(root)
 
+    @classmethod
+    def find_node(cls, root, val):
+        return find_node_by_value(root, val)
+
 def new_bitree_level(seq, *, cls = TreeNode, display = False):
     Node = cls
     if not seq:

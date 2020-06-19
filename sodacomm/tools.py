@@ -1,3 +1,4 @@
+import collections
 import functools
 import sys
 import time
@@ -122,6 +123,18 @@ class Validator:
                 s.remove(r)
                 count += 1
             return count == n
+        return validate
+
+    @classmethod
+    def multiset(cls, seq):
+        def validate(res):
+            c1 = collections.Counter(seq)
+            c2 = collections.Counter(res)
+            for key in c2:
+                if key not in c1 or c2[key] != c1[key]:
+                    return False
+                c1.pop(key)
+            return not c1
         return validate
 
 class ObjectDumper:

@@ -37,6 +37,10 @@ class LinkList:
         return head
 
     @classmethod
+    def find_node(cls, head, val):
+        return find_first(head, val)
+
+    @classmethod
     def build_cycle_s(cls, nums, pos):
         head = cls.new_s(nums)
         tail = get_tail(head)
