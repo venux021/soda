@@ -1,6 +1,9 @@
 class AVLNode:
 
     def __init__(self, val):
+        self.reset(val)
+
+    def reset(self, val):
         self.val = val
         self.height = 0
         self.bf = 0
@@ -8,7 +11,7 @@ class AVLNode:
 
 class AVLTree:
 
-    def __init__(self, node_class = AVLNode):
+    def __init__(self, *, node_class = AVLNode):
         self.root = None
         self.node_class = node_class
 
@@ -98,3 +101,17 @@ class AVLTree:
         self.update_height(a)
         self.update_height(b)
         return b
+
+class PooledAVLTree(AVLTree):
+
+    def __init__(self, pool, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pool = pool
+        self.index = 0
+
+    def create_node(self, val):
+        node = self.pool[self.index]
+        node.reset(val)
+        self.index += 1
+        return node
+
