@@ -1,4 +1,5 @@
 from collections import deque
+import json
 
 class TreeNode:
 
@@ -42,8 +43,33 @@ class BiTree:
         return new_bitree_level(*args, **kwargs)
 
     @classmethod
-    def show(cls, root):
-        print_tree_level(root)
+    def show(cls, root, format = 'detail'):
+        if format == 'detail':
+            print_tree_level(root)
+        elif format == 'level':
+            cls.show_in_simple_level(root)
+
+    @classmethod
+    def show_in_simple_level(cls, root):
+        if not root:
+            print('[]')
+            return
+        qu = deque([root])
+        buf = []
+        while qu:
+            node = qu.popleft()
+            if node:
+                buf.append(str(node.val))
+                qu.append(node.left)
+                qu.append(node.right)
+            else:
+                buf.append('null')
+        p = len(buf)-1
+        while buf[p] == 'null':
+            p -= 1
+        print('[', end='')
+        print(','.join(buf[:p+1]), end='')
+        print(']')
 
     @classmethod
     def find_node(cls, root, val):
@@ -53,6 +79,8 @@ def new_bitree_level(seq, *, cls = TreeNode, display = False):
     Node = cls
     if not seq:
         return
+    elif isinstance(seq, str):
+        seq = json.loads(seq)
     q = deque()
     it = iter(seq)
     first = next(it)
