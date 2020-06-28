@@ -116,13 +116,17 @@ class Validator:
         def validate(res):
             s = set(seq)
             n = len(s)
-            count = 0
+            errors = []
             for r in res:
                 if r not in s:
-                    return False
-                s.remove(r)
-                count += 1
-            return count == n
+                    errors.append(r)
+                else:
+                    s.remove(r)
+            if s:
+                print('Missing', s)
+            if errors:
+                print('Error result', errors)
+            return not s and not errors
         return validate
 
     @classmethod
