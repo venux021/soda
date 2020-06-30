@@ -1,5 +1,6 @@
 import collections
 import functools
+import json
 import sys
 import time
 
@@ -95,6 +96,26 @@ def testcall(func, args=(), kwargs={}, *, show_args=True, show_result=True, vali
 def justtest(args, answer):
     func = sys.modules['__main__'].solution
     testcall(func, args, answer=answer)
+
+def load_case(types, source = 'input_data.txt'):
+    def load_groups():
+        with open(source, 'rt') as fp:
+            group = []
+            for line in fp:
+                text = line.strip()
+                if not group and not text:
+                    continue
+                group.append(text)
+                if len(group) > len(types):
+                    yield group
+                    group.clear()
+
+    for group in load_groups():
+        input_args = group[:-1]
+        for i in range(len(types)):
+            input_args[i] = json.loads(input_args[i])
+        res = json.loads(group[-1])
+        yield (tuple(input_args), res)
 
 class Validator:
 

@@ -3,6 +3,7 @@
 
 #include <any>
 #include <chrono>
+#include <exception>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -36,6 +37,12 @@ template <typename T>
 struct DefaultSerializer
 {
     static std::string serialize(const T &t);
+};
+
+template <>
+struct DefaultSerializer<bool>
+{
+    static std::string serialize(bool res);
 };
 
 template <typename T>

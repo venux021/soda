@@ -6,6 +6,13 @@ std::string DefaultSerializer<T>::serialize(const T &t)
     return common_out.str();
 }
 
+std::string DefaultSerializer<bool>::serialize(bool res)
+{
+    std::ostringstream out;
+    out << std::boolalpha << res;
+    return out.str();
+}
+
 template <typename T>
 std::string DefaultSerializer<vector<T>>::serialize(const vector<T> &v)
 {
@@ -81,8 +88,9 @@ void Tester<R,Args...>::execute(std::function<R(Args&&...)> solution, Args&&... 
     auto end = std::chrono::steady_clock::now();
 
     if (!validateFunc(res)) {
-        std::cerr << "Test failed\n";
-        return;
+        throw std::runtime_error("Test Failed");
+        //std::cerr << "Test failed\n";
+        //return;
     }
 
     if (showResult) {
