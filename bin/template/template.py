@@ -7,6 +7,7 @@ from sodacomm.bitree import *
 from sodacomm.graph import *
 from sodacomm.linklist import *
 from sodacomm.tools import *
+from sodacomm.unittest import Tester
 
 # Solution here
 def solution():
