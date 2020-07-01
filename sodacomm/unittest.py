@@ -10,10 +10,7 @@ class Tester:
         self.validator = None
 
     def call(self, func, args=(), kwargs={}, answer=None):
-        if answer is not None:
-            validator = lambda res: res == answer
-        else:
-            validator = self.validator
+        validator = answer or self.validator
         testcall(
             func, args, kwargs,
             show_args=self.show_args,
