@@ -38,11 +38,8 @@ def execute(func, args, kwargs, *,
         else:
             answer = validator
             checker = lambda res, _: res == validator
-    if not checker(res, answer):
-        if answer is not None:
-            info = f'Wrong answer {res}, but {answer} expected'
-        else:
-            info = f'Wrong answer {res}, but no correct answer presented'
+    if answer is not None and not checker(res, answer):
+        info = f'Wrong answer {res}, but {answer} expected'
         raise Exception(info)
 
     # show result
