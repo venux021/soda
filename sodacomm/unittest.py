@@ -7,15 +7,17 @@ class Tester:
     def __init__(self):
         self.show_args = True
         self.show_result = True
-        self.validator = None
+        self.validator = lambda res, ans: res == ans
 
     def call(self, func, args=(), kwargs={}, answer=None):
-        validator = answer or self.validator
-        testcall(
+        if not isinstance(args, (tuple)):
+            args = (args,)
+        execute(
             func, args, kwargs,
             show_args=self.show_args,
             show_result=self.show_result,
-            validator=validator
+            answer=answer,
+            checker=self.validator
         )
 
     def just(self, args, answer):

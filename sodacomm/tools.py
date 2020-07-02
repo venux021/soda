@@ -6,7 +6,8 @@ import time
 
 __test_number = 0
 
-def execute(func, args, kwargs, *, show_args=True, show_result=True, validator=None):
+def execute(func, args, kwargs, *, 
+        show_args=True, show_result=True, validator=None, answer=None, checker=None):
     # show test number
     global __test_number
     __test_number += 1
@@ -31,12 +32,18 @@ def execute(func, args, kwargs, *, show_args=True, show_result=True, validator=N
     t2 = time.time()
 
     # validate result object
-    if validator is not None:
+    if checker is None:
         if callable(validator):
-            if not validator(res):
-                raise Exception(f'Wrong answer {res}, failed to the validator')
-        elif res != validator:
-            raise Exception(f'Wrong answer {res}, but {validator} expected')
+            checker = lambda res, _: validator(res)
+        else:
+            answer = validator
+            checker = lambda res, _: res == validator
+    if not checker(res, answer):
+        if answer is not None:
+            info = f'Wrong answer {res}, but {answer} expected'
+        else:
+            info = f'Wrong answer {res}, but no correct answer presented'
+        raise Exception(info)
 
     # show result
     def print_result(_res):
