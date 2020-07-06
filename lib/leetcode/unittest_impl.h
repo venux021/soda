@@ -32,26 +32,25 @@ int TypeId<T>::id() {
 
 template <typename R, typename... Args>
 Tester<R,Args...>::Tester() {
-    argsPlayer = [this](auto&&... args) {
-        this->default_args_player(std::forward<Args>(args)...);
-    };
     resultPlayer = [this](const R &res) {
         this->default_result_player(res);
     };
-    validator = [](const R&){return true;};
+    validator = [](const R* res, const R* ans){
+        return *res == *ans;
+    };
 }
 
-template <typename R, typename... Args>
-void Tester<R,Args...>::test(std::function<R(Args&&...)> solution, Args&&... args, const R &correct) {
-    auto validateFunc = [&] (const R &res) { 
-        if (res != correct) {
-            std::cerr << "Wrong answer " << res << ", but " << correct << " expected" << std::endl;
-            return false;
-        }
-        return true;
-    };
-    execute(solution, std::forward<Args>(args)..., validateFunc);
-}
+//template <typename R, typename... Args>
+//void Tester<R,Args...>::test(std::function<R(Args&&...)> solution, Args&&... args, const R &correct) {
+//    auto validateFunc = [&] (const R &res) { 
+//        if (res != correct) {
+//            std::cerr << "Wrong answer " << res << ", but " << correct << " expected" << std::endl;
+//            return false;
+//        }
+//        return true;
+//    };
+//    execute(solution, std::forward<Args>(args)..., &correct);
+//}
 
 template <typename R, typename... Args>
     template <typename T>
@@ -75,22 +74,21 @@ std::function<std::string(const T&)> Tester<R,Args...>::serializer() {
 }
 
 template <typename R, typename... Args>
-void Tester<R,Args...>::execute(std::function<R(Args&&...)> solution, Args&&... args, std::function<bool(const R&)> validateFunc) {
+    template <typename Func, typename... RealArgs>
+R Tester<R,Args...>::execute(const R* answer, Func solution, RealArgs&&... args) {
     ++__testNumber;
     std::cout << "**[" << __testNumber << "]**\n";
 
     if (showArgs) {
-        argsPlayer(std::forward<Args>(args)...);
+        default_args_player(std::forward<RealArgs>(args)...);
     }
 
     auto start = std::chrono::steady_clock::now();
-    auto res = solution(std::forward<Args>(args)...);
+    R res = solution(std::forward<RealArgs>(args)...);
     auto end = std::chrono::steady_clock::now();
 
-    if (!validateFunc(res)) {
+    if (answer && !validator(&res, answer)) {
         throw std::runtime_error("Test Failed");
-        //std::cerr << "Test failed\n";
-        //return;
     }
 
     if (showResult) {
@@ -103,12 +101,14 @@ void Tester<R,Args...>::execute(std::function<R(Args&&...)> solution, Args&&... 
     std::cout << std::fixed << std::setprecision(3) << (elapse_us / 1000.0) << " ms\n";
 
     std::cout << '\n';
+    return res;
 }
 
 template <typename R, typename... Args>
-void Tester<R,Args...>::default_args_player(Args&&... args) {
+    template <typename... RealArgs>
+void Tester<R,Args...>::default_args_player(RealArgs&&... args) {
     std::cout << "input:" << std::endl;
-    show_args(std::forward<Args>(args)...);
+    show_args(std::forward<RealArgs>(args)...);
 }
 
 template <typename R, typename... Args>

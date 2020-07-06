@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from collections import Counter, defaultdict, deque
+import math
 from typing import *
 import sys
 
@@ -16,7 +17,7 @@ def solution():
 def main():
     # testrun(solution, a, b, c, d=e, f=g)
     # testcall(solution, (a,b,c), {d:e, f:g}, validator=lambda x: x > 0)
-    pass
+    te = Tester()
 
 # Template for simple test
 #@simpletest

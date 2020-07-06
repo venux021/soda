@@ -155,6 +155,10 @@ class Validator:
         return validate
 
     @classmethod
+    def with_set(cls, res, ans):
+        return cls.set(ans)(res)
+
+    @classmethod
     def multiset(cls, seq):
         def validate(res):
             c1 = collections.Counter(seq)

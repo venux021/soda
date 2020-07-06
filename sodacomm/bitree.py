@@ -51,29 +51,50 @@ class BiTree:
 
     @classmethod
     def show_in_simple_level(cls, root):
-        if not root:
-            print('[]')
-            return
-        qu = deque([root])
-        buf = []
-        while qu:
-            node = qu.popleft()
-            if node:
-                buf.append(str(node.val))
-                qu.append(node.left)
-                qu.append(node.right)
-            else:
-                buf.append('null')
-        p = len(buf)-1
-        while buf[p] == 'null':
-            p -= 1
-        print('[', end='')
-        print(','.join(buf[:p+1]), end='')
-        print(']')
+        return json.dumps(cls.level_order(root))
+        #if not root:
+        #    print('[]')
+        #    return
+        #qu = deque([root])
+        #buf = []
+        #while qu:
+        #    node = qu.popleft()
+        #    if node:
+        #        buf.append(str(node.val))
+        #        qu.append(node.left)
+        #        qu.append(node.right)
+        #    else:
+        #        buf.append('null')
+        #p = len(buf)-1
+        #while buf[p] == 'null':
+        #    p -= 1
+        #print('[', end='')
+        #print(','.join(buf[:p+1]), end='')
+        #print(']')
 
     @classmethod
     def find_node(cls, root, val):
         return find_node_by_value(root, val)
+
+    @classmethod
+    def level_order(cls, root):
+        res = []
+        if not root:
+            return res
+        qu = deque([root])
+        while qu:
+            node = qu.popleft()
+            if node:
+                res.append(node.val)
+                qu.append(node.left)
+                qu.append(node.right)
+            else:
+                res.append(None)
+        # remove trailing None
+        p = len(res) - 1
+        while res[p] is None:
+            p -= 1
+        return res[:p+1]
 
 def new_bitree_level(seq, *, cls = TreeNode, display = False):
     Node = cls

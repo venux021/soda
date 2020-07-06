@@ -27,3 +27,6 @@ class Tester:
     def all(self, types, source = 'input_data.txt'):
         for case, res in load_case(types, source):
             self.just(case, res)
+
+    def do(self, *args, ans):
+        self.just(args, ans)
