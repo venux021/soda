@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "array.h"
+#include "string.h"
 
 namespace leetcode {
 
@@ -52,9 +53,10 @@ struct DefaultSerializer<vector<T>>
 };
 
 template <typename T>
-struct DataLoader
+struct DataParser
 {
-    static T load(std::istream &input) {
+    static T parse(std::string &text) {
+        istringstream input(text);
         T t;
         input >> t;
         return t;
@@ -94,20 +96,53 @@ public:
 
     template <typename Func>
     void all(Func solution, std::istream &input) {
-        std::tuple<Args...> tp;
-        //cout << "tuple size: " << std::tuple_size<std::tuple<Args...>>::value << endl;
-        load_data<decltype(tp),0,Args...>(input, tp);
-        std::apply(solution, tp);
+        size_t argsCount = std::tuple_size<std::tuple<Args...>>::value;
+        while (true) {
+            std::vector<std::string> args;
+            while (args.size() < argsCount + 1) {
+                std::string line;
+                if (!std::getline(input, line)) {
+                    return;
+                }
+                line = String::trim(line);
+                if (line.size() == 0 || line[0] == '#') {
+                    continue;
+                }
+                args.push_back(line);
+            }
+            std::string answer = args.back();
+            args.pop_back();
+
+            std::tuple<Args...> tp;
+            parse_data<decltype(tp),0,Args...>(args, tp);
+
+            if (answer != "null") {
+                R ans = DataParser<R>::parse(answer);
+                Tester &tester = *this;
+                auto t = std::tuple_cat(std::make_tuple(tester, ans, solution), tp);
+                std::function<R(const R&,Func,Args...)> caller = Tester::test;
+                std::apply(caller, t);
+            } else {
+                Tester &tester = *this;
+                auto t = std::tuple_cat(std::make_tuple(tester, solution), tp);
+                std::function<R(Func,Args...)> caller = Tester::run;
+                std::apply(caller, t);
+            }
+        }
     }
 
     template <typename Func>
-    void all(Func solution, const std::string &filepath) {
+    void all(Func solution, const std::string &filepath = "input_data.txt") {
         ifstream input(filepath);
         all(solution, input);
     }
 
     template <typename Func>
-    void all(Func solution, const std::vector<std::string> &filepathList);
+    void all(Func solution, const std::vector<std::string> &filepathList) {
+        for (auto &filepath : filepathList) {
+            all(solution, filepath);
+        }
+    }
 
     // set serializer, the return old
     template <typename T> std::function<std::string(const T&)> serializer(std::function <std::string(const T&)> s);
@@ -134,19 +169,21 @@ private:
         show_args(std::forward<_Args>(args)...);
     }
 
-    template <typename Tuple, int I, typename T, typename... _Args>
-    void load_data(std::istream &input, Tuple &tp) {
-        load_element(input, std::get<I>(tp));
-        load_data<Tuple,I+1,_Args...>(input, tp);
+    // template <typename Tuple, int I, typename T, typename... _Args>
+    template <typename Tuple, int I, typename T, typename... _Args, std::enable_if_t<sizeof...(_Args) != 0, int> = 0>
+    void parse_data(const std::vector<std::string> &args, Tuple &tp) {
+        parse_element(args[I], std::get<I>(tp));
+        parse_data<Tuple,I+1,_Args...>(args, tp);
     }
 
     template <typename E>
-    void load_element(std::istream &input, E &e) {
-        e = DataLoader<E>::load(input);
+    void parse_element(std::string &text, E &e) {
+        e = DataParser<E>::parse(text);
     }
 
-    template <typename Tuple, int I>
-    void load_data(std::istream &input, Tuple &tp) {
+    // template <typename Tuple, int I>
+    template <typename Tuple, int I, typename T, typename... _Args, std::enable_if_t<sizeof...(_Args) == 0, int> = 0>
+    void parse_data(const std::vector<std::string> &args, Tuple &tp) {
     }
 };
 

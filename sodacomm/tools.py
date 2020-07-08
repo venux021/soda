@@ -107,8 +107,10 @@ def load_case(types, source = 'input_data.txt'):
             group = []
             for line in fp:
                 text = line.strip()
-                if not group and not text:
+                if not text or text[0] == '#':
                     continue
+                #if not group and not text:
+                #    continue
                 group.append(text)
                 if len(group) > len(types):
                     yield group
