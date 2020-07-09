@@ -4,6 +4,7 @@
 #include <any>
 #include <chrono>
 #include <exception>
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -60,6 +61,22 @@ struct DataParser
         T t;
         input >> t;
         return t;
+    }
+};
+
+template <typename T>
+struct DataParser<vector<T>>
+{
+    static vector<T> parse(const string &text) {
+        return Array::load<T>(text);
+    }
+};
+
+template <typename T>
+struct DataParser<vector<vector<T>>>
+{
+    static vector<vector<T>> parse(const string &text) {
+        return Array::load2d<T>(text);
     }
 };
 
@@ -133,8 +150,12 @@ public:
 
     template <typename Func>
     void all(Func solution, const std::string &filepath = "input_data.txt") {
-        ifstream input(filepath);
-        all(solution, input);
+        std::ifstream fin(filepath);
+        if (!fin) {
+            std::cerr << "[ERROR] Unable to read file " << filepath << std::endl;
+            return;
+        }
+        all(solution, fin);
     }
 
     template <typename Func>
