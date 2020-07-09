@@ -55,7 +55,7 @@ struct DefaultSerializer<vector<T>>
 template <typename T>
 struct DataParser
 {
-    static T parse(std::string &text) {
+    static T parse(const std::string &text) {
         istringstream input(text);
         T t;
         input >> t;
@@ -118,15 +118,15 @@ public:
 
             if (answer != "null") {
                 R ans = DataParser<R>::parse(answer);
-                Tester &tester = *this;
-                auto t = std::tuple_cat(std::make_tuple(tester, ans, solution), tp);
-                std::function<R(const R&,Func,Args...)> caller = Tester::test;
-                std::apply(caller, t);
+                auto caller = [this,&ans,solution](auto&&... arguments) {
+                    return this->test(ans, solution, std::forward<decltype(arguments)>(arguments)...);
+                };
+                std::apply(caller, tp);
             } else {
-                Tester &tester = *this;
-                auto t = std::tuple_cat(std::make_tuple(tester, solution), tp);
-                std::function<R(Func,Args...)> caller = Tester::run;
-                std::apply(caller, t);
+                auto caller = [this,solution](auto&&... arguments) {
+                    return this->run(solution, std::forward<decltype(arguments)>(arguments)...);
+                };
+                std::apply(caller, tp);
             }
         }
     }
@@ -170,19 +170,19 @@ private:
     }
 
     // template <typename Tuple, int I, typename T, typename... _Args>
-    template <typename Tuple, int I, typename T, typename... _Args, std::enable_if_t<sizeof...(_Args) != 0, int> = 0>
+    template <typename Tuple, int I, typename T, typename... _Args>
     void parse_data(const std::vector<std::string> &args, Tuple &tp) {
         parse_element(args[I], std::get<I>(tp));
         parse_data<Tuple,I+1,_Args...>(args, tp);
     }
 
     template <typename E>
-    void parse_element(std::string &text, E &e) {
+    void parse_element(const std::string &text, E &e) {
         e = DataParser<E>::parse(text);
     }
 
     // template <typename Tuple, int I>
-    template <typename Tuple, int I, typename T, typename... _Args, std::enable_if_t<sizeof...(_Args) == 0, int> = 0>
+    template <typename Tuple, int I>
     void parse_data(const std::vector<std::string> &args, Tuple &tp) {
     }
 };

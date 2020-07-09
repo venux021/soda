@@ -40,18 +40,6 @@ Tester<R,Args...>::Tester() {
     };
 }
 
-//template <typename R, typename... Args>
-//void Tester<R,Args...>::test(std::function<R(Args&&...)> solution, Args&&... args, const R &correct) {
-//    auto validateFunc = [&] (const R &res) { 
-//        if (res != correct) {
-//            std::cerr << "Wrong answer " << res << ", but " << correct << " expected" << std::endl;
-//            return false;
-//        }
-//        return true;
-//    };
-//    execute(solution, std::forward<Args>(args)..., &correct);
-//}
-
 template <typename R, typename... Args>
     template <typename T>
 std::function<std::string(const T&)> Tester<R,Args...>::serializer(std::function <std::string(const T&)> s) {
@@ -87,7 +75,9 @@ R Tester<R,Args...>::execute(const R* answer, Func solution, RealArgs&&... args)
     R res = solution(std::forward<RealArgs>(args)...);
     auto end = std::chrono::steady_clock::now();
 
-    if (answer && !validator(&res, answer)) {
+    if (!answer) {
+        std::cerr << "[WARNING] No answer presented\n";
+    } else if (!validator(&res, answer)) {
         throw std::runtime_error("Test Failed");
     }
 
