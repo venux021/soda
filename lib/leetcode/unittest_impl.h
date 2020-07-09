@@ -1,22 +1,18 @@
 template <typename T>
-std::string DefaultSerializer<T>::serialize(const T &t)
+std::string DataSerializer<T>::serialize(const T &t)
 {
     std::ostringstream common_out;
     common_out << t;
     return common_out.str();
 }
 
-std::string DefaultSerializer<bool>::serialize(bool res)
-{
-    std::ostringstream out;
-    out << std::boolalpha << res;
-    return out.str();
-}
-
 template <typename T>
-std::string DefaultSerializer<vector<T>>::serialize(const vector<T> &v)
+T DataSerializer<T>::deserialize(const std::string &text)
 {
-    return Array::dump(v);
+    istringstream input(text);
+    T t;
+    input >> t;
+    return t;
 }
 
 template <typename T>
@@ -32,33 +28,58 @@ int TypeId<T>::id() {
 
 template <typename R, typename... Args>
 Tester<R,Args...>::Tester() {
-    resultPlayer = [this](const R &res) {
-        this->default_result_player(res);
-    };
     validator = [](const R* res, const R* ans){
         return *res == *ans;
     };
 }
 
 template <typename R, typename... Args>
-    template <typename T>
-std::function<std::string(const T&)> Tester<R,Args...>::serializer(std::function <std::string(const T&)> s) {
-    int id = TypeId<T>::id();
-    auto old = serializer<T>();
-    serialMap[id] = s;
-    return old;
+    template <typename Func>
+void Tester<R,Args...>::all(Func solution, std::istream &input) {
+    size_t argsCount = std::tuple_size<std::tuple<Args...>>::value;
+    while (true) {
+        std::vector<std::string> args;
+        while (args.size() < argsCount + 1) {
+            std::string line;
+            if (!std::getline(input, line)) {
+                return;
+            }
+            line = String::trim(line);
+            if (line.size() == 0 || line[0] == '#') {
+                continue;
+            }
+            args.push_back(line);
+        }
+        std::string answer = args.back();
+        args.pop_back();
+
+        std::tuple<Args...> tp;
+        parse_data<decltype(tp),0,Args...>(args, tp);
+
+        if (answer != "null") {
+            R ans = DataSerializer<R>::deserialize(answer);
+            auto caller = [this,&ans,solution](auto&&... arguments) {
+                return this->test(ans, solution, std::forward<decltype(arguments)>(arguments)...);
+            };
+            std::apply(caller, tp);
+        } else {
+            auto caller = [this,solution](auto&&... arguments) {
+                return this->run(solution, std::forward<decltype(arguments)>(arguments)...);
+            };
+            std::apply(caller, tp);
+        }
+    }
 }
 
 template <typename R, typename... Args>
-    template <typename T>
-std::function<std::string(const T&)> Tester<R,Args...>::serializer() {
-    int id = TypeId<T>::id();
-    auto p = serialMap.find(id);
-    if (p == serialMap.end()) {
-        std::function<std::string(const T&)> func = DefaultSerializer<T>::serialize;
-        serialMap[id] = func;
+    template <typename Func>
+void Tester<R,Args...>::all(Func solution, const std::string &filepath/* = "input_data.txt" */) {
+    std::ifstream fin(filepath);
+    if (!fin) {
+        std::cerr << "[ERROR] Unable to read file " << filepath << std::endl;
+        return;
     }
-    return std::any_cast<std::function<std::string(const T&)>>(serialMap[id]);
+    all(solution, fin);
 }
 
 template <typename R, typename... Args>
@@ -78,11 +99,14 @@ R Tester<R,Args...>::execute(const R* answer, Func solution, RealArgs&&... args)
     if (!answer) {
         std::cerr << "[WARNING] No answer presented\n";
     } else if (!validator(&res, answer)) {
-        throw std::runtime_error("Test Failed");
+        std::cerr << "[ERROR] Testing failed\n";
+        std::cerr << "output: " << to_str(res) << '\n';
+        std::cerr << "expect: " << to_str(*answer) << '\n';
+        std::exit(2);
     }
 
     if (showResult) {
-        resultPlayer(res);
+        std::cout << "output:\n" << to_str(res) << std::endl;
     }
 
     std::cout << "----\n";
@@ -101,8 +125,3 @@ void Tester<R,Args...>::default_args_player(RealArgs&&... args) {
     show_args(std::forward<RealArgs>(args)...);
 }
 
-template <typename R, typename... Args>
-void Tester<R,Args...>::default_result_player(const R &res) {
-    std::cout << "output:" << std::endl;
-    show_args(res);
-}

@@ -36,48 +36,31 @@ public:
 };
 
 template <typename T>
-struct DefaultSerializer
+struct DataSerializer
 {
     static std::string serialize(const T &t);
+    static T deserialize(const std::string &s);
 };
 
 template <>
-struct DefaultSerializer<bool>
+struct DataSerializer<bool>
 {
-    static std::string serialize(bool res);
+    static std::string serialize(bool res) { return res ? "true" : "false"; }
+    static bool deserialize(const std::string &s) { return s == "true"; }
 };
 
 template <typename T>
-struct DefaultSerializer<vector<T>>
+struct DataSerializer<vector<T>>
 {
-    static std::string serialize(const vector<T> &v);
+    static std::string serialize(const std::vector<T> &v) { return Array::dump(v); }
+    static std::vector<T> deserialize(const std::string &s) { return Array::load<T>(s); }
 };
 
 template <typename T>
-struct DataParser
+struct DataSerializer<std::vector<std::vector<T>>>
 {
-    static T parse(const std::string &text) {
-        istringstream input(text);
-        T t;
-        input >> t;
-        return t;
-    }
-};
-
-template <typename T>
-struct DataParser<vector<T>>
-{
-    static vector<T> parse(const string &text) {
-        return Array::load<T>(text);
-    }
-};
-
-template <typename T>
-struct DataParser<vector<vector<T>>>
-{
-    static vector<vector<T>> parse(const string &text) {
-        return Array::load2d<T>(text);
-    }
+    static std::string serialize(const std::vector<std::vector<T>> &v) { return Array::dump(v); }
+    static std::vector<std::vector<T>> deserialize(const std::string &s) { return Array::load2d<T>(s); }
 };
 
 // Test case counter
@@ -85,17 +68,11 @@ extern int __testNumber;
 
 template <typename R, typename... Args>
 class Tester {
-
-    std::unordered_map<int,std::any> serialMap;
-
 public:
     // if show args
     bool showArgs {true};
     // if show result
     bool showResult {true};
-    // function to show result
-    std::function<void(const R&)> resultPlayer;
-
     // function to validate result
     std::function<bool(const R*, const R*)> validator;
 
@@ -112,51 +89,10 @@ public:
     }
 
     template <typename Func>
-    void all(Func solution, std::istream &input) {
-        size_t argsCount = std::tuple_size<std::tuple<Args...>>::value;
-        while (true) {
-            std::vector<std::string> args;
-            while (args.size() < argsCount + 1) {
-                std::string line;
-                if (!std::getline(input, line)) {
-                    return;
-                }
-                line = String::trim(line);
-                if (line.size() == 0 || line[0] == '#') {
-                    continue;
-                }
-                args.push_back(line);
-            }
-            std::string answer = args.back();
-            args.pop_back();
-
-            std::tuple<Args...> tp;
-            parse_data<decltype(tp),0,Args...>(args, tp);
-
-            if (answer != "null") {
-                R ans = DataParser<R>::parse(answer);
-                auto caller = [this,&ans,solution](auto&&... arguments) {
-                    return this->test(ans, solution, std::forward<decltype(arguments)>(arguments)...);
-                };
-                std::apply(caller, tp);
-            } else {
-                auto caller = [this,solution](auto&&... arguments) {
-                    return this->run(solution, std::forward<decltype(arguments)>(arguments)...);
-                };
-                std::apply(caller, tp);
-            }
-        }
-    }
+    void all(Func solution, std::istream &input);
 
     template <typename Func>
-    void all(Func solution, const std::string &filepath = "input_data.txt") {
-        std::ifstream fin(filepath);
-        if (!fin) {
-            std::cerr << "[ERROR] Unable to read file " << filepath << std::endl;
-            return;
-        }
-        all(solution, fin);
-    }
+    void all(Func solution, const std::string &filepath = "input_data.txt");
 
     template <typename Func>
     void all(Func solution, const std::vector<std::string> &filepathList) {
@@ -164,12 +100,6 @@ public:
             all(solution, filepath);
         }
     }
-
-    // set serializer, the return old
-    template <typename T> std::function<std::string(const T&)> serializer(std::function <std::string(const T&)> s);
-
-    // get serializer
-    template <typename T> std::function<std::string(const T&)> serializer();
 
 private:
 
@@ -179,18 +109,20 @@ private:
     template <typename... RealArgs>
     void default_args_player(RealArgs&&... args);
 
-    void default_result_player(const R &res);
-
     void show_args() {}
+
+    template <typename E>
+    std::string to_str(const E &e) {
+        return DataSerializer<E>::serialize(e);
+    }
 
     template <typename T, typename... _Args>
     void show_args(const T &t, _Args&&... args)
     {
-        std::cout << serializer<T>()(t) << std::endl;
+        std::cout << to_str(t) << std::endl;
         show_args(std::forward<_Args>(args)...);
     }
 
-    // template <typename Tuple, int I, typename T, typename... _Args>
     template <typename Tuple, int I, typename T, typename... _Args>
     void parse_data(const std::vector<std::string> &args, Tuple &tp) {
         parse_element(args[I], std::get<I>(tp));
@@ -199,13 +131,13 @@ private:
 
     template <typename E>
     void parse_element(const std::string &text, E &e) {
-        e = DataParser<E>::parse(text);
+        e = DataSerializer<E>::deserialize(text);
     }
 
-    // template <typename Tuple, int I>
     template <typename Tuple, int I>
     void parse_data(const std::vector<std::string> &args, Tuple &tp) {
     }
+
 };
 
 #include "unittest_impl.h"
