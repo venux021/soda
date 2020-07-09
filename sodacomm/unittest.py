@@ -25,8 +25,11 @@ class Tester:
         self.call(func, args, answer=answer)
 
     def all(self, types, source = 'input_data.txt'):
-        for case, res in load_case(types, source):
-            self.just(case, res)
+        if isinstance(source, str):
+            source = [source]
+        for datafile in source:
+            for case, res in load_case(types, datafile):
+                self.just(case, res)
 
     def do(self, *args, ans):
         self.just(args, ans)
