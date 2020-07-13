@@ -63,6 +63,13 @@ struct DataSerializer<std::vector<std::vector<T>>>
     static std::vector<std::vector<T>> deserialize(const std::string &s) { return Array::load2d<T>(s); }
 };
 
+template <>
+struct DataSerializer<std::string>
+{
+    static std::string serialize(const std::string &s) { return s; }
+    static std::string deserialize(const std::string &s) { return s.substr(1, s.size()-2); }
+};
+
 // Test case counter
 extern int __testNumber;
 
