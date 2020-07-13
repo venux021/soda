@@ -108,6 +108,12 @@ public:
         }
     }
 
+    template <typename Func, typename... Filenames>
+    void all(Func solution, const std::string &filepath, Filenames&&... otherFiles) {
+        all(solution, filepath);
+        all(solution, std::forward<Filenames>(otherFiles)...);
+    }
+
 private:
 
     template <typename Func, typename... RealArgs>
