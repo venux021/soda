@@ -7,7 +7,8 @@ import time
 __test_number = 0
 
 def execute(func, args, kwargs, *, 
-        show_args=True, show_result=True, validator=None, answer=None, checker=None):
+        show_args=True, show_result=True, validator=None,
+        answer=None, checker=None, skip=False):
     # show test number
     global __test_number
     __test_number += 1
@@ -22,42 +23,44 @@ def execute(func, args, kwargs, *,
         print('input:')
         show_args(*args, **kwargs)
 
-    # record start time
-    t1 = time.time()
+    if not skip:
+        # record start time
+        t1 = time.time()
 
-    # execute testing procedure
-    res = func(*args, **kwargs)
+        # execute testing procedure
+        res = func(*args, **kwargs)
 
-    # record end time
-    t2 = time.time()
+        # record end time
+        t2 = time.time()
 
-    # validate result object
-    if checker is None:
-        if callable(validator):
-            checker = lambda res, _: validator(res)
-        else:
-            answer = validator
-            checker = lambda res, _: res == validator
-    if answer is not None and not checker(res, answer):
-        info = f'Wrong answer {res}, but {answer} expected'
-        raise Exception(info)
+        # validate result object
+        if checker is None:
+            if callable(validator):
+                checker = lambda res, _: validator(res)
+            else:
+                answer = validator
+                checker = lambda res, _: res == validator
+        if answer is not None and not checker(res, answer):
+            info = f'Wrong answer {res}, but {answer} expected'
+            raise Exception(info)
 
-    # show result
-    def print_result(_res):
-        print(res)
-    if show_result is True:
-        show_result = print_result
-    if callable(show_result):
-        print('output:')
-        show_result(res)
+        # show result
+        def print_result(_res):
+            print(res)
+        if show_result is True:
+            show_result = print_result
+        if callable(show_result):
+            print('output:')
+            show_result(res)
 
-    # show end flag
-    print(f'----')
+        # show end flag
+        print(f'----')
 
-    # show time elapsed
-    print(f'{(t2-t1)*1000:.3f} ms\n')
-
-    return res
+        # show time elapsed
+        print(f'{(t2-t1)*1000:.3f} ms\n')
+        return res
+    else:
+        print('SKIP\n')
 
 def simpletest(func):
     @functools.wraps(func)
