@@ -86,7 +86,7 @@ template <typename R, typename... Args>
     template <typename Func, typename... RealArgs>
 R Tester<R,Args...>::execute(const R* answer, Func solution, RealArgs&&... args) {
     ++__testNumber;
-    std::cout << "**[" << __testNumber << "]**\n";
+    std::cout << "**[" << __testNumber << "]**" << std::endl;
 
     if (showArgs) {
         default_args_player(std::forward<RealArgs>(args)...);
