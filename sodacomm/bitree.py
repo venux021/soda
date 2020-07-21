@@ -51,26 +51,7 @@ class BiTree:
 
     @classmethod
     def show_in_simple_level(cls, root):
-        return json.dumps(cls.level_order(root))
-        #if not root:
-        #    print('[]')
-        #    return
-        #qu = deque([root])
-        #buf = []
-        #while qu:
-        #    node = qu.popleft()
-        #    if node:
-        #        buf.append(str(node.val))
-        #        qu.append(node.left)
-        #        qu.append(node.right)
-        #    else:
-        #        buf.append('null')
-        #p = len(buf)-1
-        #while buf[p] == 'null':
-        #    p -= 1
-        #print('[', end='')
-        #print(','.join(buf[:p+1]), end='')
-        #print(']')
+        print(json.dumps(cls.level_order(root)))
 
     @classmethod
     def find_node(cls, root, val):
