@@ -3,10 +3,10 @@ import json
 
 class TreeNode:
 
-    def __init__(self, value = None, *, lc = None, rc = None):
+    def __init__(self, value = None, *, left=None, lc = None, right=None, rc = None):
         self.value = value
-        self.lc = lc
-        self.rc = rc
+        self.lc = left or lc
+        self.rc = right or rc
 
     @property
     def isleaf(self):
