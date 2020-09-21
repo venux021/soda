@@ -4,6 +4,9 @@
 *.pyc
 Makefile.gen.*
 
+/lib/soda-java
+/leetcode
+
 /zcy3
 /zcy4
 /zcy5
