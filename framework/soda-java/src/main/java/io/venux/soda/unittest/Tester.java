@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Tester {
 	
-	public static final String DEFAULT_INPUT_FILE = "input.txt";
+	public static final String DEFAULT_INPUT_FILE = "input_data.txt";
 	
 	private Class<?> resultClass;
 
@@ -32,15 +32,6 @@ public class Tester {
 	public Tester(Class<?> resultClass, Class<?>... inputClasses) {
 		this.resultClass = resultClass;
 		this.inputClasses = inputClasses;
-	}
-	
-	private static class DefaultValidator implements ResultValidator {
-		
-		@Override
-		public boolean validate(Object result, Object answer) {
-			return result != null ? result.equals(answer) : answer == null;
-		}
-		
 	}
 	
 	public void all(Object worker, String methodName) {
