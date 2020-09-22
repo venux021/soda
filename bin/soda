@@ -2,7 +2,8 @@
 
 self_dir=$(cd $(dirname $0) && pwd)
 top_dir=$(dirname $self_dir)
-framework_dir=$top_dir/framework
+export SODA_FRAMEWORK_DIR=$top_dir/framework
+framework_dir=$SODA_FRAMEWORK_DIR
 
 usage()
 {
@@ -14,8 +15,14 @@ lang:
     python, cpp, java
 
 python options:
-    new <srcfile>                 create source file
+    new <srcfile>                 create python source file
     run <srcfile> <datafile>...   run test case
+
+java options:
+    new <srcfile>                  create java source file
+    compile <srcfile>              compile source file
+    run <classname> <datafile>...  run test case
+    go <classname> <datafile>...   compile && run
 EOF
     exit 1
 }
@@ -37,21 +44,28 @@ handle_python()
     case $cmd in
         new)
             create_source_file $framework_dir/python/src/soda/unittest/bootstrap.py "$1"
-#            srcfile=$1
-#            [ -z $srcfile ] && usage
-#            [ -e $srcfile ] && { echo "Error: $srcfile exists" >&2; exit 2; }
-#            cat $framework_dir/python/bootstrap.py > $srcfile && echo "$srcfile OK"
             ;;
         run)
-            export SODA_PYTHON_DIR=$framework_dir/python
-            export PYTHONPATH="$SODA_PYTHON_DIR/src:$PYTHONPATH"
-            runner=soda.unittest.tester
-            python3 -m $runner "$@"
+            run_test python "$@"
             ;;
         *)
             usage
             ;;
     esac
+}
+
+compile_java()
+{
+    srcfile=$1
+    [ -z $srcfile ] && usage
+    bash $framework_dir/java/compile.sh $srcfile && echo "Compile $srcfile OK"
+}
+
+run_test()
+{
+    export PYTHONPATH="$framework_dir/python/src:$PYTHONPATH"
+    runner=soda.unittest.tester
+    python3 -m $runner "$@"
 }
 
 handle_java()
@@ -61,7 +75,25 @@ handle_java()
     shift
     case $cmd in
         new)
-            create_source_file $framework_dir/python/bootstrap.py "$1"
+            template_file=$framework_dir/java/src/main/java/soda/unittest/__Bootstrap__.java
+            target_file=$1
+            create_source_file $template_file "$target_file" || exit
+            filename=$(basename $target_file)
+            classname=${filename%.java}
+            echo "import soda.unittest.*;" > ${classname}.tmp
+            cat $target_file | grep -v '^package ' | sed "s/__Bootstrap__/$classname/g" >> ${classname}.tmp
+            mv ${classname}.tmp $target_file
+            ;;
+        compile)
+            compile_java "$1"
+            ;;
+        run)
+            run_test java "$@"
+            ;;
+        go)
+            classname=$1
+            srcfile=${classname}.java
+            compile_java $srcfile && run_test java "$@"
             ;;
         *)
             usage

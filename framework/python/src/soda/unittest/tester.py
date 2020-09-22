@@ -4,10 +4,7 @@ import os.path
 from subprocess import Popen, PIPE
 import sys
 
-framework_python_dir = os.environ['SODA_PYTHON_DIR']
-
-def usage():
-    print('python3 testtool.py <srcfile> <inputfile>...')
+framework_dir = os.environ['SODA_FRAMEWORK_DIR']
 
 class DataConfig:
 
@@ -57,8 +54,12 @@ def parse_input(fp):
                 lines.append(line)
 
 def run_python(srcfile, testobj):
-    runner = f'{framework_python_dir}/run.sh'
+    runner = f'{framework_dir}/python/run.sh'
     command = f'{runner} {srcfile}'
+    return call_process(command, testobj)
+
+def run_java(classfile, testobj):
+    command = f'{framework_dir}/java/run.sh {classfile}'
     return call_process(command, testobj)
 
 def call_process(command, testobj):
@@ -79,12 +80,15 @@ def call_process(command, testobj):
     #print(errs, file = sys.stderr)
     return resultobj
 
-def run_code(srcfile, testobj):
-    if srcfile.endswith('.py'):
-        return run_python(srcfile, testobj)
+def run_code(lang, exefile, testobj):
+    if lang == 'python':
+        return run_python(exefile, testobj)
+    elif lang == 'java':
+        return run_java(exefile, testobj)
 
-def execute(counter, config, srcfile, testobj):
-    print(f'**[{counter}]**')
+def execute(lang, exefile, config, testobj):
+    seq_number = testobj['id']
+    print(f'**[{seq_number}]**')
 
     if config['showArgs']:
         print('input:')
@@ -94,7 +98,7 @@ def execute(counter, config, srcfile, testobj):
         print('SKIP\n')
         return
 
-    response = run_code(srcfile, testobj)
+    response = run_code(lang, exefile, testobj)
     if response is None:
         raise Exception('Error: unabled to execute test')
 
@@ -124,12 +128,14 @@ def execute(counter, config, srcfile, testobj):
 def main():
     parser = argparse.ArgumentParser(prog='soda')
 
-    parser.add_argument('srcfile')
+    parser.add_argument('language', choices=['python','java','cpp'])
+    parser.add_argument('exefile')
     parser.add_argument('data_files', nargs=argparse.REMAINDER)
 
     args = parser.parse_args()
 
-    srcfile = args.srcfile
+    language = args.language
+    exefile = args.exefile
     input_files = args.data_files
 
     counter = 0
@@ -138,7 +144,7 @@ def main():
             for config, testobj in parse_input(fp):
                 counter += 1
                 testobj['id'] = counter
-                execute(counter, config, srcfile, testobj)
+                execute(language, exefile, config, testobj)
 
 if __name__ == '__main__':
     main()
