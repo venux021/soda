@@ -20,6 +20,15 @@ EOF
     exit 1
 }
 
+create_source_file()
+{
+    template_file=$1
+    target_file=$2
+    [ -z $target_file ] && usage
+    [ -e $target_file ] && { echo "Error: $target_file exists" >&2; exit 2; }
+    cat $template_file > $target_file && echo "$target_file OK"
+}
+
 handle_python()
 {
     cmd=$1
@@ -27,16 +36,32 @@ handle_python()
     shift
     case $cmd in
         new)
-            srcfile=$1
-            [ -z $srcfile ] && usage
-            [ -e $srcfile ] && { echo "Error: $srcfile exists" >&2; exit 2; }
-            cat $framework_dir/python/bootstrap.py > $srcfile && echo "$srcfile OK"
+            create_source_file $framework_dir/python/src/soda/unittest/bootstrap.py "$1"
+#            srcfile=$1
+#            [ -z $srcfile ] && usage
+#            [ -e $srcfile ] && { echo "Error: $srcfile exists" >&2; exit 2; }
+#            cat $framework_dir/python/bootstrap.py > $srcfile && echo "$srcfile OK"
             ;;
         run)
             export SODA_PYTHON_DIR=$framework_dir/python
             export PYTHONPATH="$SODA_PYTHON_DIR/src:$PYTHONPATH"
             runner=soda.unittest.tester
             python3 -m $runner "$@"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+}
+
+handle_java()
+{
+    cmd=$1
+    [ -z $cmd ] && usage
+    shift
+    case $cmd in
+        new)
+            create_source_file $framework_dir/python/bootstrap.py "$1"
             ;;
         *)
             usage
@@ -52,6 +77,9 @@ shift
 case $language in
     python)
         handle_python "$@"
+        ;;
+    java)
+        handle_java "$@"
         ;;
     *)
         usage

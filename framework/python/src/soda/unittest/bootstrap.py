@@ -25,7 +25,8 @@ if __name__ == '__main__':
         buf.append(line)
 
     testobj = json.loads(''.join(buf))
-    answer = testobj['answer']
+    req = UnitTestRequest(testobj)
+    answer = req.answer
 
     # get args from testobj['args']
     # arg0 = req.arg(0)
