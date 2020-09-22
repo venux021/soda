@@ -1,0 +1,41 @@
+#!/bin/bash
+
+self_dir=$(cd $(dirname $0) && pwd)
+top_dir=$(dirname $self_dir)
+
+usage()
+{
+    cat <<EOF
+usage:
+    soda new <file>
+EOF
+    exit 1
+}
+
+create_file()
+{
+    [ $# -eq 0 ] && usage
+    filename=$1
+    ext=${filename##*.}
+    template=$top_dir/bin/template/template.$ext
+    [ -e $template ] || { echo "Unsupported file type: $ext"; exit 2; }
+    if [ -e $filename ]; then
+        echo "ERROR: $filename exists"
+        exit 10
+    else
+        cp $template $filename && echo $filename OK
+    fi
+}
+
+subcmd=$1
+
+case $subcmd in
+    new)
+        shift
+        create_file "$@"
+        ;;
+    *)
+        usage
+        ;;
+esac
+

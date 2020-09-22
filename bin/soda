@@ -2,37 +2,55 @@
 
 self_dir=$(cd $(dirname $0) && pwd)
 top_dir=$(dirname $self_dir)
+framework_dir=$top_dir/framework
 
 usage()
 {
-    cat <<EOF
+    cat << EOF
 usage:
-    soda new <file>
+    $(basename $0) <lang> [options]
+
+lang: 
+    python, cpp, java
+
+python options:
+    new <srcfile>                 create source file
+    run <srcfile> <datafile>...   run test case
 EOF
     exit 1
 }
 
-create_file()
+handle_python()
 {
-    [ $# -eq 0 ] && usage
-    filename=$1
-    ext=${filename##*.}
-    template=$top_dir/bin/template/template.$ext
-    [ -e $template ] || { echo "Unsupported file type: $ext"; exit 2; }
-    if [ -e $filename ]; then
-        echo "ERROR: $filename exists"
-        exit 10
-    else
-        cp $template $filename && echo $filename OK
-    fi
+    cmd=$1
+    [ -z $cmd ] && usage
+    shift
+    case $cmd in
+        new)
+            srcfile=$1
+            [ -z $srcfile ] && usage
+            [ -e $srcfile ] && { echo "Error: $srcfile exists" >&2; exit 2; }
+            cat $framework_dir/python/bootstrap.py > $srcfile && echo "$srcfile OK"
+            ;;
+        run)
+            runner=$framework_dir/unittest/tester.py
+            echo "$@"
+            python3 $runner "$@"
+            ;;
+        *)
+            usage
+            ;;
+    esac
 }
 
-subcmd=$1
+language=$1
+[ -z $language ] && usage
 
-case $subcmd in
-    new)
-        shift
-        create_file "$@"
+shift
+
+case $language in
+    python)
+        handle_python "$@"
         ;;
     *)
         usage
