@@ -4,8 +4,7 @@ import os.path
 from subprocess import Popen, PIPE
 import sys
 
-self_path = os.path.dirname(os.path.realpath(__file__))
-framework_path = os.path.abspath(self_path + '/..')
+framework_python_dir = os.environ['SODA_PYTHON_DIR']
 
 def usage():
     print('python3 testtool.py <srcfile> <inputfile>...')
@@ -58,8 +57,7 @@ def parse_input(fp):
                 lines.append(line)
 
 def run_python(srcfile, testobj):
-    python_dir = framework_path + '/python'
-    runner = f'{framework_path}/python/run.sh'
+    runner = f'{framework_python_dir}/run.sh'
     command = f'{runner} {srcfile}'
     return call_process(command, testobj)
 
@@ -98,8 +96,7 @@ def execute(counter, config, srcfile, testobj):
 
     response = run_code(srcfile, testobj)
     if response is None:
-        print('Error: unabled to execute test', file = sys.stderr)
-        return
+        raise Exception('Error: unabled to execute test')
 
     #if not response['finished']:
     #    print('not finished due to internal error')

@@ -11,6 +11,7 @@ import sys
 from soda.leetcode.bitree import *
 from soda.leetcode.graph import *
 from soda.leetcode.linklist import *
+from soda.unittest.common import *
 
 def solution():
     pass
@@ -27,13 +28,14 @@ if __name__ == '__main__':
     answer = testobj['answer']
 
     # get args from testobj['args']
-    # TODO
+    # arg0 = req.arg(0)
+    # arg1 = req.args[1]
 
     # start time
     start = time.time()
 
     # run test
-    # TODO res = solution()
+    res = solution(*req.args)
 
     # end time
     end = time.time()

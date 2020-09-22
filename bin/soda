@@ -33,9 +33,10 @@ handle_python()
             cat $framework_dir/python/bootstrap.py > $srcfile && echo "$srcfile OK"
             ;;
         run)
-            runner=$framework_dir/unittest/tester.py
-            echo "$@"
-            python3 $runner "$@"
+            export SODA_PYTHON_DIR=$framework_dir/python
+            export PYTHONPATH="$SODA_PYTHON_DIR/src:$PYTHONPATH"
+            runner=soda.unittest.tester
+            python3 -m $runner "$@"
             ;;
         *)
             usage
