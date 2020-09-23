@@ -62,6 +62,10 @@ def run_java(classfile, testobj):
     command = f'{framework_dir}/java/run.sh {classfile}'
     return call_process(command, testobj)
 
+def run_cpp(exefile, testobj):
+    command = f'{framework_dir}/cpp/run.sh {exefile}'
+    return call_process(command, testobj)
+
 def call_process(command, testobj):
     datatext = json.dumps(testobj)
     with Popen(command, shell=True, stdin=PIPE, stdout=PIPE, encoding='utf-8') as proc:
@@ -85,6 +89,10 @@ def run_code(lang, exefile, testobj):
         return run_python(exefile, testobj)
     elif lang == 'java':
         return run_java(exefile, testobj)
+    elif lang == 'cpp':
+        return run_cpp(exefile, testobj)
+    else:
+        raise Exception(f'Unsupported language: {lang}')
 
 def execute(lang, exefile, config, testobj):
     seq_number = testobj['id']
@@ -137,6 +145,9 @@ def main():
     language = args.language
     exefile = args.exefile
     input_files = args.data_files
+
+    if not input_files:
+        input_files = ['test_data']
 
     counter = 0
     for infile in input_files:

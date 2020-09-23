@@ -3,6 +3,7 @@
 *.o
 *.pyc
 Makefile.gen.*
+*.swp
 
 /lib/soda-java
 /leetcode

@@ -36,6 +36,13 @@ create_source_file()
     cat $template_file > $target_file && echo "$target_file OK"
 }
 
+run_test()
+{
+    export PYTHONPATH="$framework_dir/python/src:$PYTHONPATH"
+    runner=soda.unittest.tester
+    python3 -m $runner "$@"
+}
+
 handle_python()
 {
     cmd=$1
@@ -59,13 +66,6 @@ compile_java()
     srcfile=$1
     [ -z $srcfile ] && usage
     bash $framework_dir/java/compile.sh $srcfile && echo "Compile $srcfile OK"
-}
-
-run_test()
-{
-    export PYTHONPATH="$framework_dir/python/src:$PYTHONPATH"
-    runner=soda.unittest.tester
-    python3 -m $runner "$@"
 }
 
 handle_java()
@@ -112,6 +112,9 @@ case $language in
         ;;
     java)
         handle_java "$@"
+        ;;
+    cpp)
+        bash $framework_dir/cpp/work.sh "$@"
         ;;
     *)
         usage
