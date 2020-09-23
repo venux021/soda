@@ -14,10 +14,6 @@ usage:
 lang: 
     python, cpp, java
 
-python options:
-    new <srcfile>                 create python source file
-    run <srcfile> <datafile>...   run test case
-
 java options:
     new <srcfile>                  create java source file
     compile <srcfile>              compile source file
@@ -41,24 +37,6 @@ run_test()
     export PYTHONPATH="$framework_dir/python/src:$PYTHONPATH"
     runner=soda.unittest.tester
     python3 -m $runner "$@"
-}
-
-handle_python()
-{
-    cmd=$1
-    [ -z $cmd ] && usage
-    shift
-    case $cmd in
-        new)
-            create_source_file $framework_dir/python/src/soda/unittest/bootstrap.py "$1"
-            ;;
-        run)
-            run_test python "$@"
-            ;;
-        *)
-            usage
-            ;;
-    esac
 }
 
 compile_java()
@@ -108,7 +86,7 @@ shift
 
 case $language in
     python)
-        handle_python "$@"
+        bash $framework_dir/python/work.sh "$@"
         ;;
     java)
         handle_java "$@"

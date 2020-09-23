@@ -13,38 +13,43 @@ from soda.leetcode.graph import *
 from soda.leetcode.linklist import *
 from soda.unittest.common import *
 
-def solution():
-    pass
+# step [0]: implement class Solution
+# class Solution: pass
 
+# step [1]: implement validate function
 def validate(res, answer):
     return res == answer
 
 if __name__ == '__main__':
-    buf = []
-    for line in sys.stdin:
-        buf.append(line)
-
-    testobj = json.loads(''.join(buf))
+    testobj = json.load(sys.stdin)
     req = UnitTestRequest(testobj)
-    answer = req.answer
 
-    # get args from testobj['args']
+    # step [2]: deserialize arguments
     # arg0 = req.arg(0)
-    # arg1 = req.args[1]
 
-    # start time
     start = time.time()
 
-    # run test
-    res = solution(*req.args)
+    su = Solution()
+    # step [3]: invoke solution function
+    # res = su.someMethod(arg0, arg1, ...)
 
-    # end time
     end = time.time()
 
     response = {
         'id': testobj['id'],
-        'success': answer is None or validate(res, answer),
-        'result': res,
         'elapse': (end-start) * 1000
     }
+
+    if req.answer:
+        # step [4]: deserialize answer object
+        # answer = _deserialize(req.answer);
+        response['success'] = validate(res, answer)
+    else:
+        response['success'] = True
+
+    # step [5]: serialize result object
+    # serialRes = _serialize(res);
+    response['result'] = serialRes
+
     print(json.dumps(response))
+
