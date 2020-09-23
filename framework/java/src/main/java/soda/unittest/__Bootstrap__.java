@@ -6,8 +6,12 @@ import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+// step [0]: implement class Solution
+// class Solution {}
+
 public class __Bootstrap__ {
 	
+    // step [1]: implement validate function
 	public static boolean validate(Object res, Object answer) {
 		return res != null ? res.equals(answer) : answer == null;
 	}
@@ -17,25 +21,31 @@ public class __Bootstrap__ {
 		String input = loadStdin();
 		UnitTestRequest req = json.readValue(input, UnitTestRequest.class);
 		
-		// get arg from req
+        // step [2]: deserialize arguments
 		// arg1 = req.arg(index, <type>.class);
 		
+        // it's a little slow to load class Solution, so put it before time range
+		Solution su = new Solution();
 		long startNano = System.nanoTime();
 		
-		// TODO invoke Solution
-		// Solution su = new Solution()
-		// res = su.someMethod(arg1, arg2);
-		Object res = null;
+        // step [3]: invoke solution function
+        // res = su.someMethod(arg0, arg1, ...);
 		
 		long endNano = System.nanoTime();
 		
-		boolean success = req.answer == null || validate(res, req.answer);
-		
 		UnitTestResponse resp = new UnitTestResponse();
 		resp.id = req.id;
-		resp.success = success;
-		resp.result = res;
 		resp.elapse = (endNano - startNano) / 1e6;
+
+        if (req.answer != null) {
+            // step [4]: deserialize answer object if necessary
+            resp.success = validate(res, req.answer);
+        } else {
+            resp.success = true;
+        }
+
+        // step [5]: serialize result object if necessary
+		resp.result = res;
 		
 		System.out.println(json.writeValueAsString(resp));
 	}

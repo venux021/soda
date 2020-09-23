@@ -13,70 +13,8 @@ usage:
 
 lang: 
     python, cpp, java
-
-java options:
-    new <srcfile>                  create java source file
-    compile <srcfile>              compile source file
-    run <classname> <datafile>...  run test case
-    go <classname> <datafile>...   compile && run
 EOF
     exit 1
-}
-
-create_source_file()
-{
-    template_file=$1
-    target_file=$2
-    [ -z $target_file ] && usage
-    [ -e $target_file ] && { echo "Error: $target_file exists" >&2; exit 2; }
-    cat $template_file > $target_file && echo "$target_file OK"
-}
-
-run_test()
-{
-    export PYTHONPATH="$framework_dir/python/src:$PYTHONPATH"
-    runner=soda.unittest.tester
-    python3 -m $runner "$@"
-}
-
-compile_java()
-{
-    srcfile=$1
-    [ -z $srcfile ] && usage
-    bash $framework_dir/java/compile.sh $srcfile && echo "Compile $srcfile OK"
-}
-
-handle_java()
-{
-    cmd=$1
-    [ -z $cmd ] && usage
-    shift
-    case $cmd in
-        new)
-            template_file=$framework_dir/java/src/main/java/soda/unittest/__Bootstrap__.java
-            target_file=$1
-            create_source_file $template_file "$target_file" || exit
-            filename=$(basename $target_file)
-            classname=${filename%.java}
-            echo "import soda.unittest.*;" > ${classname}.tmp
-            cat $target_file | grep -v '^package ' | sed "s/__Bootstrap__/$classname/g" >> ${classname}.tmp
-            mv ${classname}.tmp $target_file
-            ;;
-        compile)
-            compile_java "$1"
-            ;;
-        run)
-            run_test java "$@"
-            ;;
-        go)
-            classname=$1
-            srcfile=${classname}.java
-            compile_java $srcfile && run_test java "$@"
-            ;;
-        *)
-            usage
-            ;;
-    esac
 }
 
 language=$1
@@ -89,7 +27,7 @@ case $language in
         bash $framework_dir/python/work.sh "$@"
         ;;
     java)
-        handle_java "$@"
+        bash $framework_dir/java/work.sh "$@"
         ;;
     cpp)
         bash $framework_dir/cpp/work.sh "$@"

@@ -9,7 +9,7 @@ usage:
 
 options:
     new <testname>
-        create source file with name <testname>.cpp
+        create source file with name <testname>.py
 
     run <testname> [<datefile>...]
         run test case, default data file is 'test_data'

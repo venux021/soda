@@ -2,4 +2,8 @@
 
 self_dir=$(cd $(dirname $0) && pwd)
 
-bash $self_dir/caller.sh run "$1"
+source $self_dir/setup_env.sh || exit
+
+classname=$1
+
+java -cp $(get_classpath) $classname
