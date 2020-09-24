@@ -50,16 +50,20 @@ int main()
     resp.elapse = elapseMicro / 1000.0;
 
     if (req.hasAnswer()) {
-        // step [4]: deserialize answer object
-        // auto answer = _deserialize(req.answer<T>());
-        resp.success = validate(res, answer);
+        // step [4]
+        // 4.1 deserialize answer object
+        // resp.success = validate(res, DESERIALIZE(req.getAnswer<T>()));
+        //
+        // OR
+        //
+        // 4.2 compare serialized result with raw answer
+        // resp.success = validate(SERIALIZE(res), req.getAnswer<T>());
     } else {
         resp.success = true;
     }
 
     // step [5]: serialize result object
-    // auto serialRes = _serialize(res);
-    resp.setResult(serialRes);
+    // resp.setResult(SERIALIZE(res));
 
     cout << resp.toJSONString();
 

@@ -41,4 +41,25 @@ string List::toString(ListNode *node) {
     return "[" + result.substr(0, result.length() - 2) + "]";
 }
 
+ListNode* ListHelper::create(const std::vector<int>& listData)
+{
+    ListNode head(-1);
+    ListNode* tail = &head;
+    for (int data : listData) {
+        auto node = new ListNode(data);
+        tail->next = node;
+        tail = node;
+    }
+    return head.next;
+}
+
+std::vector<int> ListHelper::dump(ListNode* head)
+{
+    vector<int> data;
+    for (; head; head = head->next) {
+        data.push_back(head->val);
+    }
+    return data;
+}
+
 } // namespace soda::leetcode

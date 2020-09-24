@@ -1,6 +1,8 @@
 #ifndef _SODA_LEETCODE_LIST_H_
 #define _SODA_LEETCODE_LIST_H_
 
+#include <vector>
+
 namespace soda::leetcode {
 
 struct ListNode {
@@ -16,6 +18,15 @@ public:
     static ListNode *load(string input);
 
     static string toString(ListNode *node);
+};
+
+class ListHelper {
+public:
+
+    static ListNode* create(const std::vector<int>& listData);
+
+    static std::vector<int> dump(ListNode* head);
+
 };
 
 } // namespace soda::leetcode

@@ -50,7 +50,7 @@ def parse_input(fp):
                 status = 0
                 lines = []
                 config = None
-            elif line:
+            elif line and line[0] != '#':
                 lines.append(line)
 
 def run_python(srcfile, testobj):

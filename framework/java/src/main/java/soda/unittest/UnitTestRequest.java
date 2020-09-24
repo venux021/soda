@@ -21,4 +21,8 @@ public class UnitTestRequest {
 		return args != null && args.size() > index ? args.get(index) : null;
 	}
 	
+	public <T> T getAnswer(Class<T> klass) {
+		return klass.cast(answer);
+	}
+	
 }

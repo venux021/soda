@@ -6,9 +6,7 @@
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
-namespace soda {
-
-namespace unittest {
+namespace soda::unittest {
 
 class UnitTestRequest
 {
@@ -28,7 +26,7 @@ public:
     }
 
     template <typename T>
-    T answer() const {
+    T getAnswer() const {
         return object["answer"].get<T>();
     }
 
@@ -62,7 +60,5 @@ public:
 };
 
 } // namespace soda::unittest
-
-} // namespace soda
 
 #endif
