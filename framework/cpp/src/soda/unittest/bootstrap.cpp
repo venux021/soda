@@ -6,6 +6,9 @@ using namespace std;
 using namespace soda::leetcode;
 using namespace soda::unittest;
 
+// step [0]: implement class Solution
+// class Solution {};
+
 namespace {
     const auto __ = []() {
         ios_base::sync_with_stdio(false);
@@ -13,9 +16,6 @@ namespace {
         return 0;
     }();
 }
-
-// step [0]: implement class Solution
-// class Solution {};
 
 // step [1]: implement validate function
 template <typename T>
