@@ -62,7 +62,7 @@ int main()
         resp.success = true;
     }
 
-    // step [5]: serialize result object
+    // step [5]: serialize result object if necessary
     // resp.setResult(SERIALIZE(res));
 
     cout << resp.toJSONString();

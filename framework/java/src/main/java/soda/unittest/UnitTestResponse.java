@@ -10,4 +10,8 @@ public class UnitTestResponse {
 	
 	public double elapse;
 	
+	public void setResult(Object res) {
+		this.result = res;
+	}
+	
 }

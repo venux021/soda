@@ -24,11 +24,9 @@ public class __Bootstrap__ {
         ObjectMapper json = new ObjectMapper();
         String input = loadStdin();
         UnitTestRequest req = json.readValue(input, UnitTestRequest.class);
-        ArgReader argu = new ArgReader(req);
         
         // step [2]: deserialize arguments
-        // arg1 = req.arg(index, <type>.class);
-        // List<Integer> arg2 = argu.asIntList(index);
+        // T0 arg0 = req.arg(0, T0.class);
         
         // it's a little slow to load class Solution, so put it before time range
         Solution su = new Solution();
@@ -44,14 +42,20 @@ public class __Bootstrap__ {
         resp.elapse = (endNano - startNano) / 1e6;
 
         if (req.answer != null) {
-            // step [4]: deserialize answer object if necessary
-            resp.success = validate(res, req.answer);
+            // step [4]
+            // 4.1 deserialize answer object
+            // resp.success = validate(res, DESERIALIZE(req.getAnswer(T.class)));
+            //
+            // OR
+            //
+            // 4.2 compare serialized result with raw answer
+            // resp.success = validate(SERIALIZE(res), req.getAnswer(T.class));
         } else {
             resp.success = true;
         }
 
         // step [5]: serialize result object if necessary
-        resp.result = res;
+        // resp.setResult(SERIALIZE(res));
         
         System.out.println(json.writeValueAsString(resp));
     }
