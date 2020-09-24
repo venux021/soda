@@ -21,8 +21,7 @@ def validate(res, answer):
     return res == answer
 
 if __name__ == '__main__':
-    testobj = json.load(sys.stdin)
-    req = UnitTestRequest(testobj)
+    req = UnitTestRequest(json.load(sys.stdin))
 
     # step [2]: deserialize arguments
     # arg0 = req.arg(0)
@@ -35,21 +34,25 @@ if __name__ == '__main__':
 
     end = time.time()
 
-    response = {
-        'id': testobj['id'],
+    resp = {
+        'id': req.id,
         'elapse': (end-start) * 1000
     }
 
     if req.answer:
-        # step [4]: deserialize answer object
-        # answer = _deserialize(req.answer);
-        response['success'] = validate(res, answer)
+        # step [4]
+        # 4.1 deserialize answer object
+        # resp['success'] = validate(res, DESERIALIZE(req.answer))
+        # 
+        # OR
+        # 
+        # 4.2 compare serialized result with raw answer
+        # resp['success'] = validate(SERIALIZE(res), req.answer)
     else:
-        response['success'] = True
+        resp['success'] = True
 
-    # step [5]: serialize result object
-    # serialRes = _serialize(res);
-    response['result'] = serialRes
+    # step [5]: serialize result object if necessary
+    # resp['result'] = SERIALIZE(res)
 
-    print(json.dumps(response))
+    print(json.dumps(resp))
 

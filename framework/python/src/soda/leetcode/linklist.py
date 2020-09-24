@@ -1,3 +1,5 @@
+from typing import *
+
 class ListNode:
 
     def __init__(self, value = None, *, val = None, prev = None, next = None):
@@ -14,6 +16,26 @@ class ListNode:
     @val.setter
     def val(self, v):
         self.value = v
+
+class ListHelper:
+
+    @classmethod
+    def create(cls, data_list: List[int]) -> ListNode:
+        head = ListNode(-1)
+        tail = head
+        for val in data_list:
+            node = ListNode(val)
+            tail.next = node
+            tail = node
+        return head.next
+
+    @classmethod
+    def dump(cls, head: ListNode) -> List[int]:
+        L = []
+        while head:
+            L.append(head.val)
+            head = head.next
+        return L
 
 class LinkList:
 

@@ -7,6 +7,9 @@ class UnitTestRequest:
     def answer(self):
         return self.obj['answer']
 
+    def getAnswer(self):
+        return self.answer
+
     @property
     def args(self):
         return self.obj['args'][:]
@@ -17,3 +20,4 @@ class UnitTestRequest:
 
     def arg(self, index):
         return self.obj['args'][index]
+
