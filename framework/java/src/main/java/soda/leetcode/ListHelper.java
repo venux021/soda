@@ -16,7 +16,7 @@ public class ListHelper {
 		return head.next;
 	}
 	
-	public static List<Integer> toList(ListNode head) {
+	public static List<Integer> dump(ListNode head) {
 		List<Integer> list = new ArrayList<>();
 		while (head != null) {
 			list.add(head.val);

@@ -2,9 +2,6 @@ package soda.unittest;
 
 import java.util.List;
 
-import soda.leetcode.ListHelper;
-import soda.leetcode.ListNode;
-
 public class UnitTestRequest {
 
 	public int id;
@@ -22,10 +19,6 @@ public class UnitTestRequest {
 	
 	public Object arg(int index) {
 		return args != null && args.size() > index ? args.get(index) : null;
-	}
-	
-	public ListNode argLinkList(int index) {
-		return ListHelper.create(DS.asIntList(arg(index)));
 	}
 	
 }

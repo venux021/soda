@@ -48,6 +48,7 @@ do_compile()
     testname=$1
     [ -z $testname ] && usage
     srcfile=${testname}.java
+    assert_framework
     javac -cp $(get_classpath) $srcfile && echo "Compile $srcfile OK"
 }
 

@@ -24,9 +24,11 @@ public class __Bootstrap__ {
         ObjectMapper json = new ObjectMapper();
         String input = loadStdin();
         UnitTestRequest req = json.readValue(input, UnitTestRequest.class);
+        ArgReader argu = new ArgReader(req);
         
         // step [2]: deserialize arguments
         // arg1 = req.arg(index, <type>.class);
+        // List<Integer> arg2 = argu.asIntList(index);
         
         // it's a little slow to load class Solution, so put it before time range
         Solution su = new Solution();
