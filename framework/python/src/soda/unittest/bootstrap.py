@@ -13,46 +13,40 @@ from soda.leetcode.graph import *
 from soda.leetcode.linklist import *
 from soda.unittest.common import *
 
-# step [0]: implement class Solution
+# step [1]: implement class Solution
 # class Solution: pass
 
-# step [1]: implement validate function
-def validate(res, answer):
-    return res == answer
+# step [2]: implement test job
+class TestJob(JobTemplate):
+
+    def execute(self, req: TestRequest, resp: TestResponse) -> 'ResultType':
+        # TODO
+
+    def serialize(self, res: 'ResultType') -> 'ResultSerialType':
+        return res
+
+    def validate(self, req: TestRequest, resp: TestResponse) -> bool:
+        return req.expected == resp.result
+
 
 if __name__ == '__main__':
-    req = UnitTestRequest(json.load(sys.stdin))
 
-    # step [2]: deserialize arguments
-    # arg0 = req.arg(0)
+    req = TestRequest(json.load(sys.stdin))
+    resp = TestResponse()
+    resp.obj['id'] = req.id
+
+    job = TestJob()
 
     start = time.time()
-
-    su = Solution()
-    # step [3]: invoke solution function
-    # res = su.someMethod(arg0, arg1, ...)
-
+    res = job.run(req, resp)
     end = time.time()
 
-    resp = {
-        'id': req.id,
-        'elapse': (end-start) * 1000
-    }
+    resp.obj['elapse'] = (end-start) * 1000
 
-    if req.answer:
-        # step [4]
-        # 4.1 deserialize answer object
-        # resp['success'] = validate(res, DESERIALIZE(req.answer))
-        # 
-        # OR
-        # 
-        # 4.2 compare serialized result with raw answer
-        # resp['success'] = validate(SERIALIZE(res), req.answer)
+    if req.expected:
+        resp.obj['success'] = job.validate(req, resp)
     else:
-        resp['success'] = True
+        resp.obj['success'] = True
 
-    # step [5]: serialize result object if necessary
-    # resp['result'] = SERIALIZE(res)
-
-    print(json.dumps(resp))
+    print(json.dumps(resp.obj))
 

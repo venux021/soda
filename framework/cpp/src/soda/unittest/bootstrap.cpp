@@ -61,5 +61,6 @@ int main()
 
     cout << resp.toJSONString();
 
+    delete job;
     return 0;
 }
