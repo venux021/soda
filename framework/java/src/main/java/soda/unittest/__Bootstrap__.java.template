@@ -1,73 +1,66 @@
 package soda.unittest;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import soda.leetcode.*;
 
-// step [0]: implement class Solution
+// step [1]: implement class Solution
 // class Solution {}
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public class __Bootstrap__ {
+// step [2]: implement test job, replace ResultType and ResultSerialType with real type
+class TestJob extends JobTemplate<ResultType, ResultSerialType> {
+
+    @Override
+    public ResultType execute(TestRequest req, TestResponse resp) {
+        // TODO
+    }
     
-    // step [1]: implement validate function
-    public static boolean validate(Object res, Object answer) {
-        return res != null ? res.equals(answer) : answer == null;
+    @Override
+    public ResultSerialType serialize(ResultType res) {
+        return res;
+    }
+    
+    @Override
+    public boolean validate(TestRequest req, TestResponse resp) {
+        return req.getExpected(Object.class).equals(resp.getResult(Object.class));
     }
 
+} 
+
+public class __Bootstrap__ {
+    
     public static void main(String[] args) throws Exception {
         ObjectMapper json = new ObjectMapper();
-        String input = loadStdin();
-        UnitTestRequest req = json.readValue(input, UnitTestRequest.class);
+
+        TestRequest req = json.readValue(readStdin(), TestRequest.class);
+        TestResponse resp = new TestResponse();
+        resp.id = req.id;
         
-        // step [2]: deserialize arguments
-        // T0 arg0 = req.arg(0, T0.class);
-        
-        // it's a little slow to load class Solution, so put it before time range
-        Solution su = new Solution();
+        TestJob job = new TestJob();
+
         long startNano = System.nanoTime();
-        
-        // step [3]: invoke solution function
-        // res = su.someMethod(arg0, arg1, ...);
-        
+        job.run(req, resp);
         long endNano = System.nanoTime();
         
-        UnitTestResponse resp = new UnitTestResponse();
-        resp.id = req.id;
         resp.elapse = (endNano - startNano) / 1e6;
 
-        if (req.answer != null) {
-            // step [4]
-            // 4.1 deserialize answer object
-            // resp.success = validate(res, DESERIALIZE(req.getAnswer(T.class)));
-            //
-            // OR
-            //
-            // 4.2 compare serialized result with raw answer
-            // resp.success = validate(SERIALIZE(res), req.getAnswer(T.class));
+        if (req.hasExpected()) {
+            resp.success = job.validate(req, resp);
         } else {
             resp.success = true;
         }
-
-        // step [5]: serialize result object if necessary
-        // resp.setResult(SERIALIZE(res));
         
         System.out.println(json.writeValueAsString(resp));
     }
     
-    private static String loadStdin() throws Exception {
-        try (InputStreamReader in = new InputStreamReader(System.in, StandardCharsets.UTF_8);
-                BufferedReader reader = new BufferedReader(in)) {
+    private static String readStdin() throws Exception {
+        try (Scanner scan = new Scanner(System.in, "UTF-8")) {
             StringBuilder buf = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                buf.append(line);
-            }
+            while (scan.hasNextLine()) {
+                buf.append(scan.nextLine());
+            }   
             return buf.toString();
         }
     }

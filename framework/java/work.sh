@@ -49,7 +49,7 @@ do_compile()
     [ -z $testname ] && usage
     srcfile=${testname}.java
     assert_framework
-    javac -cp $(get_classpath) $srcfile && echo "Compile $srcfile OK"
+    javac -cp $(get_classpath) $SODA_JAVA_COMPILE_OPTION $srcfile && echo "Compile $srcfile OK"
 }
 
 case $cmd in

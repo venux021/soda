@@ -2,6 +2,8 @@ this_dir=$(cd -P $(dirname ${BASH_SOURCE[0]}) >/dev/null 2>&1 && pwd)
 
 #export JAVA_HOME=$JAVA_HOME
 
+export SODA_JAVA_COMPILE_OPTION=
+
 tell_to_build()
 {
     echo "Java framework need to build. Please run $this_dir/deploy.sh to do it" >&2
