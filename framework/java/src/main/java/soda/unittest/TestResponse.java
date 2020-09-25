@@ -1,6 +1,6 @@
 package soda.unittest;
 
-public class UnitTestResponse {
+public class TestResponse {
 
 	public int id;
 	
@@ -12,6 +12,10 @@ public class UnitTestResponse {
 	
 	public void setResult(Object res) {
 		this.result = res;
+	}
+	
+	public <T> T getResult(Class<T> klass) {
+		return klass.cast(result);
 	}
 	
 }

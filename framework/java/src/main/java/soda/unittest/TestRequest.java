@@ -2,11 +2,11 @@ package soda.unittest;
 
 import java.util.List;
 
-public class UnitTestRequest {
+public class TestRequest {
 
 	public int id;
 	
-	public Object answer;
+	public Object expected;
 	
 	public List<Object> args;
 	
@@ -21,8 +21,12 @@ public class UnitTestRequest {
 		return args != null && args.size() > index ? args.get(index) : null;
 	}
 	
-	public <T> T getAnswer(Class<T> klass) {
-		return klass.cast(answer);
+	public boolean hasExpected() {
+		return expected == null;
+	}
+	
+	public <T> T getExpected(Class<T> klass) {
+		return klass.cast(expected);
 	}
 	
 }

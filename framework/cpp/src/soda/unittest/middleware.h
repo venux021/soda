@@ -67,6 +67,24 @@ public:
     }
 };
 
+template <typename Result, typename ResultSerial>
+class JobTemplate {
+public:
+    using ResultType = Result;
+    using ResultSerialType = ResultSerial;
+
+    void run(const TestRequest& req, TestResponse& resp) {
+        resp.setResult(serialize(execute(req, resp)));
+    }
+
+    virtual ResultType execute(const TestRequest& req, TestResponse& resp) = 0;
+
+    virtual ResultSerialType serialize(const ResultType& res) = 0;
+
+    virtual bool validate(const TestRequest& req, const TestResponse& resp) = 0;
+
+};
+
 } // namespace soda::unittest
 
 #endif

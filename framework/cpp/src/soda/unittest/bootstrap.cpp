@@ -6,7 +6,7 @@ using namespace std;
 using namespace soda::leetcode;
 using namespace soda::unittest;
 
-// step [0]: implement class Solution
+// step [1]: implement class Solution
 // class Solution {};
 
 namespace {
@@ -17,28 +17,18 @@ namespace {
     }();
 }
 
-class TestJob {
+// step [2]: implement test job
+class TestJob : public JobTemplate</*TODO result type*/, /*TODO result serial type*/> {
 public:
-    // step [1]: set result object type
-    using ResultType = ...;
-    // setp [2]: set serialized result type
-    using ResultSerialType = ResultType;
-
-    // step [3]: call solution
-    void execute(const TestRequest& req, TestResponse& resp) {
+    ResultType execute(const TestRequest& req, TestResponse& resp) override {
         // TODO
-
-        resp.setResult(serialize(res));
     }
 
-    // step [4]: result serializer
-    ResultSerialType serialize(const ResultType& res) {
+    ResultSerialType serialize(const ResultType& res) override {
         return res;
     }
 
-    // step [5]: implement result validation
-    bool validate(const TestRequest& req, const TestResponse& resp) {
-        // It's OK for most scenario, but maybe sometimes you'll need to do comparison in their original type
+    bool validate(const TestRequest& req, const TestResponse& resp) override {
         return req.getExpected<ResultSerialType>() == resp.getResult<ResultSerialType>();
     }
 };
@@ -54,17 +44,17 @@ int main()
     TestResponse resp;
     resp.id = req.id();
 
-    TestJob job;
+    auto job = new TestJob();
 
     auto startMicro = chrono::steady_clock::now();
-    job.execute(req, resp);
+    job->run(req, resp);
     auto endMicro = chrono::steady_clock::now();
     auto elapseMicro = chrono::duration_cast<chrono::microseconds>(endMicro - startMicro).count();
 
     resp.elapse = elapseMicro / 1000.0;
 
     if (req.hasExpected()) {
-        resp.success = job.validate(req, resp);
+        resp.success = job->validate(req, resp);
     } else {
         resp.success = true;
     }
