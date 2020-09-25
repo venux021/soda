@@ -5,10 +5,3 @@
 Makefile.gen.*
 *.swp
 
-/lib/soda-java
-/leetcode
-
-/zcy3
-/zcy4
-/zcy5
-/ltc
