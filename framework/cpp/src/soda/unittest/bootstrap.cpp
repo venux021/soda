@@ -17,12 +17,31 @@ namespace {
     }();
 }
 
-// step [1]: implement validate function
-template <typename T>
-bool validate(const T& res, const T& answer)
-{
-    return res == answer;
-}
+class TestJob {
+public:
+    // step [1]: set result object type
+    using ResultType = ...;
+    // setp [2]: set serialized result type
+    using ResultSerialType = ResultType;
+
+    // step [3]: call solution
+    void execute(const TestRequest& req, TestResponse& resp) {
+        // TODO
+
+        resp.setResult(serialize(res));
+    }
+
+    // step [4]: result serializer
+    ResultSerialType serialize(const ResultType& res) {
+        return res;
+    }
+
+    // step [5]: implement result validation
+    bool validate(const TestRequest& req, const TestResponse& resp) {
+        // It's OK for most scenario, but maybe sometimes you'll need to do comparison in their original type
+        return req.getExpected<ResultSerialType>() == resp.getResult<ResultSerialType>();
+    }
+};
 
 int main()
 {
@@ -31,39 +50,24 @@ int main()
         content += line;
     }
 
-    UnitTestRequest req(content);
-
-    // step [2]: deserialize arguments
-    // auto arg0 = req.arg<T0>(0);
-
-    auto startMicro = std::chrono::steady_clock::now();
-
-    Solution su;
-    // step [3]: invoke solution function
-    // auto res = su.someMethod(arg0, arg1, ...);
-
-    auto endMicro = std::chrono::steady_clock::now();
-    auto elapseMicro = std::chrono::duration_cast<std::chrono::microseconds>(endMicro - startMicro).count();
-
-    UnitTestResponse resp;
+    TestRequest req(content);
+    TestResponse resp;
     resp.id = req.id();
+
+    TestJob job;
+
+    auto startMicro = chrono::steady_clock::now();
+    job.execute(req, resp);
+    auto endMicro = chrono::steady_clock::now();
+    auto elapseMicro = chrono::duration_cast<chrono::microseconds>(endMicro - startMicro).count();
+
     resp.elapse = elapseMicro / 1000.0;
 
-    if (req.hasAnswer()) {
-        // step [4]
-        // 4.1 deserialize answer object
-        // resp.success = validate(res, DESERIALIZE(req.getAnswer<T>()));
-        //
-        // OR
-        //
-        // 4.2 compare serialized result with raw answer
-        // resp.success = validate(SERIALIZE(res), req.getAnswer<T>());
+    if (req.hasExpected()) {
+        resp.success = job.validate(req, resp);
     } else {
         resp.success = true;
     }
-
-    // step [5]: serialize result object if necessary
-    // resp.setResult(SERIALIZE(res));
 
     cout << resp.toJSONString();
 

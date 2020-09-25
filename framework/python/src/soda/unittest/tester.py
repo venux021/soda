@@ -29,9 +29,9 @@ def build_test_object(lines):
     testobj = {}
     testobj['args'] = list(map(json.loads, lines[:-1]))
     if lines[-1] != '-':
-        testobj['answer'] = json.loads(lines[-1])
+        testobj['expected'] = json.loads(lines[-1])
     else:
-        testobj['answer'] = None
+        testobj['expected'] = None
     return testobj
 
 def parse_input(fp):
@@ -119,9 +119,9 @@ def execute(lang, exefile, config, testobj):
 
     if not response['success']:
         res = response['result']
-        answer = testobj['answer']
-        if answer is not None:
-            info = f'Wrong answer {res}, but {answer} expected'
+        expected = testobj['expected']
+        if expected is not None:
+            info = f'Wrong answer {res}, but {expected} expected'
         else:
             info = f'Wrong answer {res}'
         raise Exception(info)

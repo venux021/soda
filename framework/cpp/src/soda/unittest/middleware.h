@@ -1,6 +1,7 @@
 #ifndef _SODA_UNITTEST_MIDDLEWARE_H_
 #define _SODA_UNITTEST_MIDDLEWARE_H_
 
+#include <iostream>
 #include <string>
 
 #include "nlohmann/json.hpp"
@@ -8,11 +9,11 @@ using json = nlohmann::json;
 
 namespace soda::unittest {
 
-class UnitTestRequest
+class TestRequest
 {
     json object;
 public:
-    UnitTestRequest(const std::string &text) :
+    TestRequest(const std::string &text) :
         object(json::parse(text))
     {
     }
@@ -21,13 +22,13 @@ public:
         return object["id"];
     }
 
-    bool hasAnswer() const {
-        return object.contains("answer") && !object["answer"].is_null();
+    bool hasExpected() const {
+        return object.contains("expected") && !object["expected"].is_null();
     }
 
     template <typename T>
-    T getAnswer() const {
-        return object["answer"].get<T>();
+    T getExpected() const {
+        return object["expected"].get<T>();
     }
 
     template <typename T>
@@ -36,10 +37,10 @@ public:
     }
 };
 
-struct UnitTestResponse
+struct TestResponse
 {
 private:
-    json object;
+    json resultObject;
 
 public:
     int id {0};
@@ -48,13 +49,20 @@ public:
 
     template <typename T>
     void setResult(const T& res) {
-        object["result"] = res;
+        resultObject = res;
     }
 
-    std::string toJSONString() {
+    template <typename T>
+    T getResult() const {
+        return resultObject.get<T>();
+    }
+
+    std::string toJSONString() const {
+        json object;
         object["id"] = id;
         object["success"] = success;
         object["elapse"] = elapse;
+        object["result"] = resultObject;
         return object.dump();
     }
 };
