@@ -100,7 +100,7 @@ def execute(lang, exefile, config, testobj):
 
     if config['showArgs']:
         print('input:')
-        print(*testobj['args'])
+        print(*list(map(json.dumps, testobj['args'])))
 
     if config['skip']:
         print('SKIP\n')
@@ -127,7 +127,7 @@ def execute(lang, exefile, config, testobj):
         raise Exception(info)
     elif config['showResult']:
         print('output:')
-        print(response['result'])
+        print(json.dumps(response['result']))
 
     print('----')
     elapse = response['elapse']
