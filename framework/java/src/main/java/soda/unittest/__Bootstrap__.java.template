@@ -3,6 +3,8 @@ package soda.unittest;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import soda.leetcode.*;
 
@@ -10,15 +12,17 @@ import soda.leetcode.*;
 // class Solution {}
 
 // step [2]: implement test job, replace ResultType and ResultSerialType with real type
-class TestJob extends JobTemplate<ResultType, ResultSerialType> {
+class TestJob extends JobTemplate<_ResultType_, _ResultSerialType_> {
+
+    private static Logger logger = LogManager.getLogger(TestJob.class);
 
     @Override
-    public ResultType execute(TestRequest req, TestResponse resp) {
+    public _ResultType_ execute(TestRequest req, TestResponse resp) {
         // TODO
     }
     
     @Override
-    public ResultSerialType serialize(ResultType res) {
+    public _ResultSerialType_ serialize(_ResultType_ res) {
         return res;
     }
     

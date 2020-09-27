@@ -2,6 +2,7 @@
 from collections import Counter, defaultdict, deque
 import heapq
 import json
+import logging
 import math
 import random
 import time
@@ -12,6 +13,8 @@ from soda.leetcode.bitree import *
 from soda.leetcode.graph import *
 from soda.leetcode.linklist import *
 from soda.unittest.common import *
+
+logger = logging.getLogger(__name__)
 
 # step [1]: implement class Solution
 # class Solution: pass
@@ -30,6 +33,13 @@ class TestJob(JobTemplate):
 
 
 if __name__ == '__main__':
+
+    logging.basicConfig(
+        level = logging.INFO,
+        datefmt = '%Y-%m-%d %H:%M:%S',
+        #format = '%(asctime)s [%(process)d] [%(name)s] %(levelname)s: %(message)s'
+        format = '%(levelname)s: %(message)s'
+    )
 
     req = TestRequest(json.load(sys.stdin))
     resp = TestResponse()
