@@ -11,18 +11,19 @@ import soda.leetcode.*;
 // step [1]: implement class Solution
 // class Solution {}
 
-// step [2]: implement test job, replace ResultType and ResultSerialType with real type
-class TestJob extends JobTemplate<_ResultType_, _ResultSerialType_> {
+// step [2]: implement test job
+class TestJob extends JobTemplate<Object, Object> {
 
-    private static Logger logger = LogManager.getLogger(TestJob.class);
+    public static Logger logger = LogManager.getLogger(TestJob.class);
 
     @Override
-    public _ResultType_ execute(TestRequest req, TestResponse resp) {
+    public Object execute(TestRequest req, TestResponse resp) {
         // TODO
+        return null;
     }
     
     @Override
-    public _ResultSerialType_ serialize(_ResultType_ res) {
+    public Object serialize(Object res) {
         return res;
     }
     

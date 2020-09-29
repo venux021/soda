@@ -58,7 +58,7 @@ case $cmd in
         [ -z $testname ] && usage
         testname=${testname%.java}
         target_file=${testname}.java
-        template_file=$self_dir/src/main/java/soda/unittest/__Bootstrap__.java.template
+        template_file=$self_dir/src/main/java/soda/unittest/__Bootstrap__.java
         create_source_file $template_file $target_file
         classname=$testname
         echo "import soda.unittest.*;" > ${classname}.tmp
