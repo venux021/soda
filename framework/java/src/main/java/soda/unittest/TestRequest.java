@@ -22,7 +22,7 @@ public class TestRequest {
 	}
 	
 	public boolean hasExpected() {
-		return expected == null;
+		return expected != null;
 	}
 	
 	public <T> T getExpected(Class<T> klass) {

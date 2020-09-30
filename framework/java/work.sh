@@ -14,14 +14,17 @@ options:
     compile <testname> 
         compile test case
 
-    run <testname> [<datefile>...]
-        run test case, default data file is 'test_data'
+    run <testname> [--testcase <files>] [--verbose]
+        run test case
+        
+        --testcase <files>    test case files, separated by ':', default is 'test_data'
+        --verbose             show test request & response
 
-    go <testname> [<datafile>...] 
-        compile && run
+    go <testname> [options] 
+        compile && run, options same as command 'run'
 
-    exec <classname> [<datefile>...]
-        run test case by class name, default data file is 'test_data'
+    exec <classname> [options]
+        run test case by class name, options same as command 'run'
 EOF
     exit 1
 }
