@@ -44,11 +44,11 @@ def parse_input(fp):
     for line in fp:
         line = line.strip()
         if status == 0:
-            if line.startswith('#>>'):
+            if line.startswith('#>>') or line.startswith('@>>'):
                 config = DataConfig.parse(line[3:])
                 status = 1
         elif status == 1:
-            if line.startswith('#<<'):
+            if line.startswith('#<<') or line.startswith('@<<'):
                 yield (config, build_test_object(lines))
                 status = 0
                 lines = []

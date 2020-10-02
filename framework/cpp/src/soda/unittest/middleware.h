@@ -67,7 +67,7 @@ public:
     }
 };
 
-template <typename Result, typename ResultSerial>
+template <typename Result, typename ResultSerial = Result>
 class JobTemplate {
 public:
     using ResultType = Result;
