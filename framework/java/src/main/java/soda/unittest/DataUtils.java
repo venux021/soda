@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class DataUtils {
@@ -84,16 +85,72 @@ public class DataUtils {
 		return L;
 	}
 	
+	public static List<Integer> toList(int[] array) {
+		return Arrays.stream(array).boxed().collect(Collectors.toList());
+	}
+	
+	public static List<Long> toList(long[] array) {
+		return Arrays.stream(array).boxed().collect(Collectors.toList());
+	}
+	
+	public static List<Double> toList(double[] array) {
+		return Arrays.stream(array).boxed().collect(Collectors.toList());
+	}
+	
+	public static int[] toIntArray(List<?> L) {
+		return L.stream().mapToInt(i -> (Integer)i).toArray();
+	}
+	
+	public static long[] toLongArray(List<?> L) {
+		return L.stream().mapToLong(i -> (Long)i).toArray();
+	}
+	
+	public static double[] toDoubleArray(List<?> L) {
+		return L.stream().mapToDouble(i -> (Double)i).toArray();
+	}
+	
+	public static List<List<Integer>> toList2d(int[][] array) {
+		return Arrays.stream(array).map(arr -> toList(arr)).collect(Collectors.toList());
+	}
+	
+	public static List<List<Long>> toList2d(long[][] array) {
+		return Arrays.stream(array).map(arr -> toList(arr)).collect(Collectors.toList());
+	}
+	
+	public static List<List<Double>> toList2d(double[][] array) {
+		return Arrays.stream(array).map(arr -> toList(arr)).collect(Collectors.toList());
+	}
+	
+	public static int[][] toIntArray2d(List<?> L) {
+		return L.stream().map(a -> toIntArray((List<?>) a)).toArray(int[][]::new);
+	}
+	
+	public static long[][] toLongArray2d(List<?> L) {
+		return L.stream().map(a -> toLongArray((List<?>) a)).toArray(long[][]::new);
+	}
+	
+	public static double[][] toDoubleArray2d(List<?> L) {
+		return L.stream().map(a -> toDoubleArray((List<?>) a)).toArray(double[][]::new);
+	}
+	
 	public static void main(String[] args) {
 		int[][] arr2d = new int[][] {{1,2,3}, {4,5,6}, {7,8,9}};
-		List<List<Integer>> L = fromPrimitiveArray2d(arr2d, Integer.class);
-		int[][] arr2d1 = (int[][]) toPrimitiveArray2d(L, Integer.class);
+		List<List<Integer>> L = toList2d(arr2d);
+		System.out.println(L);
+		int[][] arr2d1 = toIntArray2d(L);
 		for (int i = 0; i < arr2d1.length; ++i) {
 			for (int j = 0; j < arr2d1[i].length; ++j) {
 				System.out.print(arr2d1[i][j] + " ");
 			}
 			System.out.println();
 		}
+		
+		int[] arr = new int[] {1,2,3,4,5};
+		List<Integer> L2 = toList(arr);
+		System.out.println(L2);
+		
+		arr = toIntArray(L2);
+		System.out.println(Arrays.toString(arr));
 		
 //		List<Integer> L1 = new ArrayList<>();
 //		L1.add(1); L1.add(2); L1.add(3);
