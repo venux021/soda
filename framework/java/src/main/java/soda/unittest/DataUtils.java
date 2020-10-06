@@ -85,6 +85,10 @@ public class DataUtils {
 		return L;
 	}
 	
+	public static List<String> toStringList(char[] array) {
+		return fromPrimitiveArray(array, Character.class).stream().map(c -> String.valueOf(c)).collect(Collectors.toList());
+	}
+	
 	public static List<Integer> toList(int[] array) {
 		return Arrays.stream(array).boxed().collect(Collectors.toList());
 	}
@@ -95,6 +99,11 @@ public class DataUtils {
 	
 	public static List<Double> toList(double[] array) {
 		return Arrays.stream(array).boxed().collect(Collectors.toList());
+	}
+	
+	public static char[] toCharArray(List<?> L) {
+		List<Character> chList = L.stream().map(o -> o instanceof String ? ((String)o).charAt(0) : (Character) o).collect(Collectors.toList());
+		return (char[]) toPrimitiveArray(chList, Character.class);
 	}
 	
 	public static int[] toIntArray(List<?> L) {
