@@ -173,7 +173,7 @@ def main():
     parser.add_argument('--verbose', action='store_true', default=False)
 
     args = parser.parse_args()
-    print(args)
+    # print(args)
 
     language = args.language
     exefile = args.exefile
