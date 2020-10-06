@@ -13,18 +13,14 @@ options:
 
     compile <testname> 
         compile test case
-
-    run <testname> [--testcase <files>] [--verbose]
-        run test case
-        
-        --testcase <files>    test case files, separated by ':', default is 'test_data'
-        --verbose             show test request & response
+    $command_run_help
 
     go <testname> [options] 
         compile && run, options same as command 'run'
 
     exec <classname> [options]
         run test case by class name, options same as command 'run'
+
 EOF
     exit 1
 }

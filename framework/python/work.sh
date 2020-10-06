@@ -10,15 +10,11 @@ usage:
 options:
     new <testname>
         create source file with name <testname>.py
-
-    run <testname> [--testcase <files>] [--verbose]
-        run test case
-        
-        --testcase <files>    test case files, separated by ':', default is 'test_data'
-        --verbose             show test request & response
+    $command_run_help
 
     exec <exefile> [options]
         run executable file, options same as command 'run'
+
 EOF
     exit 1
 }

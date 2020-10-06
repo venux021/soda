@@ -170,6 +170,7 @@ def main():
     parser.add_argument('language', choices=['python','java','cpp'])
     parser.add_argument('exefile')
     parser.add_argument('--testcase', default='test_data')
+    parser.add_argument('--delim', default=',')
     parser.add_argument('--verbose', action='store_true', default=False)
 
     args = parser.parse_args()
@@ -177,7 +178,7 @@ def main():
 
     language = args.language
     exefile = args.exefile
-    input_files = args.testcase.split(':')
+    input_files = args.testcase.split(args.delim)
 
     global verbose
     verbose = args.verbose
