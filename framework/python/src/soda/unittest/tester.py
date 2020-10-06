@@ -100,6 +100,7 @@ def run_code(lang, exefile, testobj):
 def execute(lang, exefile, config, testobj):
     seq_number = testobj['id']
     print(f'**[{seq_number}]**')
+    print(f'* {config["_test_file"]} <{config["_seq_in_file"]}>')
 
     if verbose:
         print('config:', json.dumps(config))
@@ -188,10 +189,14 @@ def main():
 
     counter = 0
     for infile in input_files:
+        seq_in_file = 0
         with open(infile, 'r') as fp:
             for config, testobj in parse_input(fp):
+                seq_in_file += 1
                 counter += 1
                 testobj['id'] = counter
+                config['_test_file'] = infile
+                config['_seq_in_file'] = seq_in_file
                 if not execute(language, exefile, config, testobj):
                     return
 
