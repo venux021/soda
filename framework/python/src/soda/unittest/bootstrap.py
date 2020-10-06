@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     resp.obj['elapse'] = (end-start) * 1000
 
-    if req.expected:
+    if req.expected is not None:
         resp.obj['success'] = job.validate(req, resp)
     else:
         resp.obj['success'] = True
