@@ -71,12 +71,19 @@ def run_cpp(exefile, testobj):
 
 def call_process(command, testobj):
     datatext = json.dumps(testobj)
+    return_code = None
     with Popen(command, shell=True, stdin=PIPE, stdout=PIPE, encoding='utf-8') as proc:
         try:
             outs, _ = proc.communicate(datatext, timeout=5)
         except:
             proc.kill()
             outs, _ = proc.communicate()
+
+        return_code = proc.returncode
+
+    if return_code != 0:
+        print(f'Error: Sub process exit with {return_code}')
+        return None
 
     try:
         resultobj = json.loads(outs)
