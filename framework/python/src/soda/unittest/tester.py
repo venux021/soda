@@ -77,7 +77,9 @@ def call_process(command, testobj):
             outs, _ = proc.communicate(datatext, timeout=5)
         except:
             proc.kill()
-            outs, _ = proc.communicate()
+            print(f'Error: Time Limit Exceeded')
+            return None
+            # outs, _ = proc.communicate()
 
         return_code = proc.returncode
 
@@ -91,7 +93,6 @@ def call_process(command, testobj):
         resultobj = None
         print('Invalid output:', outs)
 
-    #print(errs, file = sys.stderr)
     return resultobj
 
 def run_code(lang, exefile, testobj):
