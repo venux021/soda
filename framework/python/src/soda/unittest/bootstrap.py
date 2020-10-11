@@ -24,6 +24,7 @@ class TestJob(JobTemplate):
 
     def execute(self, req: TestRequest, resp: TestResponse) -> 'ResultType':
         # TODO
+        raise Exception('Not implemented')
 
     def serialize(self, res: 'ResultType') -> 'ResultSerialType':
         return res

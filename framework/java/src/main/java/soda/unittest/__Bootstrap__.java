@@ -19,7 +19,7 @@ class TestJob extends JobTemplate<Object, Object> {
     @Override
     public Object execute(TestRequest req, TestResponse resp) {
         // TODO
-        return null;
+        throw new RuntimeException("Not implemented");
     }
     
     @Override

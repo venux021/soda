@@ -22,6 +22,7 @@ class TestJob : public JobTemplate</*TODO result type*/, /*TODO result serial ty
 public:
     ResultType execute(const TestRequest& req, TestResponse& resp) override {
         // TODO
+        cerr << "Not implemented" << endl;
     }
 
     ResultSerialType serialize(const ResultType& res) override {
