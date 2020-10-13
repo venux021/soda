@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import soda.leetcode.*;
 
+import static soda.unittest.LoggerHelper.logger;
+
 // step [1]: implement class Solution
 // class Solution {}
 
