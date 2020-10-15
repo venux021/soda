@@ -12,6 +12,7 @@ from subprocess import Popen, PIPE
 
 framework_dir = os.environ['SODA_FRAMEWORK_DIR']
 verbose = False
+testcase_timeout = 5.0
 
 class DataConfig:
 
@@ -102,27 +103,22 @@ def call_process(command, testobj):
     return_code = None
     with Popen(command, shell=True, stdin=PIPE, stdout=PIPE, encoding='utf-8') as proc:
         try:
-            outs, _ = proc.communicate(datatext, timeout=5)
+            outs, _ = proc.communicate(datatext, timeout=testcase_timeout)
         except:
-            print(f'Error: Time Limit Exceeded')
             kill_all_child_processes(proc.pid)
             # outs, _ = proc.communicate()
             # proc.kill()
-            return None
+            raise Exception(f'Time Limit Exceeded')
 
         return_code = proc.returncode
 
     if return_code != 0:
-        print(f'Error: Sub process exit with {return_code}')
-        return None
+        raise Exception(f'Sub process exit with {return_code}')
 
     try:
-        resultobj = json.loads(outs)
+        return json.loads(outs)
     except:
-        resultobj = None
-        print('Invalid output:', outs)
-
-    return resultobj
+        raise Exception(f'Invalid response: {outs}')
 
 def run_code(lang, exefile, testobj):
     if lang == 'python':
@@ -151,9 +147,10 @@ def execute(lang, exefile, config, testobj):
         print('SKIP\n')
         return True
 
-    response = run_code(lang, exefile, testobj)
-    if response is None:
-        print('Error: unabled to execute test')
+    try:
+        response = run_code(lang, exefile, testobj)
+    except Exception as ex:
+        print(f'Error: {ex}')
         return False
 
     if verbose:
@@ -210,6 +207,7 @@ def main():
     parser.add_argument('--testcase', default='test_data')
     parser.add_argument('--delim', default=',')
     parser.add_argument('--verbose', action='store_true', default=False)
+    parser.add_argument('--timeout', default=5.0, type=float)
 
     args = parser.parse_args()
     # print(args)
@@ -223,6 +221,11 @@ def main():
 
     if not input_files:
         input_files = ['test_data']
+
+    timeout = max(2.0, args.timeout)
+    timeout = min(10.0, timeout)
+    global testcase_timeout
+    testcase_timeout = timeout
 
     counter = 0
     for infile in input_files:
