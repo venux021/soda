@@ -1,10 +1,14 @@
 import argparse
 import json
 import os.path
-from subprocess import Popen, PIPE
+import signal
+import subprocess
 import sys
+import time
 
 from soda.unittest import diff, util
+
+from subprocess import Popen, PIPE
 
 framework_dir = os.environ['SODA_FRAMEWORK_DIR']
 verbose = False
@@ -27,6 +31,30 @@ class DataConfig:
             c = json.loads(text)
             config.update(c)
         return config
+
+def pstree(pid: int):
+    pid_list = []
+    def recursive(pid):
+        res = subprocess.run(f'pgrep -P {pid}', shell=True, stdout=PIPE, encoding='utf-8')
+        text = res.stdout.strip()
+        if not text:
+            return
+        c_pids = []
+        for cpid in text.split('\n'):
+            cpid = cpid.strip()
+            try:
+                cpid = int(cpid)
+                recursive(cpid)
+                pid_list.append(cpid)
+            except:
+                pass
+    recursive(pid)
+    return pid_list
+
+def kill_all_child_processes(ppid):
+    for cpid in pstree(ppid):
+        subprocess.run(f'kill -9 {cpid}', shell=True, stdout=PIPE, stderr=PIPE)
+        time.sleep(0.01)
 
 def build_test_object(lines):
     testobj = {}
@@ -76,10 +104,11 @@ def call_process(command, testobj):
         try:
             outs, _ = proc.communicate(datatext, timeout=5)
         except:
-            proc.kill()
             print(f'Error: Time Limit Exceeded')
-            return None
+            kill_all_child_processes(proc.pid)
             # outs, _ = proc.communicate()
+            # proc.kill()
+            return None
 
         return_code = proc.returncode
 
