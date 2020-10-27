@@ -36,32 +36,8 @@ public:
 
 int main()
 {
-    string line, content;
-    while (getline(cin, line)) {
-        content += line;
-    }
-
-    TestRequest req(content);
-    TestResponse resp;
-    resp.id = req.id();
-
-    auto job = new TestJob();
-
-    auto startMicro = chrono::steady_clock::now();
-    job->run(req, resp);
-    auto endMicro = chrono::steady_clock::now();
-    auto elapseMicro = chrono::duration_cast<chrono::microseconds>(endMicro - startMicro).count();
-
-    resp.elapse = elapseMicro / 1000.0;
-
-    if (req.hasExpected()) {
-        resp.success = job->validate(req, resp);
-    } else {
-        resp.success = true;
-    }
-
-    cout << resp.toJSONString();
-
-    delete job;
+    TestJob job;
+    Runner runner;
+    runner.run(job);
     return 0;
 }

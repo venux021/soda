@@ -85,6 +85,36 @@ public:
 
 };
 
+class Runner {
+public:
+    template <typename R, typename RS>
+    void run(JobTemplate<R,RS>& job) {
+        std::string line, content;
+        while (std::getline(std::cin, line)) {
+            content += line;
+        }
+
+        TestRequest req(content);
+        TestResponse resp;
+        resp.id = req.id();
+
+        auto startMicro = std::chrono::steady_clock::now();
+        job.run(req, resp);
+        auto endMicro = std::chrono::steady_clock::now();
+        auto elapseMicro = std::chrono::duration_cast<std::chrono::microseconds>(endMicro - startMicro).count();
+
+        resp.elapse = elapseMicro / 1000.0;
+
+        if (req.hasExpected()) {
+            resp.success = job.validate(req, resp);
+        } else {
+            resp.success = true;
+        }
+
+        std::cout << resp.toJSONString();
+    }
+};
+
 } // namespace soda::unittest
 
 #endif
