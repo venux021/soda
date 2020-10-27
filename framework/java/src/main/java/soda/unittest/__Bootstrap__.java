@@ -1,6 +1,7 @@
 package soda.unittest;
 
 import java.util.*;
+import java.util.stream.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -15,8 +16,6 @@ import static soda.unittest.LoggerHelper.logger;
 
 // step [2]: implement test job
 class TestJob extends JobTemplate<Object, Object> {
-
-    public static Logger logger = LogManager.getLogger(TestJob.class);
 
     @Override
     public Object execute(TestRequest req, TestResponse resp) {
@@ -37,39 +36,8 @@ class TestJob extends JobTemplate<Object, Object> {
 } 
 
 public class __Bootstrap__ {
-    
     public static void main(String[] args) throws Exception {
-        ObjectMapper json = new ObjectMapper();
-
-        TestRequest req = json.readValue(readStdin(), TestRequest.class);
-        TestResponse resp = new TestResponse();
-        resp.id = req.id;
-        
-        TestJob job = new TestJob();
-
-        long startNano = System.nanoTime();
-        job.run(req, resp);
-        long endNano = System.nanoTime();
-        
-        resp.elapse = (endNano - startNano) / 1e6;
-
-        if (req.hasExpected()) {
-            resp.success = job.validate(req, resp);
-        } else {
-            resp.success = true;
-        }
-        
-        System.out.println(json.writeValueAsString(resp));
+        new Runner().run(new TestJob());
     }
-    
-    private static String readStdin() throws Exception {
-        try (Scanner scan = new Scanner(System.in, "UTF-8")) {
-            StringBuilder buf = new StringBuilder();
-            while (scan.hasNextLine()) {
-                buf.append(scan.nextLine());
-            }   
-            return buf.toString();
-        }
-    }
-    
 }
+
