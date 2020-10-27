@@ -42,22 +42,5 @@ if __name__ == '__main__':
         format = '%(levelname)s: %(message)s'
     )
 
-    req = TestRequest(json.load(sys.stdin))
-    resp = TestResponse()
-    resp.obj['id'] = req.id
-
-    job = TestJob()
-
-    start = time.time()
-    res = job.run(req, resp)
-    end = time.time()
-
-    resp.obj['elapse'] = (end-start) * 1000
-
-    if req.expected is not None:
-        resp.obj['success'] = job.validate(req, resp)
-    else:
-        resp.obj['success'] = True
-
-    print(json.dumps(resp.obj))
+    Runner().run(TestJob())
 

@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+import json
+import sys
+import time
 
 class TestRequest:
 
@@ -51,4 +54,24 @@ class JobTemplate(ABC):
     @abstractmethod
     def validate(self, req: TestRequest, resp: TestResponse) -> bool:
         pass
+
+class Runner:
+
+    def run(self, job: JobTemplate) -> None:
+        req = TestRequest(json.load(sys.stdin))
+        resp = TestResponse()
+        resp.obj['id'] = req.id
+
+        start = time.time()
+        res = job.run(req, resp)
+        end = time.time()
+
+        resp.obj['elapse'] = (end-start) * 1000
+
+        if req.expected is not None:
+            resp.obj['success'] = job.validate(req, resp)
+        else:
+            resp.obj['success'] = True
+
+        print(json.dumps(resp.obj))
 
