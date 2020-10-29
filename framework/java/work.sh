@@ -5,7 +5,9 @@ usage()
     local cmd=$(basename $0)
     cat << EOF
 usage:
-    soda java [options]
+    soda java [-s] [options]
+
+    -s : use server mode
 
 options:
     new <testname>
@@ -35,10 +37,25 @@ source $self_dir/setup_env.sh || exit
 cmd=$1
 [ -z $cmd ] && usage
 
+server_mode=no
+if [ "$cmd" == "-s" ]; then
+    server_mode=yes
+    shift
+    cmd=$1
+fi
+
 exec_test()
 {
     local classname=$1
     [ -z $classname ] && usage
+    if [ "$server_mode" == 'yes' ]; then
+        set -e
+        $self_dir/server.sh start
+        runpath=$(pwd)
+        curl -d "runpath=$runpath" "http://localhost:$server_port/soda/java/setup" && echo
+        export SODA_JAVA_SERVER_MODE=yes
+        set +e
+    fi
     run_test java "$@"
 }
 

@@ -90,8 +90,11 @@ def run_python(srcfile, testobj):
     command = f'{runner} {srcfile}'
     return call_process(command, testobj)
 
-def run_java(classfile, testobj):
-    command = f'{framework_dir}/java/run.sh {classfile}'
+def run_java(classname, testobj):
+    if os.environ.get('SODA_JAVA_SERVER_MODE') == 'yes':
+        command = f'{framework_dir}/java/run-client.sh {classname}'
+    else:
+        command = f'{framework_dir}/java/run.sh {classname}'
     return call_process(command, testobj)
 
 def run_cpp(exefile, testobj):
