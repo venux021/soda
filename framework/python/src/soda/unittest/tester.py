@@ -102,7 +102,10 @@ def run_cpp(exefile, testobj):
     return call_process(command, testobj)
 
 def run_scala(classname, testobj):
-    command = f'{framework_dir}/scala/run.sh {classname}'
+    if os.environ.get('SODA_SCALA_SERVER_MODE') == 'yes':
+        command = f'{framework_dir}/scala/run-client.sh {classname}'
+    else:
+        command = f'{framework_dir}/scala/run.sh {classname}'
     return call_process(command, testobj)
 
 def call_process(command, testobj):

@@ -5,7 +5,9 @@ usage()
     local cmd=$(basename $0)
     cat << EOF
 usage:
-    soda scala [options]
+    soda scala [-s] [options]
+
+    -s: use server mode
 
 options:
     new <testname>
@@ -15,7 +17,10 @@ options:
         compile test case
     $command_run_help
 
-    exec <exefile> [options]
+    go <testname> [options] 
+        compile && run, options same as command 'run'
+
+    exec <classname> [options]
         run executable file, options same as command 'run'
 
 EOF
@@ -26,15 +31,31 @@ self_dir=$(cd $(dirname $0) && pwd)
 framework_dir=$(dirname $self_dir)
 source $framework_dir/common/bashlib.sh || exit
 
-source $self_dir/../java/setup_env.sh || exit
+[ -e $self_dir/setup_env.sh ] || cp $self_dir/_setup_env.sh $self_dir/setup_env.sh
+source $self_dir/setup_env.sh || exit
 
 cmd=$1
 [ -z $cmd ] && usage
+
+server_mode=no
+if [ "$cmd" == "-s" ]; then
+    server_mode=yes
+    shift
+    cmd=$1
+fi
 
 exec_test()
 {
     local classname=$1
     [ -z $classname ] && usage
+    if [ "$server_mode" == 'yes' ]; then
+        set -e
+        $self_dir/server.sh start
+        runpath=$(pwd)
+        curl -d "runpath=$runpath" "http://localhost:$server_port/soda/java/setup" && echo
+        export SODA_SCALA_SERVER_MODE=yes
+        set +e
+    fi
     run_test scala "$@"
 }
 
@@ -65,6 +86,12 @@ case $cmd in
         do_compile $testname
         ;;
     run)
+        shift
+        exec_test "$@"
+        ;;
+    go)
+        testname=$2
+        do_compile $testname || exit
         shift
         exec_test "$@"
         ;;
