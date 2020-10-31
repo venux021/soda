@@ -12,7 +12,7 @@ usage:
     $(basename $0) <lang> [options]
 
 lang: 
-    python, cpp, java
+    python, cpp, java, scala
 EOF
     exit 1
 }
@@ -23,14 +23,8 @@ language=$1
 shift
 
 case $language in
-    python)
-        bash $framework_dir/python/work.sh "$@"
-        ;;
-    java)
-        bash $framework_dir/java/work.sh "$@"
-        ;;
-    cpp)
-        bash $framework_dir/cpp/work.sh "$@"
+    python | cpp | java | scala)
+        bash $framework_dir/$language/work.sh "$@"
         ;;
     *)
         usage

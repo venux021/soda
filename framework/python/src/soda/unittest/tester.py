@@ -101,6 +101,10 @@ def run_cpp(exefile, testobj):
     command = f'{framework_dir}/cpp/run.sh {exefile}'
     return call_process(command, testobj)
 
+def run_scala(classname, testobj):
+    command = f'{framework_dir}/scala/run.sh {classname}'
+    return call_process(command, testobj)
+
 def call_process(command, testobj):
     datatext = json.dumps(testobj)
     return_code = None
@@ -123,17 +127,19 @@ def call_process(command, testobj):
     except:
         raise Exception(f'Invalid response: {outs}')
 
-def run_code(lang, exefile, testobj):
+def run_code(lang, executable, testobj):
     if lang == 'python':
-        return run_python(exefile, testobj)
+        return run_python(executable, testobj)
     elif lang == 'java':
-        return run_java(exefile, testobj)
+        return run_java(executable, testobj)
     elif lang == 'cpp':
-        return run_cpp(exefile, testobj)
+        return run_cpp(executable, testobj)
+    elif lang == 'scala':
+        return run_scala(executable, testobj)
     else:
         raise Exception(f'Unsupported language: {lang}')
 
-def execute(lang, exefile, config, testobj):
+def execute(lang, executable, config, testobj):
     seq_number = testobj['id']
     print(f'**[{seq_number}]**')
     print(f'* {config["_test_file"]} <{config["_seq_in_file"]}>')
@@ -151,7 +157,7 @@ def execute(lang, exefile, config, testobj):
         return True
 
     try:
-        response = run_code(lang, exefile, testobj)
+        response = run_code(lang, executable, testobj)
     except Exception as ex:
         print(f'Error: {ex}')
         return False
@@ -205,7 +211,7 @@ def execute(lang, exefile, config, testobj):
 def main():
     parser = argparse.ArgumentParser(prog='soda')
 
-    parser.add_argument('language', choices=['python','java','cpp'])
+    parser.add_argument('language')
     parser.add_argument('exefile')
     parser.add_argument('--testcase', default='test_data')
     parser.add_argument('--delim', default=',')
@@ -216,7 +222,7 @@ def main():
     # print(args)
 
     language = args.language
-    exefile = args.exefile
+    executable = args.exefile
     input_files = args.testcase.split(args.delim)
 
     global verbose
@@ -240,7 +246,7 @@ def main():
                 testobj['id'] = counter
                 config['_test_file'] = infile
                 config['_seq_in_file'] = seq_in_file
-                if not execute(language, exefile, config, testobj):
+                if not execute(language, executable, config, testobj):
                     return
 
 if __name__ == '__main__':
