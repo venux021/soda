@@ -34,13 +34,10 @@ class TestJob(JobTemplate):
 
 
 if __name__ == '__main__':
-
     logging.basicConfig(
         level = logging.INFO,
         datefmt = '%Y-%m-%d %H:%M:%S',
-        #format = '%(asctime)s [%(process)d] [%(name)s] %(levelname)s: %(message)s'
         format = '%(levelname)s: %(message)s'
     )
-
     Runner().run(TestJob())
 
