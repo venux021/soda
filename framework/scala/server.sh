@@ -27,7 +27,7 @@ start_server()
     cd $work_dir
     logfile=./soda-server.log
     errfile=./soda-server.err
-    nohup java -cp $SCALA_HOME/lib/scala-library.jar:$(get_classpath) $server_class $port >>$logfile 2>&1 &
+    nohup scala -cp $(get_classpath) $server_class $port >>$logfile 2>&1 &
     cd $old_path
     for i in 1 2 3 4 5; do
         sleep 1

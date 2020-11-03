@@ -1,0 +1,6 @@
+/target/
+/.classpath
+/.project
+/.settings
+/soda-lib/
+/setup_env.sh

@@ -1,11 +1,11 @@
-package soda.unittest;
+package soda.unittest
 
-import java.util._;
-import java.util.stream._;
+import java.util._
+import java.util.stream._
 
-import soda.leetcode._;
+import soda.leetcode._
 
-import soda.unittest.LoggerHelper.logger;
+import soda.unittest.LoggerHelper.logger
 
 // setp [1]: implement object Solution
 // object Solution
