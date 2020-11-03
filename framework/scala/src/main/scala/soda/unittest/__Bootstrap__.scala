@@ -11,14 +11,14 @@ import soda.unittest.LoggerHelper.logger
 // object Solution
 
 // step [2]: implement test job
-class __Bootstrap__ extends JobTemplate[Object, Object] {
+class __Bootstrap__ extends JobTemplate[Any, Any] {
 
-    override def execute(req: TestRequest, resp: TestResponse): Object = {
+    override def execute(req: TestRequest, resp: TestResponse): Any = {
         // TODO
         throw new RuntimeException("Not implemented");
     }
 
-    override def serialize(res: Object): Object = {
+    override def serialize(res: Any): Any = {
         res
     }
     
