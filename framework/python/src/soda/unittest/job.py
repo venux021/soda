@@ -61,12 +61,12 @@ class JobRunner:
         end = time.time()
 
         serial_res = CodecFactory.create(jbs.ret_type).encode(res)
-        elapse = end - start
+        elapseMillis = (end - start) * 1000
 
         resp = {
             'id': input_data.id,
             'result': serial_res,
-            'elapse': elapse
+            'elapse': elapseMillis
         }
 
         success = True
@@ -74,10 +74,10 @@ class JobRunner:
             if jbs.validate_by_object:
                 vf = jbs.object_validator or (lambda x, y: x == y)
                 expc = CodecFactory.create(jbs.ret_type).decode(input_data.expected)
-                success = vf(res, expc)
+                success = vf(expc, res)
             else:
                 vf = jbs.serial_validator or (lambda x, y: x == y)
-                success = vf(serial_res, input_data.expected)
+                success = vf(input_data.expected, serial_res)
 
         resp['success'] = success
 

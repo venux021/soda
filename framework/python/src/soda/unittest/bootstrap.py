@@ -12,32 +12,35 @@ import sys
 from soda.leetcode.bitree import *
 from soda.leetcode.graph import *
 from soda.leetcode.linklist import *
-from soda.unittest.common import *
+from soda.unittest.util import init_logging
 
 logger = logging.getLogger(__name__)
 
 # step [1]: implement class Solution
 # class Solution: pass
 
-# step [2]: implement test job
-class TestJob(JobTemplate):
-
-    def execute(self, req: TestRequest, resp: TestResponse) -> 'ResultType':
-        # TODO
-        raise Exception('Not implemented')
-
-    def serialize(self, res: 'ResultType') -> 'ResultSerialType':
-        return res
-
-    def validate(self, req: TestRequest, resp: TestResponse) -> bool:
-        return req.expected == resp.result
-
-
 if __name__ == '__main__':
-    logging.basicConfig(
-        level = logging.INFO,
-        datefmt = '%Y-%m-%d %H:%M:%S',
-        format = '%(levelname)s: %(message)s'
-    )
-    Runner().run(TestJob())
+    init_logging()
 
+    from soda.unittest.job import JobEntry
+    # cls       - solution class
+    # method    - method name
+    # arg_types - arguments types, in tuple or list
+    # ret_type  - return type
+    JobEntry.run(
+        cls = Solution, 
+        method = '',
+        arg_types = ...,
+        ret_type = ...
+    )
+
+#    JobEntry.run(
+#        cls = Solution,               # solution class
+#        method = '',                  # method name
+#        arg_types = ...,              # argument types
+#        ret_type = ...,               # return type
+#        validate_by_object = False,   # true - validate between expected and result in original type
+#                                      # false - in serialized type
+#        object_validator = None,      # perform when validate_by_object is true
+#        serial_validator = None       # perform when validate_by_object is false
+#    )
