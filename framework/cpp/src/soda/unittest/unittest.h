@@ -2,5 +2,6 @@
 #define _SODA_UNITTEST_H_
 
 #include "middleware.h"
+#include "job.h"
 
 #endif

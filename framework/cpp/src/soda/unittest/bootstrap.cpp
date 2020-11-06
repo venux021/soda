@@ -17,27 +17,13 @@ namespace {
     }();
 }
 
-// step [2]: implement test job
-class TestJob : public JobTemplate</*TODO result type*/, /*TODO result serial type*/> {
-public:
-    ResultType execute(const TestRequest& req, TestResponse& resp) override {
-        // TODO
-        cerr << "Not implemented" << endl;
-    }
-
-    ResultSerialType serialize(const ResultType& res) override {
-        return res;
-    }
-
-    bool validate(const TestRequest& req, const TestResponse& resp) override {
-        return req.getExpected<ResultSerialType>() == resp.getResult<ResultSerialType>();
-    }
-};
-
 int main()
 {
-    TestJob job;
-    Runner runner;
-    runner.run(job);
+    JobEntry::run(&Solution::someFunction);
+
+    // JobEntry::runWithObjectCheck(&Solution::someFunction, validator_using_object);
+    // OR
+    // JobEntry::runWithSerialCheck(&Solution::someFunction, validator_using_serial);
+
     return 0;
 }

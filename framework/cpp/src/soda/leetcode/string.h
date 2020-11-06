@@ -1,15 +1,17 @@
 #ifndef _SODA_LEETCODE_STRING_H_
 #define _SODA_LEETCODE_STRING_H_
 
+#include <string>
+
 namespace soda::leetcode {
 
 class String {
 public:
-    static void trimLeftTrailingSpaces(string &input);
+    static void trimLeftTrailingSpaces(std::string &input);
     
-    static void trimRightTrailingSpaces(string &input);
+    static void trimRightTrailingSpaces(std::string &input);
 
-    static string trim(const string &str);
+    static std::string trim(const std::string &str);
 };
 
 } // soda::leetcode
