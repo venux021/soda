@@ -1,6 +1,8 @@
 package soda.unittest.web;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -10,6 +12,9 @@ import com.sun.net.httpserver.HttpExchange;
 
 import soda.unittest.JobRunner;
 import soda.unittest.JobTemplate;
+import soda.unittest.job.JobDesc;
+import soda.unittest.job.JobExecutor;
+import soda.unittest.job.JobSpec;
 
 public class JobHandler extends BaseHandler {
 	
@@ -30,20 +35,31 @@ public class JobHandler extends BaseHandler {
 		
 		ClassLoader loader = mgr.get(jr.runpath);
 		Class<?> klass = loader.loadClass(jr.jobclass);
-		Constructor<?> ctor = klass.getDeclaredConstructor();
-		ctor.setAccessible(true);
-		JobTemplate<?,?> job = (JobTemplate<?,?>) ctor.newInstance();
 		
-    	TimeLimitedJob tlJob = new TimeLimitedJob(() -> {
-    		JobRunner runner = new JobRunner();
-    		return runner.runJob(jr.request, job);
-    	});
-    	FutureTask<String> future = tlJob.start();
-    	
+		Callable<String> callable = null;
+		if (JobTemplate.class.isAssignableFrom(klass)) {
+	    	callable = () -> {
+	    		Constructor<?> ctor = klass.getDeclaredConstructor();
+				ctor.setAccessible(true);
+				JobTemplate<?,?> job = (JobTemplate<?,?>) ctor.newInstance();
+	    		JobRunner runner = new JobRunner();
+	    		return runner.runJob(jr.request, job);
+	    	};
+		} else {
+			callable = () -> {
+				var desc = klass.getAnnotation(JobDesc.class);
+				var spec = new JobSpec(desc.jobClass(), desc.method());
+				var executor = new JobExecutor();
+				return executor.exec(jr.request, spec);
+			};
+		}
+		
+		TimeLimitedJob tLJob = new TimeLimitedJob(callable);
+		FutureTask<String> future = tLJob.start();
     	try {
     		return future.get(timeoutMillis, TimeUnit.MILLISECONDS);
     	} catch (TimeoutException tex) {
-    		tlJob.kill();
+    		tLJob.kill();
     		throw new RuntimeException("Job timeout");
     	}
 	}

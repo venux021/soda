@@ -5,9 +5,10 @@ usage()
     local cmd=$(basename $0)
     cat << EOF
 usage:
-    soda java [-s] [options]
+    soda java [-s|-r] [options]
 
-    -s : use server mode
+    -s: use server mode
+    -r: restart server, then use server mode
 
 options:
     new <testname>
@@ -38,8 +39,9 @@ cmd=$1
 [ -z $cmd ] && usage
 
 server_mode=no
-if [ "$cmd" == "-s" ]; then
+if [ "$cmd" == "-s" -o "$cmd" == '-r' ]; then
     server_mode=yes
+    [ "$cmd" == "-r" ] && $self_dir/server.sh stop
     shift
     cmd=$1
 fi
@@ -65,6 +67,7 @@ do_compile()
     [ -z $testname ] && usage
     srcfile=${testname}.java
     assert_framework
+    echo "Compiling $srcfile ..."
     javac -cp $(get_classpath) $SODA_JAVA_COMPILE_OPTION $srcfile && echo "Compile $srcfile OK"
 }
 

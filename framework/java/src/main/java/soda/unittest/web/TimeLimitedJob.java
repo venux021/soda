@@ -5,7 +5,7 @@ import java.util.concurrent.FutureTask;
 
 class TimeLimitedJob {
 
-private Callable<String> job;
+	private Callable<String> job;
 	
 	private Thread jobThread;
 	

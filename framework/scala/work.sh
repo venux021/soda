@@ -38,8 +38,9 @@ cmd=$1
 [ -z $cmd ] && usage
 
 server_mode=no
-if [ "$cmd" == "-s" ]; then
+if [ "$cmd" == "-s" -o "$cmd" == '-r' ]; then
     server_mode=yes
+    [ "$cmd" == "-r" ] && $self_dir/server.sh stop
     shift
     cmd=$1
 fi
@@ -65,6 +66,7 @@ do_compile()
     [ -z $testname ] && usage
     srcfile=${testname}.scala
     assert_framework
+    echo "Compiling $srcfile ..."
     scalac -deprecation -cp $(get_classpath) $srcfile && echo "Compile $srcfile OK"
 }
 

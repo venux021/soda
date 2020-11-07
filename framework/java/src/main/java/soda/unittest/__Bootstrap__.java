@@ -4,33 +4,18 @@ import java.util.*;
 import java.util.stream.*;
 
 import soda.leetcode.*;
+import soda.unittest.job.JobDesc;
+import soda.unittest.job.JobEntry;
 
 import static soda.unittest.LoggerHelper.logger;
 
 // step [1]: implement class Solution
 // class Solution {}
 
-// step [2]: implement test job
-public class __Bootstrap__ extends JobTemplate<Object, Object> {
-
-    @Override
-    public Object execute(TestRequest req, TestResponse resp) {
-        // TODO
-        throw new RuntimeException("Not implemented");
-    }
-    
-    @Override
-    public Object serialize(Object res) {
-        return res;
-    }
-    
-    @Override
-    public boolean validate(TestRequest req, TestResponse resp) {
-        return req.getExpected(Object.class).equals(resp.getResult(Object.class));
-    }
-    
+// step [2]: setup job information
+//@JobDesc(jobClass = Solution.class, method = "method-name")
+public class __Bootstrap__ {
     public static void main(String[] args) throws Exception {
-        new ConsoleRunner().run(new __Bootstrap__());
+         JobEntry.run(__Bootstrap__.class);
     }
-
 }
