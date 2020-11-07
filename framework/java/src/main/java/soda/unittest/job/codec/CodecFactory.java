@@ -10,10 +10,28 @@ public class CodecFactory {
 	static {
 		codecMap = new HashMap<>();
 		codecMap.put(int[].class, IntArrayCodec.class);
+		codecMap.put(int[][].class, IntArray2dCodec.class);
 	}
 
-	public static ICodec create(Class<?> objClass) {
+	public static ICodec create(Class<?> objClass) throws Exception {
+		Class<? extends ICodec> cls = codecMap.get(objClass);
+		if (cls != null) {
+			return cls.getDeclaredConstructor().newInstance();
+		}
+		
+		if (objClass.isArray()) {
+			return new ObjectArrayCodec(getElementType(objClass), getDimension(objClass));
+		}
+		
 		return new DefaultCodec();
+	}
+	
+	private static Class<?> getElementType(Class<?> cls) {
+		return cls.isArray() ? getElementType(cls.getComponentType()) : cls;
+	}
+	
+	private static int getDimension(Class<?> cls) {
+		return cls.isArray() ? 1 + getDimension(cls.getComponentType()) : 0;
 	}
 	
 }

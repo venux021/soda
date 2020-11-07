@@ -47,7 +47,7 @@ case $cmd in
         test_server || { start_server || exit; }
         ;;
     stop)
-        curl --connect-timeout 2 "$prefix/stop"
+        curl --connect-timeout 2 "$prefix/stop" && echo
         ;;
     *)
         usage

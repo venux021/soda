@@ -1,7 +1,6 @@
 package soda.unittest.web;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +11,6 @@ import com.sun.net.httpserver.HttpExchange;
 
 import soda.unittest.JobRunner;
 import soda.unittest.JobTemplate;
-import soda.unittest.job.JobDesc;
 import soda.unittest.job.JobExecutor;
 import soda.unittest.job.JobSpec;
 
@@ -47,8 +45,7 @@ public class JobHandler extends BaseHandler {
 	    	};
 		} else {
 			callable = () -> {
-				var desc = klass.getAnnotation(JobDesc.class);
-				var spec = new JobSpec(desc.jobClass(), desc.method());
+				var spec = (JobSpec) klass.getMethod("createSpec").invoke(null);
 				var executor = new JobExecutor();
 				return executor.exec(jr.request, spec);
 			};

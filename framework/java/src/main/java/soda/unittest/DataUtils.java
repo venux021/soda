@@ -3,6 +3,8 @@ package soda.unittest;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,58 @@ public class DataUtils {
 	
 	public static <T> List<T> toList(T[] array) {
 		return Arrays.asList(array);
+	}
+	
+	public static Object toList(Object array) {
+		Class<?> ec = array.getClass().getComponentType();
+		if (ec == null) {
+			throw new IllegalArgumentException("object must be an array");
+		}
+		List<Object> res = new ArrayList<>();
+		for (int i = 0; i < Array.getLength(array); ++i) {
+			Object element = Array.get(array, i);
+			res.add(ec.isArray() ? toList(element) : element);
+		}
+		return res;
+	}
+	
+	public static Object toArray(Object collection, Class<?> elementType, int D) {
+		if (!Collection.class.isAssignableFrom(collection.getClass())) {
+			throw new IllegalArgumentException("object must be an collection");
+		}
+		int[] sizes = new int[D];
+		getSizeOnDimensions(collection, sizes, 0);
+		Object array = Array.newInstance(elementType, sizes);
+		fillMultipleDimension((Collection<Object>) collection, array, D);
+		return array;
+	}
+	
+	private static void fillMultipleDimension(Collection<Object> coll, Object array, int k) {
+		Iterator<Object> iter = coll.iterator();
+		for (int i = 0; i < Array.getLength(array); ++i) {
+			Object element = iter.next();
+			if (k == 1) {
+				Array.set(array, i, element);
+			} else {
+				fillMultipleDimension((Collection<Object>) element, Array.get(array, i), k-1);
+			}
+		}
+	}
+	
+	private static void getSizeOnDimensions(Object collection, int[] sizes, int index) {
+		if (index == sizes.length) {
+			return;
+		}
+		if (!Collection.class.isAssignableFrom(collection.getClass())) {
+			throw new IllegalArgumentException("object must be an collection");
+		}
+		Collection<Object> coll = (Collection<Object>) collection;
+		if (coll.size() == 0) {
+			return;
+		}
+		sizes[index] = coll.size();
+		Iterator<Object> iter = coll.iterator();
+		getSizeOnDimensions(iter.next(), sizes, index+1);
 	}
 	
 	public static <T> Object toPrimitiveArray2d(List<List<T>> L, Class<T> wrapClass) {
