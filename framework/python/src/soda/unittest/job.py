@@ -6,14 +6,31 @@ from soda.unittest.codec import CodecFactory
 
 class JobEntry:
 
+    @classmethod
+    def run(cls, jobclass, method, ret_type, arg_types):
+        cls.runJob(jobclass, method, ret_type, arg_types, validate_by_object=False)
+
+    @classmethod
+    def runWithObjectCheck(cls, jobclass, method, ret_type, arg_types, object_validator):
+        cls.runJob(
+                jobclass, method, ret_type, arg_types,
+                validate_by_object=True,
+                object_validator=object_validator)
+
+    @classmethod
+    def runWithSerialCheck(cls, jobclass, method, ret_type, arg_types, serial_validator):
+        cls.runJob(
+                jobclass, method, ret_type, arg_types,
+                validate_by_object=False,
+                serial_validator=serial_validator)
+
     @staticmethod
-    def run(*, 
-            cls, method: str, arg_types, ret_type, 
+    def runJob(jobclass, method: str, ret_type, arg_types, *, 
             validate_by_object=False, 
             object_validator=None, 
             serial_validator=None):
         jspec = JobSpec()
-        jspec.cls = cls
+        jspec.cls = jobclass
         jspec.method = method
         jspec.arg_types = arg_types
         jspec.ret_type = ret_type

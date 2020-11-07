@@ -21,24 +21,15 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     init_logging()
-
     from soda.unittest.job import JobEntry
-    # cls       - solution class
-    # method    - method name
-    # arg_types - arguments types, in tuple or list
-    # ret_type  - return type
-    JobEntry.run(
-        cls = Solution, 
-        method = '',
-        arg_types = ...,
-        ret_type = ...
-    )
+    # class, method name, return type, arg types
+    JobEntry.run(Solution, '', _, _)
 
 #    JobEntry.run(
 #        cls = Solution,               # solution class
 #        method = '',                  # method name
-#        arg_types = ...,              # argument types
 #        ret_type = ...,               # return type
+#        arg_types = ...,              # argument types
 #        validate_by_object = False,   # true - validate between expected and result in original type
 #                                      # false - in serialized type
 #        object_validator = None,      # perform when validate_by_object is true
