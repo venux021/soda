@@ -2,6 +2,7 @@ package soda.unittest.job;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,11 +22,14 @@ public class JobExecutor {
 			args[i] = codec.decode(inputData.arg(i));
 		}
 		
-		Constructor<?> ctor = jspec.jobClass.getDeclaredConstructor();
-		ctor.setAccessible(true);
-		Object solution = ctor.newInstance();
+		Object solution = null;
 		Method method = jspec.method;
 		method.setAccessible(true);
+        if (!Modifier.isStatic(method.getModifiers())) {
+		    Constructor<?> ctor = jspec.jobClass.getDeclaredConstructor();
+		    ctor.setAccessible(true);
+		    solution = ctor.newInstance();
+        }
 		
 		long startNano = System.nanoTime();
 		Object res = method.invoke(solution, args);

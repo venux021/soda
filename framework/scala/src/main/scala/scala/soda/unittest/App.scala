@@ -1,4 +1,4 @@
-package soda.unittest
+package scala.soda.unittest
 
 /**
  * @author ${user.name}

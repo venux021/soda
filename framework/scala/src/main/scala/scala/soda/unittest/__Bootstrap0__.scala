@@ -1,17 +1,18 @@
-package soda.unittest
+package scala.soda.unittest
 
 import java.util._
 import java.util.stream._
 
 import soda.leetcode._
 
+import soda.unittest._
 import soda.unittest.LoggerHelper.logger
 
 // setp [1]: implement object Solution
 // object Solution
 
 // step [2]: implement test job
-class __Bootstrap__ extends JobTemplate[Any, Any] {
+class __Bootstrap0__ extends JobTemplate[Any, Any] {
 
     override def execute(req: TestRequest, resp: TestResponse): Any = {
         // TODO
@@ -28,6 +29,6 @@ class __Bootstrap__ extends JobTemplate[Any, Any] {
 
 }
 
-object __Bootstrap__ extends App {
-    new ConsoleRunner().run(new __Bootstrap__())
+object __Bootstrap0__ extends App {
+    new ConsoleRunner().run(new __Bootstrap0__())
 }
