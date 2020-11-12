@@ -4,14 +4,16 @@ import java.util.List;
 
 import soda.unittest.DataUtils;
 
-public class IntArrayCodec implements ICodec {
+public class IntArrayCodec implements ICodec<List<Integer>, int[]> {
 
-	public Object encode(Object object) {
-		return DataUtils.toList((int[]) object);
+	@Override
+	public List<Integer> encode(int[] object) {
+		return DataUtils.toList(object);
 	}
 	
-	public Object decode(Object serial) {
-		return DataUtils.toIntArray((List<?>) serial);
+	@Override
+	public int[] decode(List<Integer> serial) {
+		return DataUtils.toIntArray(serial);
 	}
 	
 }

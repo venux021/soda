@@ -1,8 +1,10 @@
 package soda.unittest.job.codec;
 
+import java.util.List;
+
 import soda.unittest.DataUtils;
 
-public class ObjectArrayCodec implements ICodec {
+public class ObjectArrayCodec implements ICodec<List<?>, Object> {
 	
 	private Class<?> elementType;
 	
@@ -14,12 +16,12 @@ public class ObjectArrayCodec implements ICodec {
 	}
 
 	@Override
-	public Object encode(Object object) {
-		return DataUtils.toList(object);
+	public List<?> encode(Object object) {
+		return (List<?>) DataUtils.toList(object);
 	}
 
 	@Override
-	public Object decode(Object serial) {
+	public Object decode(List<?> serial) {
 		return DataUtils.toArray(serial, elementType, dimensions);
 	}
 

@@ -1,9 +1,9 @@
 package soda.unittest.job.codec;
 
-public interface ICodec {
+public interface ICodec<_Serial, _Object> {
 
-	Object encode(Object object);
+	_Serial encode(_Object object);
 	
-	Object decode(Object serial);
+	_Object decode(_Serial serial);
 	
 }

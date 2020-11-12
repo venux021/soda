@@ -76,10 +76,10 @@ case $cmd in
         [ -z $testname ] && usage
         testname=${testname%.scala}
         target_file=${testname}.scala
-        template_file=$self_dir/src/main/scala/scala/soda/unittest/__Bootstrap__.scala
+        template_file=$self_dir/src/main/scala/soda/scala/unittest/__Bootstrap__.scala
         create_source_file $template_file $target_file
         classname=$testname
-        echo "import soda.unittest._;" > ${classname}.tmp
+        # echo "import soda.unittest._;" > ${classname}.tmp
         cat $target_file | grep -v '^package ' | sed "s/__Bootstrap__/$classname/g" >> ${classname}.tmp
         mv ${classname}.tmp $target_file
         ;;

@@ -88,6 +88,7 @@
               <args>
                 <arg>-dependencyfile</arg>
                 <arg>${project.build.directory}/.scala_dependencies</arg>
+                <arg>-deprecation</arg>
               </args>
             </configuration>
           </execution>

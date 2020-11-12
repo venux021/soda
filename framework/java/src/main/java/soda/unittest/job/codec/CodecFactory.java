@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class CodecFactory {
 	
-	private static Map<Class<?>, Class<? extends ICodec>> codecMap;
+	private static Map<Class<?>, Class<? extends ICodec<?,?>>> codecMap;
 	
 	static {
 		codecMap = new HashMap<>();
@@ -13,8 +13,8 @@ public class CodecFactory {
 		codecMap.put(int[][].class, IntArray2dCodec.class);
 	}
 
-	public static ICodec create(Class<?> objClass) throws Exception {
-		Class<? extends ICodec> cls = codecMap.get(objClass);
+	public static ICodec<?,?> create(Class<?> objClass) throws Exception {
+		Class<? extends ICodec<?,?>> cls = codecMap.get(objClass);
 		if (cls != null) {
 			return cls.getDeclaredConstructor().newInstance();
 		}

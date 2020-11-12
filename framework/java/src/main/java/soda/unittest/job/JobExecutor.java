@@ -18,7 +18,7 @@ public class JobExecutor {
 		
 		Object[] args = new Object[jspec.argClasses.length];
 		for (int i = 0; i < args.length; ++i) {
-			ICodec codec = CodecFactory.create(jspec.argClasses[i]);
+			ICodec<Object,Object> codec = (ICodec<Object,Object>) CodecFactory.create(jspec.argClasses[i]);
 			args[i] = codec.decode(inputData.arg(i));
 		}
 		
@@ -36,7 +36,7 @@ public class JobExecutor {
 		long endNano = System.nanoTime();
 		
 		double elapseMillis = (endNano - startNano) / 1e6;
-		Object serialRes = CodecFactory.create(jspec.retClass).encode(res);
+		Object serialRes = ((ICodec<Object,Object>) CodecFactory.create(jspec.retClass)).encode(res);
 		
 		var outputData = new OutputData();
 		outputData.id = inputData.id;
@@ -47,16 +47,16 @@ public class JobExecutor {
 		if (inputData.hasExpected()) {
 			if (jspec.validateByObject) {
 				Validator<?> vf = jspec.objectValidator;
-				if (vf == null) {
-					vf = new EqualValidator();
-				}
-				Object expectObject = CodecFactory.create(jspec.retClass).decode(inputData.expected);
+//				if (vf == null) {
+//					vf = new EqualValidator();
+//				}
+				Object expectObject = ((ICodec<Object,Object>)CodecFactory.create(jspec.retClass)).decode(inputData.expected);
 				success = ((Validator<Object>)vf).validate(expectObject, res);
 			} else {
 				Validator<?> vf = jspec.serialValidator;
-				if (vf == null) {
-					vf = new EqualValidator();
-				}
+//				if (vf == null) {
+//					vf = new EqualValidator();
+//				}
 				success = ((Validator<Object>)vf).validate(inputData.expected, serialRes);
 			}
 		}

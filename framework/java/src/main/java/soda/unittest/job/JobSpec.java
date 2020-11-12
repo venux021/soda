@@ -14,9 +14,9 @@ public class JobSpec {
 	
 	public boolean validateByObject = false;
 	
-	public Validator<?> objectValidator;
+	public Validator<?> objectValidator = new EqualValidator();
 	
-	public Validator<?> serialValidator;
+	public Validator<?> serialValidator = new EqualValidator();
 	
 	public JobSpec(Class<?> jobClass, String method) throws NoSuchMethodException {
 		this.jobClass = jobClass;

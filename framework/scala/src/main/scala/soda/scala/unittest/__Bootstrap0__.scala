@@ -1,4 +1,4 @@
-package scala.soda.unittest
+package soda.scala.unittest
 
 import java.util._
 import java.util.stream._
