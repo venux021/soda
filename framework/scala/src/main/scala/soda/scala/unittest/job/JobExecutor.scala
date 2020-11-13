@@ -1,10 +1,13 @@
-package soda.scala.unittest
+package soda.scala.unittest.job
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
 import com.fasterxml.jackson.databind.ObjectMapper
+
+import soda.unittest.job.InputData
+import soda.unittest.job.OutputData
 
 import soda.scala.unittest.codec.CodecFactory
 import soda.scala.unittest.codec.ICodec
@@ -16,7 +19,7 @@ class JobExecutor {
         val inputData = json.readValue(input, classOf[InputData])
 
         val args = new Array[Object](jspec.argClasses.length)
-        for (i <- 0 until args.length) {
+        for (i <- args.indices) {
             args(i) = decode(jspec.argClasses(i), inputData.arg(i))
         }
 
@@ -30,7 +33,7 @@ class JobExecutor {
         }
 
         val startNano = System.nanoTime
-        val res = method.invoke(solution, args)
+        val res = method.invoke(solution, args: _*)
         val endNano = System.nanoTime
 
         val elapseMillis = (endNano - startNano) / 1e6

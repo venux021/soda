@@ -1,4 +1,4 @@
-package soda.scala.unittest
+package soda.scala.unittest.job
 
 import java.lang.reflect.Method
 

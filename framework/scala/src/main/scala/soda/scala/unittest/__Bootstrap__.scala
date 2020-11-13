@@ -1,23 +1,23 @@
 package soda.scala.unittest
 
-import java.util._
-import java.util.stream._
-
-import soda.leetcode._
-import soda.unittest.job.JobEntry
-import soda.unittest.job.JobSpec
-
 import soda.unittest.LoggerHelper.logger
+
+import soda.scala.unittest.job.AbstractScalaJob
+import soda.scala.unittest.job.JobEntry
+import soda.scala.unittest.job.JobSpec
 
 // setp [1]: implement object Solution
 object Solution {}
 
-object __Bootstrap__ {
-    def createSpec() = {
+class __Bootstrap__ extends AbstractScalaJob {
+    override def createSpec() = {
         // step [2]: setup job information
         val spec = new JobSpec(Solution.getClass, "METHOD")
         // do some configuration of spec
         spec
     }
-    def main(args: Array[String]): Unit = JobEntry.run(createSpec())
+}
+
+object __Bootstrap__ extends App {
+    JobEntry.run(new __Bootstrap__())
 }
