@@ -9,6 +9,7 @@ import java.util.concurrent.TimeoutException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 
+import soda.unittest.CommonJob;
 import soda.unittest.JobRunner;
 import soda.unittest.JobTemplate;
 import soda.unittest.job.JobExecutor;
@@ -35,7 +36,14 @@ public class JobHandler extends BaseHandler {
 		Class<?> klass = loader.loadClass(jr.jobclass);
 		
 		Callable<String> callable = null;
-		if (JobTemplate.class.isAssignableFrom(klass)) {
+		if (CommonJob.class.isAssignableFrom(klass)) {
+			callable = () -> {
+				Constructor<?> ctor = klass.getDeclaredConstructor();
+				ctor.setAccessible(true);
+				CommonJob cj = (CommonJob) ctor.newInstance();
+				return cj.execute(jr.request);
+			};
+		} else if (JobTemplate.class.isAssignableFrom(klass)) {
 	    	callable = () -> {
 	    		Constructor<?> ctor = klass.getDeclaredConstructor();
 				ctor.setAccessible(true);

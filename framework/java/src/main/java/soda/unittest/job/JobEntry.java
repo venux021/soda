@@ -1,5 +1,6 @@
 package soda.unittest.job;
 
+import soda.unittest.CommonJob;
 import soda.unittest.ConsoleRunner;
 
 public class JobEntry {
@@ -33,6 +34,10 @@ public class JobEntry {
 	
 	public static void run(JobSpec jspec) throws Exception {
 		new ConsoleRunner().run(jspec, new JobExecutor());
+	}
+	
+	public static void run(CommonJob cj) throws Exception {
+		new ConsoleRunner().run(cj);
 	}
 	
 }

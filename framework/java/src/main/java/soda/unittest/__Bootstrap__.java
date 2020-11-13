@@ -12,9 +12,10 @@ import static soda.unittest.LoggerHelper.logger;
 // step [1]: implement class Solution
 class Solution {}
 
-public class __Bootstrap__ {
-
-    public static JobSpec createSpec() throws Exception {
+public class __Bootstrap__ extends AbstractTestJob {
+    
+    @Override
+    public JobSpec createSpec() throws Exception {
         // step [2]: setup job information
         var spec = new JobSpec(Solution.class, "METHOD");
         // do some configuration of spec
@@ -22,6 +23,6 @@ public class __Bootstrap__ {
     }
 
     public static void main(String[] args) throws Exception {
-         JobEntry.run(createSpec());
+         JobEntry.run(new __Bootstrap__());
     }
 }

@@ -47,16 +47,10 @@ public class JobExecutor {
 		if (inputData.hasExpected()) {
 			if (jspec.validateByObject) {
 				Validator<?> vf = jspec.objectValidator;
-//				if (vf == null) {
-//					vf = new EqualValidator();
-//				}
 				Object expectObject = ((ICodec<Object,Object>)CodecFactory.create(jspec.retClass)).decode(inputData.expected);
 				success = ((Validator<Object>)vf).validate(expectObject, res);
 			} else {
 				Validator<?> vf = jspec.serialValidator;
-//				if (vf == null) {
-//					vf = new EqualValidator();
-//				}
 				success = ((Validator<Object>)vf).validate(inputData.expected, serialRes);
 			}
 		}

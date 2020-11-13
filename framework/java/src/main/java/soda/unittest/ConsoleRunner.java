@@ -17,6 +17,10 @@ public class ConsoleRunner {
     	System.out.print(res);
     }
     
+    public void run(CommonJob cj) throws Exception {
+    	System.out.println(cj.execute(readStdin()));
+    }
+    
     private static String readStdin() throws Exception {
         try (Scanner scan = new Scanner(System.in, "UTF-8")) {
             StringBuilder buf = new StringBuilder();
