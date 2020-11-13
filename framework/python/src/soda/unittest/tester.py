@@ -108,6 +108,10 @@ def run_scala(classname, testobj):
         command = f'{framework_dir}/scala/run.sh {classname}'
     return call_process(command, testobj)
 
+def run_ruby(srcfile, testobj):
+    command = f'{framework_dir}/ruby/run.sh {srcfile}'
+    return call_process(command, testobj)
+
 def call_process(command, testobj):
     datatext = json.dumps(testobj)
     return_code = None
@@ -139,6 +143,8 @@ def run_code(lang, executable, testobj):
         return run_cpp(executable, testobj)
     elif lang == 'scala':
         return run_scala(executable, testobj)
+    elif lang == 'ruby':
+        return run_ruby(executable, testobj)
     else:
         raise Exception(f'Unsupported language: {lang}')
 
