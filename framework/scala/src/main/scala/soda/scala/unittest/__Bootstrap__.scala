@@ -1,5 +1,7 @@
 package soda.scala.unittest
 
+import scala.collection.mutable._
+
 import soda.unittest.LoggerHelper.logger
 
 import soda.scala.unittest.job.AbstractScalaJob
