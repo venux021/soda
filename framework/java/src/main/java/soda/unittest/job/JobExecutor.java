@@ -22,6 +22,11 @@ public class JobExecutor {
 			args[i] = codec.decode(inputData.arg(i));
 		}
 		
+		JobContext jc = new JobContext();
+		jc.spec = jspec;
+		jc.args = args;
+		JobContext.set(jc);
+		
 		Object solution = null;
 		Method method = jspec.method;
 		method.setAccessible(true);
