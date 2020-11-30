@@ -4,6 +4,7 @@
 #include <chrono>
 #include <functional>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <tuple>
 
@@ -93,6 +94,38 @@ struct ArgDecoder<0, Tuple> {
     }   
 };
 
+template <typename... Args>
+class JobContext {
+    using arguments_t = std::tuple<typename std::remove_reference<Args>::type ...>;
+    arguments_t* args;
+
+    static std::shared_ptr<JobContext> jc;
+
+public:
+    JobContext(arguments_t* args) : args {args} {}
+
+    template <int N>
+    typename std::tuple_element<N, arguments_t>::type arg() {
+        using type_t = typename std::tuple_element<N, arguments_t>::type;
+        return std::get<N>(*args);
+    }
+
+    static std::shared_ptr<JobContext> current() {
+        return jc;
+    }
+
+    static void set(arguments_t* args) {
+        if (args) {
+            jc = make_shared<JobContext>(args);
+        } else {
+            jc.reset();
+        }
+    }
+};
+
+template <typename... Args>
+std::shared_ptr<JobContext<Args...>> JobContext<Args...>::jc;
+
 class JobEntry {
 public:
     template <typename Class, typename Return, typename... Args>
@@ -110,6 +143,11 @@ public:
     template <typename Class, typename Return, typename... Args, typename SV>
     static void runWithSerialCheck(Return (Class::*pmFun)(Args...), SV serial_validator) {
         run(pmFun, false, std::equal_to<Return>(), serial_validator);
+    }
+
+    template <typename Class, typename Return, typename... Args>
+    static std::shared_ptr<JobContext<Args...>> context(Return (Class::*pmFun)(Args...)) {
+        return JobContext<Args...>::current();
     }
 
     template <typename Class, typename Return, typename... Args, typename OV, typename SV>
@@ -130,6 +168,8 @@ public:
 
         std::tuple<typename std::remove_reference<Args>::type ...> arguments;
         decode(inputData, arguments);
+
+        JobContext<Args...>::set(&arguments);
 
         auto caller = [&](auto&&... args) {
             return (solution.*pmFun)(std::forward<decltype(args)>(args)...);
@@ -161,6 +201,8 @@ public:
             }
         }
         outputData.success = success;
+
+        JobContext<Args...>::set(nullptr);
 
         std::cout << outputData.toJSONString();
     }

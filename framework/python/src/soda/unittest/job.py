@@ -64,11 +64,29 @@ class InputData:
 class JobSpec:
     pass
 
+class JobContext:
+
+    _jc = None
+
+    def __init__(self, jspec, args):
+        self.jspec = jspec
+        self.args = args
+
+    @classmethod
+    def current(cls):
+        return cls._jc
+
+    @classmethod
+    def set(cls, jc):
+        cls._jc = jc
+
 class JobRunner:
 
     def run(self, jbs: JobSpec) -> None:
         input_data = InputData(json.load(sys.stdin))
-        args = (CodecFactory.create(t).decode(a) for t, a in zip(jbs.arg_types, input_data.args))
+        args = tuple(CodecFactory.create(t).decode(a) for t, a in zip(jbs.arg_types, input_data.args))
+
+        JobContext.set(JobContext(jbs, args))
 
         method = getattr(jbs.cls, jbs.method)
         obj = jbs.cls()
@@ -97,6 +115,8 @@ class JobRunner:
                 success = vf(input_data.expected, serial_res)
 
         resp['success'] = success
+
+        JobContext.set(None)
 
         print(json.dumps(resp))
 
