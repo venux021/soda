@@ -241,7 +241,7 @@ def main():
         input_files = ['test_data']
 
     timeout = max(2.0, args.timeout)
-    timeout = min(10.0, timeout)
+    # timeout = min(10.0, timeout)
     global testcase_timeout
     testcase_timeout = timeout
 
