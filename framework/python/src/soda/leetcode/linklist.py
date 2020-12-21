@@ -44,6 +44,10 @@ class LinkList:
         return new_slist(*args, **kwargs)
 
     @classmethod
+    def list_values(cls, head):
+        return list(map(lambda p: p.val, iter_nodes(head)))
+
+    @classmethod
     def show(cls, L):
         print_list(L)
 
