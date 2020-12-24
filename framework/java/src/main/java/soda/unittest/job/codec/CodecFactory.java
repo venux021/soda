@@ -11,6 +11,8 @@ public class CodecFactory {
 		codecMap = new HashMap<>();
 		codecMap.put(int[].class, IntArrayCodec.class);
 		codecMap.put(int[][].class, IntArray2dCodec.class);
+        codecMap.put(char.class, CharCodec.class);
+        codecMap.put(Character.class, CharCodec.class);
 	}
 
 	public static ICodec<?,?> create(Class<?> objClass) throws Exception {

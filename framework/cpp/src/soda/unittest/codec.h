@@ -63,8 +63,20 @@ public:
     serial_t encode(TreeNode* root) const {
         return BiTree::inLevelOrder(root);
     }
-    TreeNode* decode(const serial_t& data) {
+    TreeNode* decode(const serial_t& data) const {
         return BiTree::create(data);
+    }
+};
+
+template <>
+class CommonCodec<char> {
+public:
+    using serial_t = std::string;
+    serial_t encode(char ch) const {
+        return std::string(1, ch);
+    }
+    char decode(const std::string& str) const {
+        return str[0];
     }
 };
 
