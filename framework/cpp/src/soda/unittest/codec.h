@@ -9,6 +9,7 @@
 using json = nlohmann::json;
 
 #include "soda/leetcode/bitree.h"
+#include "soda/leetcode/list.h"
 
 using namespace soda::leetcode;
 
@@ -65,6 +66,18 @@ public:
     }
     TreeNode* decode(const serial_t& data) const {
         return BiTree::create(data);
+    }
+};
+
+template <>
+class CommonCodec<ListNode*> {
+public:
+    using serial_t = vector<int>;
+    serial_t encode(ListNode* head) const {
+        return ListHelper::dump(head);
+    }
+    ListNode* decode(const serial_t& data) const {
+        return ListHelper::create(data);
     }
 };
 
