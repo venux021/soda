@@ -18,12 +18,13 @@ class CodecFactory:
 
     @classmethod
     def create(cls, obj_type: Any) -> _BaseCodec:
-        if obj_type is TreeNode:
-            return BiTreeCodec()
-        elif obj_type is ListNode:
-            return LinkListCodec()
-        else:
-            return DefaultCodec()
+        return _codec_map.get(obj_type, DefaultCodec())
+        # if obj_type is TreeNode:
+        #     return BiTreeCodec()
+        # elif obj_type is ListNode:
+        #     return LinkListCodec()
+        # else:
+        #     return DefaultCodec()
 
 class DefaultCodec(_BaseCodec):
 
@@ -48,3 +49,17 @@ class LinkListCodec(_BaseCodec):
 
     def decode(self, serial_data: List[int]) -> ListNode:
         return LinkList.new_s(serial_data)
+
+class TreeNodeListCodec(_BaseCodec):
+
+    def encode(self, _object: List[TreeNode]) -> List[List[int]]:
+        return list(map(BiTree.level_order, _object))
+
+    def decode(self, _serial: List[List[int]]) -> List[TreeNode]:
+        return list(map(BiTree.new, _serial))
+
+_codec_map = {
+    TreeNode: BiTreeCodec(),
+    ListNode: LinkListCodec(),
+    List[TreeNode]: TreeNodeListCodec()
+}
