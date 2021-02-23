@@ -19,11 +19,19 @@ namespace {
 
 int main()
 {
-    JobEntry::run(&Solution::someFunction);
+    // [1] create by class member function
+    // Solution su;
+    // auto work = WorkFactory::create(su, &Solution::function);
+    //
+    // [2] or, create by ordinary function
+    // auto work = WorkFactory::create(function);
 
-    // JobEntry::runWithObjectCheck(&Solution::someFunction, validator_using_object);
-    // OR
-    // JobEntry::runWithSerialCheck(&Solution::someFunction, validator_using_serial);
-
+    // work->setCompareSerial(true);
+    // work->setArgParser<0,from_type>(parse_func);
+    // work->setValidator(validate);
+    // work->setResultParser<from_type>(parse_func);
+    // work->setResultSerializer(serial_func);
+    work->run();
+    delete work;
     return 0;
 }

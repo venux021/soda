@@ -3,5 +3,6 @@
 
 #include "middleware.h"
 #include "job.h"
+#include "work.h"
 
 #endif

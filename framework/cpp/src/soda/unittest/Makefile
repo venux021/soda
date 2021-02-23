@@ -1,11 +1,10 @@
-SOURCES := $(wildcard *.cpp)
+SOURCES := $(filter-out $(wildcard bootstrap*.cpp),$(wildcard *.cpp jsonlib/*.cpp))
 OBJS = $(SOURCES:.cpp=.o)
 CC = g++
-#CPPFLAGS = -shared -fPIC -Wreturn-type -fsanitize=address -fsanitize=signed-integer-overflow -std=c++17
-CPPFLAGS = -shared -fPIC ${SODA_CPP_FLAGS}
+CPPFLAGS = -shared -fPIC ${SODA_INCLUDE} ${SODA_CPP_FLAGS}
 
 LIB_DIR = .
-LIB_NAME = libleetcode.so
+LIB_NAME = libsodatest.so
 LIB_FILE = $(LIB_DIR)/$(LIB_NAME)
 TARGET = $(LIB_FILE)
 

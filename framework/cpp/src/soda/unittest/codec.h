@@ -10,33 +10,9 @@ using json = nlohmann::json;
 
 #include "soda/leetcode/bitree.h"
 #include "soda/leetcode/list.h"
+#include "soda/unittest/jsonlib/custom_nlohmann.h"
 
 using namespace soda::leetcode;
-
-namespace nlohmann {
-    template <typename T>
-    struct adl_serializer<vector<optional<T>>> {
-        static void to_json(json& j, const vector<optional<T>>& v) {
-            j = json::array();
-            for (auto& i : v) {
-                if (i) {
-                    j.push_back(*i);
-                } else {
-                    j.push_back(nullptr);
-                }
-            }   
-        }   
-        static void from_json(const json& j, vector<optional<T>>& v) {
-            for (auto& e : j) {
-                if (!e.is_null()) {
-                    v.emplace_back(e.get<T>());
-                } else {
-                    v.emplace_back();
-                }   
-            }   
-        }   
-    };  
-}
 
 namespace soda::unittest {
 
