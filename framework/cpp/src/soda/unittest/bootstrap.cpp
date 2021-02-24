@@ -20,15 +20,15 @@ namespace {
 int main()
 {
     // [1] create by class member function
-    // Solution su;
-    // auto work = WorkFactory::create(su, &Solution::function);
+    Solution su;
+    auto work = WorkFactory::create(su, &Solution::function);
     //
     // [2] or, create by ordinary function
     // auto work = WorkFactory::create(function);
 
+    // work->setValidator(validate);
     // work->setCompareSerial(true);
     // work->setArgParser<0,from_type>(parse_func);
-    // work->setValidator(validate);
     // work->setResultParser<from_type>(parse_func);
     // work->setResultSerializer(serial_func);
     work->run();

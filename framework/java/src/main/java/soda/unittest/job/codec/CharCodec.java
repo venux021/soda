@@ -1,9 +1,5 @@
 package soda.unittest.job.codec;
 
-import java.util.List;
-
-import soda.unittest.DataUtils;
-
 public class CharCodec implements ICodec<String, Character> {
 
 	@Override

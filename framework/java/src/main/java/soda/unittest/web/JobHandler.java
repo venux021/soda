@@ -5,15 +5,19 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 
+import soda.unittest.AbstractTestJob;
 import soda.unittest.CommonJob;
 import soda.unittest.JobRunner;
 import soda.unittest.JobTemplate;
 import soda.unittest.job.JobExecutor;
 import soda.unittest.job.JobSpec;
+import soda.unittest.work.StringTestLoader;
+import soda.unittest.work.TestWork;
 
 public class JobHandler extends BaseHandler {
 	
@@ -51,11 +55,23 @@ public class JobHandler extends BaseHandler {
 	    		JobRunner runner = new JobRunner();
 	    		return runner.runJob(jr.request, job);
 	    	};
-		} else {
+		} else if (AbstractTestJob.class.isAssignableFrom(klass)) {
 			callable = () -> {
 				var spec = (JobSpec) klass.getMethod("createSpec").invoke(null);
 				var executor = new JobExecutor();
 				return executor.exec(jr.request, spec);
+			};
+		} else {
+			callable = () -> {
+				Constructor<?> ctor = klass.getDeclaredConstructor();
+			    ctor.setAccessible(true);
+			    var workDef = ctor.newInstance();
+			    @SuppressWarnings("unchecked")
+				TestWork work = ((Supplier<TestWork>)workDef).get();
+			    StringTestLoader testLoader = new StringTestLoader(jr.request);
+			    work.setTestLoader(testLoader);
+			    work.run();
+			    return testLoader.getOutput();
 			};
 		}
 		
