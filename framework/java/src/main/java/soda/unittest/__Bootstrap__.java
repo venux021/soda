@@ -17,7 +17,7 @@ public class __Bootstrap__ implements Supplier<TestWork> {
     public TestWork get() {
         var work = new TestWork(new Solution(), "METHOD");
         // work.setValidator((e, r) -> {...});
-        // work.setCompareSerial(true);
+        work.setCompareSerial(true);
         // work.setArgumentParser(index, a -> { ... });
         // work.setResultParser(r -> { ... });
         // work.setResultSerializer(r -> {...});

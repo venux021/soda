@@ -27,7 +27,7 @@ int main()
     // auto work = WorkFactory::create(function);
 
     // work->setValidator(validate);
-    // work->setCompareSerial(true);
+    work->setCompareSerial(true);
     // work->setArgParser<0,from_type>(parse_func);
     // work->setResultParser<from_type>(parse_func);
     // work->setResultSerializer(serial_func);
