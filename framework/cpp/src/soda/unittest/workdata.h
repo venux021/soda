@@ -6,7 +6,7 @@
 #include <string>
 #include <utility>
 
-#include "./jsonlib/lib_nlohmann.h"
+#include "jsonlib/lib_nlohmann.h"
 
 namespace soda::unittest {
 

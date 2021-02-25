@@ -112,6 +112,10 @@ def run_ruby(srcfile, testobj):
     command = f'{framework_dir}/ruby/run.sh {srcfile}'
     return call_process(command, testobj)
 
+def run_go(srcfile, testobj):
+    command = f'{framework_dir}/go/run.sh {srcfile}'
+    return call_process(command, testobj)
+
 def call_process(command, testobj):
     datatext = json.dumps(testobj)
     return_code = None
@@ -145,6 +149,8 @@ def run_code(lang, executable, testobj):
         return run_scala(executable, testobj)
     elif lang == 'ruby':
         return run_ruby(executable, testobj)
+    elif lang == 'go':
+        return run_go(executable, testobj)
     else:
         raise Exception(f'Unsupported language: {lang}')
 
