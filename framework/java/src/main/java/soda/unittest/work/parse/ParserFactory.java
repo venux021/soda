@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 import soda.leetcode.ListHelper;
 import soda.leetcode.ListNode;
+import soda.leetcode.TreeFactory;
+import soda.leetcode.TreeNode;
 import soda.unittest.job.codec.CodecFactory;
 import soda.unittest.job.codec.ICodec;
 
@@ -22,6 +24,9 @@ public class ParserFactory {
 		
 		parserMap.put(ListNode.class, (List<Integer> L) -> ListHelper.create(L));
 		serialMap.put(ListNode.class, (ListNode head) -> ListHelper.dump(head));
+		
+		parserMap.put(TreeNode.class, (List<Integer> L) -> TreeFactory.create(L));
+		serialMap.put(TreeNode.class, (TreeNode root) -> TreeFactory.dump(root));
 	}
 
 	@SuppressWarnings("unchecked")

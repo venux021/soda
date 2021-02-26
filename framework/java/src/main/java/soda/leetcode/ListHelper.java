@@ -1,28 +1,15 @@
 package soda.leetcode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ListHelper {
 
 	public static ListNode create(List<Integer> values) {
-		ListNode head = new ListNode(-1);
-		ListNode tail = head;
-		for (int value : values) {
-			ListNode node = new ListNode(value);
-			tail.next = node;
-			tail = node;
-		}
-		return head.next;
+		return ListFactory.create(values);
 	}
 	
 	public static List<Integer> dump(ListNode head) {
-		List<Integer> list = new ArrayList<>();
-		while (head != null) {
-			list.add(head.val);
-			head = head.next;
-		}
-		return list;
+		return ListFactory.dump(head);
 	}
 	
 	public static boolean isEqual(ListNode L1, ListNode L2) {
