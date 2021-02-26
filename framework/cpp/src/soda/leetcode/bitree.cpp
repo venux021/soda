@@ -96,66 +96,12 @@ void BiTree::destroy(TreeNode *root) {
 
 TreeNode* BiTree::create(const vector<optional<int>>& data)
 {
-    if (data.size() == 0) {
-        return nullptr;
-    }
-
-    auto root = new TreeNode(*data[0]);
-    int index = 1;
-    deque<TreeNode*> qu;
-    qu.push_back(root);
-    for (int index = 1; index < data.size(); ) {
-        auto node = qu.front();
-        qu.pop_front();
-        if (data[index]) {
-            node->left = new TreeNode(*data[index]);
-            qu.push_back(node->left);
-        }
-        ++index;
-        if (index == data.size()) {
-            break;
-        }
-        if (data[index]) {
-            node->right = new TreeNode(*data[index]);
-            qu.push_back(node->right);
-        }
-        ++index;
-    }
-    return root;
+    return TreeFactory::create(data);
 }
 
 vector<optional<int>> BiTree::inLevelOrder(const TreeNode* root)
 {
-    if (!root) {
-        return {};
-    }
-    vector<const TreeNode*> curr, next, order;
-    curr.emplace_back(root);
-    while (curr.size()) {
-        next.clear();
-        for (auto node : curr) {
-            order.push_back(node);
-            if (node) {
-                next.push_back(node->left);
-                next.push_back(node->right);
-            }
-        }
-        curr = next;
-    }
-
-    vector<optional<int>> data;
-    int i = order.size() - 1;
-    while (!order[i]) {
-        --i;
-    }
-    for (int j = 0; j <= i; ++j) {
-        if (order[j]) {
-            data.emplace_back(order[j]->val);
-        } else {
-            data.emplace_back();
-        }
-    }
-    return data;
+    return TreeFactory::dump(root);
 }
 
 } // namespace soda::leetcode
