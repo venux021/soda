@@ -43,23 +43,12 @@ string List::toString(ListNode *node) {
 
 ListNode* ListHelper::create(const std::vector<int>& listData)
 {
-    ListNode head(-1);
-    ListNode* tail = &head;
-    for (int data : listData) {
-        auto node = new ListNode(data);
-        tail->next = node;
-        tail = node;
-    }
-    return head.next;
+    return ListFactory::create(listData);
 }
 
 std::vector<int> ListHelper::dump(ListNode* head)
 {
-    vector<int> data;
-    for (; head; head = head->next) {
-        data.push_back(head->val);
-    }
-    return data;
+    return ListFactory::dump(head);
 }
 
 } // namespace soda::leetcode
