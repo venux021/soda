@@ -23,6 +23,9 @@ func init() {
 
     dataParsers[reflect.TypeOf(new(lc.ListNode))] = reflect.ValueOf(lc.ListCreate)
     dataSerializers[reflect.TypeOf(new(lc.ListNode))] = reflect.ValueOf(lc.ListDump)
+
+    dataParsers[reflect.TypeOf(new(lc.TreeNode))] = reflect.ValueOf(lc.TreeCreate)
+    dataSerializers[reflect.TypeOf(new(lc.TreeNode))] = reflect.ValueOf(lc.TreeDump)
 }
 
 type TestInput struct {
