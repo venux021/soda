@@ -17,6 +17,10 @@ namespace {
     }();
 }
 
+// [optional] use custom type with parser and serializer,
+// and if you use this macro, may be you should define your own validator
+// USE_CUSTOM_SERIALIZER(type)
+
 int main()
 {
     // [1] create by class member function

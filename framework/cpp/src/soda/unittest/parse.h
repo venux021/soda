@@ -18,16 +18,28 @@ struct json_type_of {
 template <typename T>
 using json_type_of_t = typename json_type_of<T>::type;
 
+template <typename T>
+struct use_custom_serializer : public std::false_type {
+};
+
 class DataParser {
 public:
     virtual ~DataParser() = default;
 };
 
-template <typename T>
+template <typename T, typename Enable = void>
 class TypedDataParser : public DataParser {
 public:
     virtual T parse(JsonValue v) {
         return v.get<json_type_of_t<T>>();
+    }
+};
+
+template <typename T>
+class TypedDataParser<T, typename std::enable_if<use_custom_serializer<T>::value>::type> : public DataParser {
+public:
+    virtual T parse(JsonValue v) {
+        return T();
     }
 };
 
@@ -47,11 +59,19 @@ public:
     virtual ~DataSerializer() = default;
 };
 
-template <typename T>
+template <typename T, typename Enable = void>
 class TypedDataSerializer : public DataSerializer {
 public:
     virtual JsonValue serialize(const T& data) {
         return JsonValue{data};
+    }
+};
+
+template <typename T>
+class TypedDataSerializer<T, typename std::enable_if<use_custom_serializer<T>::value>::type> : public DataSerializer {
+public:
+    virtual JsonValue serialize(const T& data) {
+        return JsonValue{};
     }
 };
 
@@ -116,5 +136,10 @@ public:
 };
 
 } // soda::unittest
+
+#define USE_CUSTOM_SERIAL(type) \
+    namespace soda::unittest { \
+        template<> struct use_custom_serializer<type> : std::true_type {}; \
+    }
 
 #endif

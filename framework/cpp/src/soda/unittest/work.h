@@ -4,6 +4,7 @@
 #include <array>
 #include <chrono>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <tuple>
 #include <type_traits>
@@ -41,6 +42,21 @@ template <typename PL, typename Tuple>
 struct arg_loader<0,PL,Tuple> {
     static void load(PL& parserList, WorkInput& wd, Tuple& args) {
         do_load_arg<0>(parserList, wd, args);
+    }
+};
+
+template <typename T, typename Enable = void>
+struct default_validator {
+    bool operator() (const T& t1, const T& t2) {
+        return t1 == t2;
+    }
+};
+
+template <typename T>
+struct default_validator<T, typename std::enable_if<use_custom_serializer<T>::value>::type> {
+    bool operator() (const T& t1, const T& t2) {
+        std::cerr << "Warn: you use macro USE_CUSTOM_SERIALIZER, but not custom validator specified\n";
+        return false;
     }
 };
 
@@ -171,7 +187,8 @@ private:
         }
         resultSerializer = new TypedDataSerializer<Return>();
         resultParser = new TypedDataParser<Return>();
-        validator = [](Return& e, Return& r) { return e == r; };
+        // validator = [](Return& e, Return& r) { return e == r; };
+        validator = default_validator<Return>();
     }
 
     void loadArgs(WorkInput& wd, arguments_t& args) {
