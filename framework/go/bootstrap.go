@@ -8,10 +8,10 @@ func TEST_ADD(a int, b int) int {
 
 func main() {
     work := unittest.CreateWork(TEST_ADD)
+    // work.SetValidator(func(e,r)bool)
     work.CompareSerial = true
-    // work.SetArgParser(index, FUNC(a))
-    // work.SetValidator(FUNC(e,r))
-    // work.SetResultParser(FUNC(r))
-    // work.SetResultSerializer(FUNC(s))
+    // work.SetArgParser(index, func(s)a)
+    // work.SetResultParser(func(s)w)
+    // work.SetResultSerializer(func(w)s)
     work.Run()
 }
