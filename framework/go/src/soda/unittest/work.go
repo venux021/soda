@@ -7,6 +7,8 @@ import (
     "os"
     "reflect"
     "time"
+
+    lc "soda/leetcode"
 )
 
 // object real type -> function parse data from json serial
@@ -16,7 +18,11 @@ var dataParsers map[reflect.Type]reflect.Value
 var dataSerializers map[reflect.Type]reflect.Value
 
 func init() {
-    // typeMapping[from] = to
+    dataParsers = make(map[reflect.Type]reflect.Value)
+    dataSerializers = make(map[reflect.Type]reflect.Value)
+
+    dataParsers[reflect.TypeOf(new(lc.ListNode))] = reflect.ValueOf(lc.ListCreate)
+    dataSerializers[reflect.TypeOf(new(lc.ListNode))] = reflect.ValueOf(lc.ListDump)
 }
 
 type TestInput struct {

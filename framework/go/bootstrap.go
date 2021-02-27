@@ -1,5 +1,6 @@
 package main
 
+import _ "soda/leetcode"
 import "soda/unittest"
 
 func TEST_ADD(a int, b int) int {
