@@ -10,6 +10,9 @@ usage:
 options:
     new <testname>
         create source file with name <testname>.go
+
+    build <testname>
+        build test case
     $command_run_help
 
 EOF
@@ -23,29 +26,43 @@ source $framework_dir/common/bashlib.sh || exit
 cmd=$1
 [ -z $cmd ] && usage
 
+testname=${2%.go}
+srcfile=${testname}.go
+execfile=${srcfile}.out
+
 exec_test()
 {
-    local exefile=$1
-    [ -z $exefile ] && usage
-    [ -e $exefile ] || { echo "$exefile not exist" >&2; exit; }
-    run_test go "$@"
+    shift; shift  # skip <cmd> <testname>
+    [ -e $execfile ] || { echo "$execfile not exist" >&2; exit; }
+    run_test go $execfile "$@"
+}
+
+assert_testname()
+{
+    [ -z $testname ] && usage
+}
+
+do_build()
+{
+    [ -e $execfile ] && rm $execfile
+    GOPATH=$self_dir go build -o $execfile $srcfile
 }
 
 case $cmd in
     new)
-        testname=$2
-        [ -z $testname ] && usage
-        testname=${testname%.go}
-        target_file=${testname}.go
-        template_file=$self_dir/bootstrap.go
-        create_source_file $template_file $target_file
+        assert_testname
+        create_source_file $self_dir/bootstrap.go $srcfile
+        ;;
+    build)
+        assert_testname
+        do_build
         ;;
     run)
-        testname=$2
-        [ -z $testname ] && usage
-        exefile=${testname}.go
-        shift; shift
-        exec_test $exefile "$@"
+        assert_testname
+        exec_test "$@"
+        ;;
+    go)
+        do_build && exec_test "$@"
         ;;
     *)
         usage
