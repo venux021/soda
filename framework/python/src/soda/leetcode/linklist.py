@@ -17,13 +17,13 @@ class ListNode:
     def val(self, v):
         self.value = v
 
-class ListHelper:
+class ListFactory:
 
     @classmethod
-    def create(cls, data_list: List[int]) -> ListNode:
+    def create(cls, listData: List[int]) -> ListNode:
         head = ListNode(-1)
         tail = head
-        for val in data_list:
+        for val in listData:
             node = ListNode(val)
             tail.next = node
             tail = node
@@ -36,6 +36,16 @@ class ListHelper:
             L.append(head.val)
             head = head.next
         return L
+
+class ListHelper:
+
+    @classmethod
+    def create(cls, data_list: List[int]) -> ListNode:
+        return ListFactory.create(data_list)
+
+    @classmethod
+    def dump(cls, head: ListNode) -> List[int]:
+        return ListFactory.dump(head)
 
 class LinkList:
 

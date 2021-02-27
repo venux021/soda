@@ -21,17 +21,11 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     init_logging()
-    from soda.unittest.work import TestWork
+    from soda.unittest.job import JobEntry
+    # step [2]: setup function/return/arguments
+    # class, method name, return type, arg types
+    JobEntry.run(Solution, '', _, _)
 
-    # step [2]: setup function
-    # Attention! FUNCTION must use type hint, including arguments and return type
-    work = TestWork(Solution().FUNCTION)
-
-    # step [3]: setup other options
-    # work.validator = (e,r) => bool
-    work.compareSerial = True
-    # work.setArgumentParser(index, (a) => b)
-    # work.resultSerializer = (r) => s
-    # work.resultParser = (s) => r
-    work.run()
+    # JobEntry.runWithObjectCheck(class, method, ret, args, obj_validator)
+    # JobEntry.runWithSerialCheck(class, method, ret, args, ser_validator)
 

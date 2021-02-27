@@ -19,12 +19,6 @@ class CodecFactory:
     @classmethod
     def create(cls, obj_type: Any) -> _BaseCodec:
         return _codec_map.get(obj_type, DefaultCodec())
-        # if obj_type is TreeNode:
-        #     return BiTreeCodec()
-        # elif obj_type is ListNode:
-        #     return LinkListCodec()
-        # else:
-        #     return DefaultCodec()
 
 class DefaultCodec(_BaseCodec):
 

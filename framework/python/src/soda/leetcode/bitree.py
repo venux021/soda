@@ -1,5 +1,6 @@
 from collections import deque
 import json
+from typing import *
 
 class TreeNode:
 
@@ -36,6 +37,32 @@ class TreeNode:
     def val(self, v):
         self.value = v
 
+class TreeFactory:
+
+    @classmethod
+    def create(cls, treeData: List[int]) -> TreeNode:
+        return new_bitree_level(treeData)
+
+    @classmethod
+    def dump(cls, root: TreeNode) -> List[int]:
+        res = []
+        if not root:
+            return res
+        qu = deque([root])
+        while qu:
+            node = qu.popleft()
+            if node:
+                res.append(node.val)
+                qu.append(node.left)
+                qu.append(node.right)
+            else:
+                res.append(None)
+        # remove trailing None
+        p = len(res) - 1
+        while res[p] is None:
+            p -= 1
+        return res[:p+1]
+
 class BiTree:
 
     @classmethod
@@ -59,23 +86,7 @@ class BiTree:
 
     @classmethod
     def level_order(cls, root):
-        res = []
-        if not root:
-            return res
-        qu = deque([root])
-        while qu:
-            node = qu.popleft()
-            if node:
-                res.append(node.val)
-                qu.append(node.left)
-                qu.append(node.right)
-            else:
-                res.append(None)
-        # remove trailing None
-        p = len(res) - 1
-        while res[p] is None:
-            p -= 1
-        return res[:p+1]
+        return TreeFactory.dump(root)
 
 def new_bitree_level(seq, *, cls = TreeNode, display = False):
     Node = cls
