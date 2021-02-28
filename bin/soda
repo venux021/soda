@@ -7,7 +7,7 @@ framework_dir=$SODA_FRAMEWORK_DIR
 
 usage()
 {
-    cat << EOF
+    cat>&2 << EOF
 usage:
     $(basename $0) <lang> [options]
 
@@ -17,14 +17,33 @@ EOF
     exit 1
 }
 
+do_run()
+{
+    export PYTHONPATH="$framework_dir/python/src:$PYTHONPATH"
+    runner=soda.unittest.testerx
+    python3 -m $runner "$@" --script "$framework_dir/$language/work.sh"
+}
+
 language=$1
 [ -z $language ] && usage
 
 shift
 
 case $language in
-    python | cpp | java | scala | ruby | go)
+    python | java | scala | ruby | go)
         bash $framework_dir/$language/work.sh "$@"
+        ;;
+    cpp)
+        cmd=$1
+        if [ "$cmd" == "run" ]; then
+            shift
+            do_run "$@"
+        elif [ "$cmd" == "go" ]; then
+            shift
+            bash $framework_dir/cpp/work.sh make "$@" && do_run "$@"
+        else
+            bash $framework_dir/cpp/work.sh "$@"
+        fi
         ;;
     *)
         usage

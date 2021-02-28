@@ -3,7 +3,7 @@
 usage()
 {
     local cmd=$(basename $0)
-    cat << EOF
+    cat>&2 << EOF
 usage:
     soda cpp [options]
 
@@ -11,18 +11,14 @@ options:
     new <testname>
         create source file with name <testname>.cpp
 
-    compile <testname> 
-        compile test case
-    $command_run_help
+    make <testname> 
+        build executable
 
-    go <testname> [options] 
-        compile && run, options same as command 'run'
+    run <testname>
+        run executable
 
     clean <testname>
         clean intermediate files
-
-    exec <exefile> [options]
-        run executable file, options same as command 'run'
 
 EOF
     exit 1
@@ -38,64 +34,33 @@ source $self_dir/setup_env.sh || exit
 cmd=$1
 [ -z $cmd ] && usage
 
-exec_test()
-{
-    local exefile=$1
-    [ -z $exefile ] && usage
-    [ -x $exefile ] || { echo "$exefile is not executable" >&2; exit; }
-    run_test cpp "$@"
-}
+testname=$2
+makefile=Makefile.gen.$testname
 
-do_compile()
+assert_testname()
 {
-    testname=$1
     [ -z $testname ] && usage
-    testname=${testname%.cpp}
-    makefile=Makefile.gen.$testname
-    bash $self_dir/gen-makefile.sh -c $testname > $makefile
-    make -f $makefile
 }
 
-do_run()
-{
-    testname=$1
-    [ -z $testname ] && usage
-    exefile=${testname}.out
-    shift
-    exec_test $exefile "$@"
-}
-
+assert_testname
 case $cmd in
     new)
-        testname=$2
-        [ -z $testname ] && usage
-        testname=${testname%.cpp}
-        target_file=${testname}.cpp
         template_file=$self_dir/src/soda/unittest/bootstrap.cpp
-        create_source_file $template_file $target_file
+        create_source_file $template_file ${testname}.cpp
         ;;
-    compile)
-        shift
-        do_compile "$@"
+    make)
+        bash $self_dir/gen-makefile.sh -c $testname > $makefile
+        make -f $makefile
         ;;
     run)
-        shift
-        do_run "$@"
-        ;;
-    go)
-        shift
-        do_compile "$@" && do_run "$@"
+        execfile=${testname}.out
+        [ -e $execfile ] || { echo "Error: no executable file" >&2; exit 2; }
+        export LD_LIBRARY_PATH=$self_dir/src/soda/leetcode:$self_dir/src/soda/unittest:$LD_LIBRARY_PATH
+        ASAN_OPTIONS="detect_leaks=0" ./$execfile
         ;;
     clean)
-        testname=$2
-        [ -z $testname ] && usage
-        makefile=Makefile.gen.$testname
         make -f $makefile clean
         rm $makefile
-        ;;
-    exec)
-        shift
-        exec_test "$@"
         ;;
     *)
         usage

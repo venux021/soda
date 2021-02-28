@@ -1,8 +1,8 @@
 this_dir=$(cd -P $(dirname ${BASH_SOURCE[0]}) >/dev/null 2>&1 && pwd)
 framework_dir=$(dirname $this_dir)
 
-command_run_help="
-    run <testname> [--testcase <files> [--delim <DELIM>]] [--verbose] [--timeout <SEC>]
+command_run_help=\
+"    run <testname> [--testcase <files> [--delim <DELIM>]] [--verbose] [--timeout <SEC>]
         run test case
         
         --testcase <files>    test case files, separated by --delim, default is 'test_data'
