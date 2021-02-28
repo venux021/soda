@@ -3,7 +3,7 @@
 usage()
 {
     local cmd=$(basename $0)
-    cat << EOF
+    cat>&2 << EOF
 usage:
     soda go [options]
 
@@ -11,9 +11,11 @@ options:
     new <testname>
         create source file with name <testname>.go
 
-    build <testname>
-        build test case
-    $command_run_help
+    make <testname> 
+        build executable
+
+    run <testname>
+        run executable
 
 EOF
     exit 1
@@ -26,7 +28,7 @@ source $framework_dir/common/bashlib.sh || exit
 cmd=$1
 [ -z $cmd ] && usage
 
-testname=${2%.go}
+testname=$2
 srcfile=${testname}.go
 execfile=${srcfile}.out
 
@@ -42,27 +44,17 @@ assert_testname()
     [ -z $testname ] && usage
 }
 
-do_build()
-{
-    [ -e $execfile ] && rm $execfile
-    GOPATH=$self_dir go build -o $execfile $srcfile
-}
-
+assert_testname
 case $cmd in
     new)
-        assert_testname
         create_source_file $self_dir/bootstrap.go $srcfile
         ;;
-    build)
-        assert_testname
-        do_build
+    make)
+        [ -e $execfile ] && rm $execfile
+        GOPATH=$self_dir go build -o $execfile $srcfile && echo "Build success."
         ;;
     run)
-        assert_testname
-        exec_test "$@"
-        ;;
-    go)
-        do_build && exec_test "$@"
+        ./$execfile
         ;;
     *)
         usage
