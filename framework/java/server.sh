@@ -2,7 +2,7 @@
 
 usage()
 {
-    cat << EOF
+    cat>&2 << EOF
 usage:
     server.sh start|stop
 EOF

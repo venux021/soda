@@ -88,9 +88,10 @@ def parse_input(fp):
 def call_process(command, testobj):
     datatext = json.dumps(testobj)
     return_code = None
-    with Popen(command, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, encoding='utf-8') as proc:
+    # DONOT capture stderr! Message from stderr should print to console
+    with Popen(command, shell=True, stdin=PIPE, stdout=PIPE, encoding='utf-8') as proc:
         try:
-            outs, errs = proc.communicate(datatext, timeout=testcase_timeout)
+            outs, _ = proc.communicate(datatext, timeout=testcase_timeout)
         except:
             kill_all_child_processes(proc.pid)
             # outs, _ = proc.communicate()
@@ -102,7 +103,6 @@ def call_process(command, testobj):
     if return_code != 0:
         print_err(f'Error: failed to run test case')
         print_err(f'<stdout>: {outs}')
-        print_err(f'<stderr>: {errs}')
         raise Exception(f'Sub process exit with {return_code}')
 
     try:
@@ -110,7 +110,7 @@ def call_process(command, testobj):
     except:
         raise Exception(f'Invalid response: {outs}')
 
-def execute(script, testname, config, testobj):
+def execute(script, testname, script_args, config, testobj):
     seq_number = testobj['id']
     print(f'**[{seq_number}]**')
     print(f'* {config["_test_file"]} <{config["_seq_in_file"]}>')
@@ -128,7 +128,7 @@ def execute(script, testname, config, testobj):
         return True
 
     try:
-        command = f'{script} run {testname}'
+        command = f'{script} run {testname} {script_args}'
         response = call_process(command, testobj)
     except Exception as ex:
         print(f'Error: {ex}')
@@ -185,6 +185,7 @@ def main():
     parser.add_argument('--verbose', action='store_true', default=False)
     parser.add_argument('--timeout', default=5.0, type=float)
     parser.add_argument('--script', required=True)
+    parser.add_argument('-X', default='')
 
     args = parser.parse_args()
 
@@ -206,6 +207,8 @@ def main():
     global testcase_timeout
     testcase_timeout = timeout
 
+    script_args = args.X
+
     counter = 0
     for infile in input_files:
         seq_in_file = 0
@@ -216,7 +219,7 @@ def main():
                 testobj['id'] = counter
                 config['_test_file'] = infile
                 config['_seq_in_file'] = seq_in_file
-                if not execute(args.script, testname, config, testobj):
+                if not execute(args.script, testname, script_args, config, testobj):
                     sys.exit(3)
 
 if __name__ == '__main__':

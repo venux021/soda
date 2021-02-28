@@ -3,27 +3,22 @@
 usage()
 {
     local cmd=$(basename $0)
-    cat << EOF
+    cat>&2 << EOF
 usage:
-    soda java [-s|-r] [options]
-
-    -s: use server mode
-    -r: restart server, then use server mode
+    soda java <cmd> [options]
 
 options:
     new <testname>
         create source file with name <testname>.java
 
-    compile <testname> 
+    make <testname> 
         compile test case
-    $command_run_help
 
-    go <testname> [options] 
-        compile && run, options same as command 'run'
+    run <testname> [-server]
+        run test case
 
-    exec <classname> [options]
-        run test case by class name, options same as command 'run'
-
+    server (start|stop|restart)
+        server management
 EOF
     exit 1
 }
@@ -38,13 +33,10 @@ source $self_dir/setup_env.sh || exit
 cmd=$1
 [ -z $cmd ] && usage
 
-server_mode=no
-if [ "$cmd" == "-s" -o "$cmd" == '-r' ]; then
-    server_mode=yes
-    [ "$cmd" == "-r" ] && $self_dir/server.sh stop
-    shift
-    cmd=$1
-fi
+testname=$2
+assert_testname() {
+    [ -z $testname ] && usage
+}
 
 exec_test()
 {
@@ -61,21 +53,9 @@ exec_test()
     run_test java "$@"
 }
 
-do_compile()
-{
-    testname=$1
-    [ -z $testname ] && usage
-    srcfile=${testname}.java
-    assert_framework
-    echo "Compiling $srcfile ..."
-    javac -cp $(get_classpath) $SODA_JAVA_COMPILE_OPTION $srcfile && echo "Compile $srcfile OK"
-}
-
 case $cmd in
     new)
-        testname=$2
-        [ -z $testname ] && usage
-        testname=${testname%.java}
+        assert_testname
         target_file=${testname}.java
         template_file=$self_dir/src/main/java/soda/unittest/__Bootstrap__.java
         create_source_file $template_file $target_file
@@ -84,23 +64,39 @@ case $cmd in
         cat $target_file | grep -v '^package ' | sed "s/__Bootstrap__/$classname/g" >> ${classname}.tmp
         mv ${classname}.tmp $target_file
         ;;
-    compile)
-        testname=$2
-        do_compile $testname
+    make)
+        assert_testname
+        srcfile=${testname}.java
+        assert_framework
+        echo "Compiling $srcfile ..."
+        javac -cp $(get_classpath) $SODA_JAVA_COMPILE_OPTION $srcfile && echo "Compile $srcfile OK"
         ;;
     run)
-        shift
-        exec_test "$@"
+        assert_testname
+        classname=$testname
+        run_mode=$3
+        if [ "$run_mode" == "-server" ]; then
+            runpath=$(pwd)
+            curl --connect-timeout 2 -s "http://localhost:$server_port/soda/java/echo?a=b" >/dev/null || { echo "Unable to detect server" >&2; exit 2; }
+            curl -d "runpath=$runpath" -s "http://localhost:$server_port/soda/java/setup" >/dev/null && echo
+            url="http://localhost:$server_port/soda/java/job"
+            post_content=$(python3 -c "import json; import sys; content = sys.stdin.read(); print(json.dumps({'runpath':'$runpath', 'jobclass':'$classname', 'request':content}))")
+            curl --connect-timeout 2 -d "$post_content" -s $url
+        else
+            assert_framework
+            java -cp $(get_classpath) $classname
+        fi
         ;;
-    go)
-        testname=$2
-        do_compile $testname || exit
-        shift
-        exec_test "$@"
-        ;;
-    exec)
-        shift
-        exec_test "$@"
+    server)
+        operation=$2
+        if [ "$operation" == "start" ]; then
+            $self_dir/server.sh start
+        elif [ "$operation" == "stop" ]; then
+            $self_dir/server.sh stop
+        elif [ "$operation" == "restart" ]; then
+            $self_dir/server.sh stop
+            $self_dir/server.sh start
+        fi
         ;;
     *)
         usage

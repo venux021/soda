@@ -30,17 +30,17 @@ language=$1
 shift
 
 case $language in
-    java | scala | ruby)
+    scala | ruby)
         bash $framework_dir/$language/work.sh "$@"
         ;;
-    cpp | go | python)
+    cpp | go | python | java)
         cmd=$1
         if [ "$cmd" == "run" ]; then
             shift
             do_run "$@"
         elif [ "$cmd" == "go" ]; then
             shift
-            bash $framework_dir/$language/work.sh make "$@" && do_run "$@"
+            bash $framework_dir/$language/work.sh make $1 && do_run "$@"
         else
             bash $framework_dir/$language/work.sh "$@"
         fi
