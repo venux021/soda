@@ -30,10 +30,10 @@ language=$1
 shift
 
 case $language in
-    python | java | scala | ruby)
+    java | scala | ruby)
         bash $framework_dir/$language/work.sh "$@"
         ;;
-    cpp | go)
+    cpp | go | python)
         cmd=$1
         if [ "$cmd" == "run" ]; then
             shift

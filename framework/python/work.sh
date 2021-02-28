@@ -3,17 +3,19 @@
 usage()
 {
     local cmd=$(basename $0)
-    cat << EOF
+    cat>&2 << EOF
 usage:
     soda python [options]
 
 options:
     new <testname>
         create source file with name <testname>.py
-    $command_run_help
 
-    exec <exefile> [options]
-        run executable file, options same as command 'run'
+    make <testname> 
+        do nothing
+
+    run <testname>
+        run test case
 
 EOF
     exit 1
@@ -26,33 +28,25 @@ source $framework_dir/common/bashlib.sh || exit
 cmd=$1
 [ -z $cmd ] && usage
 
-exec_test()
+testname=$2
+execfile=${testname}.py
+
+assert_testname()
 {
-    local exefile=$1
-    [ -z $exefile ] && usage
-    [ -e $exefile ] || { echo "$exefile not exist" >&2; exit; }
-    run_test python "$@"
+    [ -z $testname ] && usage
 }
 
 case $cmd in
     new)
-        testname=$2
-        [ -z $testname ] && usage
-        testname=${testname%.py}
-        target_file=${testname}.py
         template_file=$self_dir/src/soda/unittest/bootstrap.py
-        create_source_file $template_file $target_file
+        create_source_file $template_file $execfile
+        ;;
+    make)
+        # Don't remove. Just for interface compatible
         ;;
     run)
-        testname=$2
-        [ -z $testname ] && usage
-        exefile=${testname}.py
-        shift; shift
-        exec_test $exefile "$@"
-        ;;
-    exec)
-        shift
-        exec_test "$@"
+        export PYTHONPATH="$self_dir/src:$PYTHONPATH"
+        python3 $execfile
         ;;
     *)
         usage
