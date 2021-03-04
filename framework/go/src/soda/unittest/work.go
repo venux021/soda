@@ -29,9 +29,9 @@ func init() {
 }
 
 type TestInput struct {
-    Args []interface{}   `json:"args"`
-    Expected interface{} `json:"expected"`
-    Id int               `json:"id"`
+    Id int                   `json:"id"`
+    Args []json.RawMessage   `json:"args"`
+    Expected json.RawMessage `json:"expected"`
 }
 
 type TestOutput struct {
@@ -76,12 +76,16 @@ func (work *TestWork) SetArgParser(index int, fn interface{}) {
     work.argumentParsers[index] = reflect.ValueOf(fn)
 }
 
-func convByType(untyped interface{}, rtype reflect.Type) reflect.Value {
-    content, _ := json.Marshal(untyped)
+func convByType(untyped json.RawMessage, rtype reflect.Type) reflect.Value {
     v := reflect.New(rtype)
-    p := v.Interface()
-    json.Unmarshal(content, p)
+    if err := json.Unmarshal(untyped, v.Interface()); err != nil {
+        printErr("Failed parse json: %s\n", err)
+    }
     return v.Elem()
+}
+
+func printErr(format string, a ...interface{}) (n int, err error) {
+    return fmt.Fprintf(os.Stderr, format, a...)
 }
 
 func (work *TestWork) initialize (fn interface{}) *TestWork {
@@ -113,7 +117,7 @@ func compareByJsonSerial(a interface{}, b interface{}) bool {
     return reflect.DeepEqual(dataA, dataB)
 }
 
-func fromSerial(ser interface{}, workType reflect.Type, parser reflect.Value) reflect.Value {
+func fromSerial(ser json.RawMessage, workType reflect.Type, parser reflect.Value) reflect.Value {
     if !parser.IsValid() {
         parser = dataParsers[workType]
     }
@@ -143,7 +147,7 @@ func (work *TestWork) Run() {
     input := readStdin()
     testInput := TestInput {}
     if err := json.Unmarshal([]byte(input), &testInput); err != nil {
-        fmt.Fprintf(os.Stderr, "JSON unmarshaling failed: %s", err)
+        printErr("JSON unmarshaling failed: %s\n", err)
         return
     }
 
@@ -178,7 +182,7 @@ func (work *TestWork) Run() {
 
     jstring, err := json.Marshal(out)
     if err != nil {
-        fmt.Fprintf(os.Stderr, "JSON marshaling failed: %s", err)
+        printErr("JSON marshaling failed: %s\n", err)
         return
     }
     fmt.Print(string(jstring))
