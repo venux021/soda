@@ -191,7 +191,7 @@ def main():
 
     testname = args.testname
     if args.testcase is None:
-        input_files = [f'{testname}.input']
+        input_files = [f'{testname.lower()}.input']
     else:
         input_files = args.testcase.split(args.delim)
 
