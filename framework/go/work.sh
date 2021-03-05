@@ -51,7 +51,10 @@ case $cmd in
         ;;
     make)
         [ -e $execfile ] && rm $execfile
-        GOPATH=$self_dir go build -o $execfile $srcfile && echo "Build success."
+        export GOPATH=$self_dir
+        # for go1.16
+        export GO111MODULE=auto
+        go build -o $execfile $srcfile && echo "Build success."
         ;;
     run)
         ./$execfile
