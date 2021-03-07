@@ -34,6 +34,10 @@ type TestInput struct {
     Expected json.RawMessage `json:"expected"`
 }
 
+func (t *TestInput) HasExpected() bool {
+    return len(t.Expected) > 0 && string(t.Expected) != "null"
+}
+
 type TestOutput struct {
     Id int              `json:"id"`
     Success bool        `json:"success"`
@@ -169,7 +173,7 @@ func (work *TestWork) Run() {
     out.Elapse = elapseMillis
 
     success := true
-    if testInput.Expected != nil {
+    if testInput.HasExpected() {
         if !work.CompareSerial {
             expectValue := fromSerial(testInput.Expected, work.ReturnType, work.resultParser)
             success = work.validator.Call(vals(expectValue, resultValue))[0].Bool()
