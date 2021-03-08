@@ -29,14 +29,14 @@ public:
     ~JsonValueNm() { if (!shared) delete ptr; }
 
     template <typename T>
-    T get() { return ptr->get<T>(); }
+    T get() const { return ptr->get<T>(); }
 
     template <typename T>
     void set(const T& t) {
         *ptr = t;
     }
 
-    bool isNull() { return ptr->is_null(); }
+    bool isNull() const { return ptr->is_null(); }
 };
 
 bool operator==(const JsonValueNm& v1, const JsonValueNm& v2);
@@ -54,7 +54,7 @@ public:
 
     JsonDataNm(): jobject{} {}
 
-    std::shared_ptr<JsonValueNm> query(const std::string& str) {
+    std::shared_ptr<JsonValueNm> query(const std::string& str) const {
         if (str.length() == 0) {
             return std::shared_ptr<JsonValueNm>();
         }
@@ -63,10 +63,10 @@ public:
             auto idx = str.find("[");
             auto key = str.substr(0, idx);
             int index = stoi(str.substr(idx+1, str.length()-idx-2));
-            return std::make_shared<JsonValueNm>(&jobject[key][index]);
+            return std::make_shared<JsonValueNm>(const_cast<json*>(&jobject[key][index]));
         } else {
             return jobject.contains(str) 
-                ? std::make_shared<JsonValueNm>(&jobject[str]) 
+                ? std::make_shared<JsonValueNm>(const_cast<json*>(&jobject[str]))
                 : std::make_shared<JsonValueNm>();
         }
     }
@@ -80,7 +80,7 @@ public:
         jobject[key] = t;
     }
 
-    std::string dump() {
+    std::string dump() const {
         return jobject.dump();
     }
 };

@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include "soda/leetcode/leetcode.h"
-#include "soda/unittest/unittest.h"
+#include "soda/unittest/work.h"
 
 using namespace std;
 using namespace soda::leetcode;
@@ -20,6 +20,10 @@ namespace {
 // [optional] use custom type with parser and serializer,
 // and if you use this macro, may be you should define your own validator
 // USE_CUSTOM_SERIALIZER(type)
+
+// [optional] instantiate json access type. This will increase compile time
+// #include "soda/unittest/json_access.h"
+// SODA_JSON_ACCESS_TYPE(type)
 
 int main()
 {

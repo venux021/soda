@@ -2,16 +2,22 @@
 #define _SODA_UNITTEST_JSONPARSE_H_
 
 #include <memory>
-#include <sstream>
 #include <string>
+#include <type_traits>
 #include <utility>
-
-#include "jsonlib/lib_nlohmann.h"
 
 namespace soda::unittest {
 
+class JsonValueNm;
+class JsonDataNm;
 using JsonValueAdapter = JsonValueNm;
 using JsonDataAdapter = JsonDataNm;
+
+template <typename T>
+struct json_value_access {
+    static T get(std::shared_ptr<JsonValueAdapter> v);
+    static void set(std::shared_ptr<JsonValueAdapter> v, const T& t);
+};
 
 class JsonValue {
 
@@ -21,83 +27,67 @@ class JsonValue {
     std::shared_ptr<JsonValueAdapter> v;
 
 public:
-    JsonValue(std::shared_ptr<JsonValueAdapter> v): v{v} {}
+    JsonValue(std::shared_ptr<JsonValueAdapter> v);
 
-    JsonValue(): v{new JsonValueAdapter} {}
+    JsonValue();
 
     template <typename T>
-    JsonValue(T&& t): v{new JsonValueAdapter} {
+    JsonValue(T&& t): v{emptyValue()} {
         set(std::forward<T>(t));
     }
 
     template <typename T>
-    T get() { return v->get<T>(); }
+    T get() {
+        return json_value_access<std::remove_reference_t<T>>::get(v);
+    }
 
     template <typename T>
     void set(const T& t) {
-        v->set(t);
+        json_value_access<std::remove_reference_t<T>>::set(v, t);
     }
 
-    bool isNull() { return v->isNull(); }
+    bool isNull() const;
+
+private:
+    static std::shared_ptr<JsonValueAdapter> emptyValue();
 };
 
 bool operator==(const JsonValue& v1, const JsonValue& v2);
 
 class WorkInput {
 
-    JsonDataAdapter* d;
+    std::shared_ptr<JsonDataAdapter> d;
 
 public:
-    WorkInput(const std::string& jstr):
-        d{new JsonDataAdapter(jstr)}
-    {}
+    WorkInput(const std::string& jstr);
 
-    int getId() {
-        return d->query("id")->get<int>();
-    }
+    int getId() const;
 
-    bool hasExpected() {
-        return !d->query("expected")->isNull();
-    }
+    bool hasExpected() const;
 
-    JsonValue getExpected() {
-        return JsonValue{d->query("expected")};
-    }
+    JsonValue getExpected() const;
 
-    JsonValue getArg(int index) {
-        std::ostringstream out;
-        out << "args[" << index << "]";
-        return JsonValue{d->query(out.str())};
-    }
+    JsonValue getArg(int index) const;
 
 };
 
 class WorkOutput {
 
-    JsonDataAdapter* d;
+    std::shared_ptr<JsonDataAdapter> d;
 
 public:
-    WorkOutput(): d{new JsonDataNm} {}
+    WorkOutput();
     
-    void setResult(JsonValue& res) {
-        d->set("result", *res.v);
-    }
+    void setResult(JsonValue& res);
 
-    void setId(int id) {
-        d->setval("id", id);
-    }
+    void setId(int id);
 
-    void setSuccess(bool s) {
-        d->setval("success", s);
-    }
+    void setSuccess(bool s);
 
-    void setElapse(double e) {
-        d->setval("elapse", e);
-    }
+    void setElapse(double e);
 
-    std::string toJSONString() {
-        return d->dump();
-    }
+    std::string toJSONString() const;
+
 };
 
 } // namespace soda::unittest
