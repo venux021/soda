@@ -77,50 +77,26 @@ string JsonObject::dump() const
 {
     return ptr->dump();
 }
-// JsonValue::JsonValue(shared_ptr<JsonValueAdapter> v): v{v} {}
-// 
-// JsonValue::JsonValue(): v{new JsonValueAdapter} {}
-// 
-// std::shared_ptr<JsonValueAdapter> JsonValue::emptyValue()
-// {
-//     return make_shared<JsonValueAdapter>();
-// }
-// 
-// bool JsonValue::isNull() const
-// {
-//     return v->isNull();
-// }
-// 
-// bool operator==(const JsonValue& v1, const JsonValue& v2)
-// {
-//     return v1.v == v2.v || *v1.v == *v2.v;
-// }
 
 WorkInput::WorkInput(const std::string& jstr): obj{jstr} {}
 
 int WorkInput::getId() const
 {
-    // return d->query("id")->get<int>();
     return obj.pointer()["id"].get<int>();
 }
 
 bool WorkInput::hasExpected() const
 {
-    // return !d->query("expected")->isNull();
     return obj.pointer().hasField("expected");
 }
 
 JsonPointer WorkInput::getExpected() const 
 {
-    // return JsonValue{d->query("expected")};
     return obj.pointer()["expected"];
 }
 
 JsonPointer WorkInput::getArg(int index) const
 {
-    // std::ostringstream out;
-    // out << "args[" << index << "]";
-    // return JsonValue{d->query(out.str())};
     return obj.pointer()["args"][index];
 }
 
@@ -133,19 +109,16 @@ void WorkOutput::setResult(JsonObject& res)
 
 void WorkOutput::setId(int id)
 {
-//    d->setval("id", id);
     root()["id"].set(id);
 }
 
 void WorkOutput::setSuccess(bool s)
 {
-    // d->setval("success", s);
     root()["success"].set(s);
 }
 
 void WorkOutput::setElapse(double e)
 {
-    // d->setval("elapse", e);
     root()["elapse"].set(e);
 }
 

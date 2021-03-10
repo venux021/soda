@@ -59,9 +59,4 @@ string JsonObject::dump() const
 
 } // namespace nmjson
 
-bool operator==(const JsonValueNm& v1, const JsonValueNm& v2)
-{
-    return v1.ptr == v2.ptr || *v1.ptr == *v2.ptr;
-}
-
 } // namespace soda::unittest
