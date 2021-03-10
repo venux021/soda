@@ -1,6 +1,8 @@
 #ifndef _SODA_LEETCODE_LIST_H_
 #define _SODA_LEETCODE_LIST_H_
 
+#include <istream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -42,19 +44,13 @@ struct SingleListFactory {
 using ListNode = SingleListNode<int>;
 using ListFactory = SingleListFactory<int>;
 
-// struct ListNode : public SingleListNode<int> {
-//     int val;
-//     ListNode *next;
-//     ListNode(int x) : val(x), next(NULL) {}
-// };
-
 class List {
 public:
-    static ListNode *load(istream &in);
+    static ListNode *load(std::istream &in);
     
-    static ListNode *load(string input);
+    static ListNode *load(std::string input);
 
-    static string toString(ListNode *node);
+    static std::string toString(ListNode *node);
 };
 
 class ListHelper {

@@ -1,5 +1,5 @@
-#ifndef _SODA_UNITTEST_CUSTOM_NLOHMANN_H_
-#define _SODA_UNITTEST_CUSTOM_NLOHMANN_H_
+#ifndef _SODA_UNITTEST_NMJSON_SERIAL_H_
+#define _SODA_UNITTEST_NMJSON_SERIAL_H_
 
 #include <optional>
 #include <vector>

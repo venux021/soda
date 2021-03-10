@@ -1,6 +1,8 @@
 #ifndef _SODA_UNITTEST_PARSE_H_
 #define _SODA_UNITTEST_PARSE_H_
 
+#include <type_traits>
+
 #include "soda/leetcode/bitree.h"
 #include "soda/leetcode/list.h"
 
@@ -30,7 +32,7 @@ public:
 template <typename T, typename Enable = void>
 class TypedDataParser : public DataParser {
 public:
-    virtual T parse(JsonValue v) {
+    virtual T parse(JsonPointer v) {
         return v.get<json_type_of_t<T>>();
     }
 };
@@ -38,7 +40,7 @@ public:
 template <typename T>
 class TypedDataParser<T, typename std::enable_if<use_custom_serializer<T>::value>::type> : public DataParser {
 public:
-    virtual T parse(JsonValue v) {
+    virtual T parse(JsonPointer v) {
         return T();
     }
 };
@@ -49,7 +51,7 @@ class CustomDataParser : public TypedDataParser<To> {
 public:
     CustomDataParser(Func fn): func{fn} {}
 
-    To parse(JsonValue v) override {
+    To parse(JsonPointer v) override {
         return func(v.get<From>());
     }
 };
@@ -62,16 +64,16 @@ public:
 template <typename T, typename Enable = void>
 class TypedDataSerializer : public DataSerializer {
 public:
-    virtual JsonValue serialize(const T& data) {
-        return JsonValue{data};
+    virtual JsonObject serialize(const T& data) {
+        return JsonObject{data};
     }
 };
 
 template <typename T>
 class TypedDataSerializer<T, typename std::enable_if<use_custom_serializer<T>::value>::type> : public DataSerializer {
 public:
-    virtual JsonValue serialize(const T& data) {
-        return JsonValue{};
+    virtual JsonObject serialize(const T& data) {
+        return JsonObject{};
     }
 };
 
@@ -81,8 +83,8 @@ class CustomDataSerializer : public TypedDataSerializer<T> {
 public:
     CustomDataSerializer(Func fn): func(fn) {}
 
-    JsonValue serialize(const T& data) override {
-        return JsonValue{func(data)};
+    JsonObject serialize(const T& data) override {
+        return JsonObject{func(data)};
     }
 };
 
@@ -90,7 +92,7 @@ public:
 template <>
 class TypedDataParser<TreeNode*> : public DataParser {
 public:
-    virtual TreeNode* parse(JsonValue v) {
+    virtual TreeNode* parse(JsonPointer v) {
         return BiTree::create(v.get<std::vector<std::optional<int>>>());
     }
 };
@@ -98,15 +100,15 @@ public:
 template <>
 class TypedDataSerializer<TreeNode*> : public DataSerializer {
 public:
-    virtual JsonValue serialize(TreeNode* root) {
-        return JsonValue{BiTree::inLevelOrder(root)};
+    virtual JsonObject serialize(TreeNode* root) {
+        return JsonObject{BiTree::inLevelOrder(root)};
     }
 };
 
 template <>
 class TypedDataParser<ListNode*> : public DataParser {
 public:
-    virtual ListNode* parse(JsonValue v) {
+    virtual ListNode* parse(JsonPointer v) {
         return ListHelper::create(v.get<std::vector<int>>());
     }
 };
@@ -114,15 +116,15 @@ public:
 template <>
 class TypedDataSerializer<ListNode*> : public DataSerializer {
 public:
-    virtual JsonValue serialize(ListNode* head) {
-        return JsonValue{ListHelper::dump(head)};
+    virtual JsonObject serialize(ListNode* head) {
+        return JsonObject{ListHelper::dump(head)};
     }
 };
 
 template <>
 class TypedDataParser<char> : public DataParser {
 public:
-    virtual char parse(JsonValue v) {
+    virtual char parse(JsonPointer v) {
         return v.get<std::string>()[0];
     }
 };
@@ -130,8 +132,8 @@ public:
 template <>
 class TypedDataSerializer<char> : public DataSerializer {
 public:
-    virtual JsonValue serialize(char ch) {
-        return JsonValue{std::string(1, ch)};
+    virtual JsonObject serialize(char ch) {
+        return JsonObject{std::string(1, ch)};
     }
 };
 
@@ -139,7 +141,7 @@ public:
 
 #define USE_CUSTOM_SERIAL(type) \
     namespace soda::unittest { \
-        template<> struct use_custom_serializer<type> : std::true_type {}; \
+        template<> struct use_custom_serializer<type> : public std::true_type {}; \
     }
 
 #endif

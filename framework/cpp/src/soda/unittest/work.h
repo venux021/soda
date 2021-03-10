@@ -113,8 +113,16 @@ public:
         if (argParsers[N]) {
             delete argParsers[N];
         }
-        using to_type = typename std::tuple_element<N, arguments_t>::type;
+        using to_type = std::tuple_element_t<N, arguments_t>;
         argParsers[N] = new CustomDataParser<From, to_type, Func>(fn);
+    }
+
+    template <int N>
+    void setArgParser(TypedDataParser<std::tuple_element_t<N, arguments_t>>* parser) {
+        if (argParsers[N]) {
+            delete argParsers[N];
+        }
+        argParsers[N] = parser;
     }
 
     template <typename From, typename Func>
@@ -152,10 +160,10 @@ public:
         };
 
         using namespace std::chrono;
-        auto startMicro = chrono::steady_clock::now();
+        auto startMicro = steady_clock::now();
         auto result = std::apply(caller, arguments);
-        auto endMicro = chrono::steady_clock::now();
-        auto elapseMicro = chrono::duration_cast<chrono::microseconds>(endMicro - startMicro).count();
+        auto endMicro = steady_clock::now();
+        auto elapseMicro = duration_cast<microseconds>(endMicro - startMicro).count();
         auto elapseMillis = elapseMicro / 1000.0;
 
         auto json_res = resultSerializer->serialize(result);
@@ -171,7 +179,7 @@ public:
                 auto expect = resultParser->parse(input.getExpected());
                 success = validator(expect, result);
             } else {
-                success = (input.getExpected() == json_res);
+                success = (input.getExpected() == json_res.pointer());
             }
         }
         output.setSuccess(success);

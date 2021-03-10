@@ -10,7 +10,7 @@ using json = nlohmann::json;
 
 #include "soda/leetcode/bitree.h"
 #include "soda/leetcode/list.h"
-#include "soda/unittest/jsonlib/custom_nlohmann.h"
+#include "soda/unittest/jsonlib/nmjson_serial.h"
 
 using namespace soda::leetcode;
 
