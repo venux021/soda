@@ -1,18 +1,20 @@
 package leetcode
 
+import "soda/util"
+
 type TreeNode struct {
     Val int
     Left *TreeNode
     Right *TreeNode
 }
 
-func TreeCreate(data []*int) *TreeNode {
+func TreeCreate(data util.OptionalIntSlice) *TreeNode {
     if len(data) == 0 {
         return nil
     }
 
     root := new(TreeNode)
-    root.Val = *data[0]
+    root.Val = data[0].Get()
     qu := make([]*TreeNode, 0)
     qu = append(qu, root)
 
@@ -20,18 +22,18 @@ func TreeCreate(data []*int) *TreeNode {
     for index < len(data) {
         node := qu[0]
         qu = qu[1:]
-        if (data[index] != nil) {
+        if (!data[index].IsNull()) {
             node.Left = new(TreeNode)
-            node.Left.Val = *data[index]
+            node.Left.Val = data[index].Get()
             qu = append(qu, node.Left)
         }
         index++
         if index == len(data) {
             break
         }
-        if (data[index] != nil) {
+        if (!data[index].IsNull()) {
             node.Right = new(TreeNode)
-            node.Right.Val = *data[index]
+            node.Right.Val = data[index].Get()
             qu = append(qu, node.Right)
         }
         index++
@@ -39,8 +41,8 @@ func TreeCreate(data []*int) *TreeNode {
     return root
 }
 
-func TreeDump(root *TreeNode) []*int {
-    data := make([]*int, 0)
+func TreeDump(root *TreeNode) util.OptionalIntSlice {
+    var data util.OptionalIntSlice
     if root == nil {
         return data
     }
@@ -67,11 +69,12 @@ func TreeDump(root *TreeNode) []*int {
         i--
     }
     for j := 0; j <= i; j++ {
+        var v util.OptionalInt
         if order[j] != nil {
-            data = append(data, &order[j].Val)
-        } else {
-            data = append(data, nil)
+            v.Set(order[j].Val)
         }
+        data = append(data, v)
     }
     return data
 }
+
