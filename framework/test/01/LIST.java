@@ -22,7 +22,7 @@ class Solution {
     }
 }
 
-public class TList implements Supplier<TestWork> {
+public class LIST implements Supplier<TestWork> {
 
     @Override
     public TestWork get() {
@@ -47,7 +47,7 @@ public class TList implements Supplier<TestWork> {
     }
 
     public static void main(String[] args) throws Exception {
-        new TList().get().run();
+        new LIST().get().run();
     }
 
 }

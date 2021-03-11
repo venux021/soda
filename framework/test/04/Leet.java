@@ -81,7 +81,7 @@ public class Leet implements Supplier<TestWork> {
             var p0 = (List<List<Integer>>) v.get(0);
             params.persons = DataUtils.toIntArray(p0.get(0));
             params.times = DataUtils.toIntArray(p0.get(1));
-            params.qs = new int[params.persons.length];
+            params.qs = new int[v.size()];
             for (int i = 1; i < v.size(); ++i) {
                 List<Integer> p = (List<Integer>) v.get(i);
                 params.qs[i] = p.get(0);
