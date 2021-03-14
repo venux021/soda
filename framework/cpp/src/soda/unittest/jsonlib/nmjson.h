@@ -12,6 +12,53 @@ namespace soda::unittest {
 
 namespace nmjson {
 
+class JsonObject2 {
+
+    using json = nlohmann::json;
+
+    json* const ptr;
+
+    const bool shared;
+
+public:
+    JsonObject2();
+
+    explicit JsonObject2(const std::string& jstr);
+
+    explicit JsonObject2(json* j);
+
+    ~JsonObject2();
+
+    JsonObject2(const JsonObject2& jobj);
+
+    JsonObject2& operator=(const JsonObject2& jobj);
+
+    bool operator==(const JsonObject2& j2) const;
+
+    template <typename T>
+    T get() const { return ptr->get<T>(); }
+
+    template <typename T>
+    void set(const T& t) {
+        *ptr = t;
+    }
+
+    std::shared_ptr<JsonObject2> operator[](const std::string& key) const;
+
+    std::shared_ptr<JsonObject2> operator[](int index) const;
+
+    int size() const;
+
+    static JsonObject2 array();
+
+    bool isNull() const;
+
+    bool contains(const std::string& key) const;
+
+    std::string dump() const;
+
+};
+
 class JsonPtr {
 
     using json = nlohmann::json;

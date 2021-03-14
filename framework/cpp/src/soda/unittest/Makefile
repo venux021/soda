@@ -1,5 +1,6 @@
 SOURCES := $(filter-out $(wildcard bootstrap*.cpp),$(wildcard *.cpp jsonlib/*.cpp))
 OBJS = $(SOURCES:.cpp=.o)
+DEPS = $(SOURCES:.cpp=.d)
 CC = g++
 CPPFLAGS = -shared -fPIC ${SODA_INCLUDE} ${SODA_CPP_FLAGS}
 
@@ -16,10 +17,11 @@ all: $(TARGET)
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
-sinclude $(SOURCES:.cpp=.d)
+#sinclude $(SOURCES:.cpp=.d)
+sinclude $(DEPS)
 
 $(TARGET): $(OBJS)
 	$(CC) $(CPPFLAGS) -o $(LIB_FILE) $(OBJS)
 
 clean:
-	rm -f *.o *.d $(LIB_FILE)
+	rm -f $(OBJS) $(DEPS) $(LIB_FILE)

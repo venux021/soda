@@ -179,7 +179,7 @@ public:
                 auto expect = resultParser->parse(input.getExpected());
                 success = validator(expect, result);
             } else {
-                success = (input.getExpected() == json_res.pointer());
+                success = (input.getExpected() == json_res);
             }
         }
         output.setSuccess(success);

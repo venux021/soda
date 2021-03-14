@@ -32,7 +32,7 @@ public:
 template <typename T, typename Enable = void>
 class TypedDataParser : public DataParser {
 public:
-    virtual T parse(JsonPointer v) {
+    virtual T parse(const JsonProxy& v) {
         return v.get<json_type_of_t<T>>();
     }
 };
@@ -40,7 +40,7 @@ public:
 template <typename T>
 class TypedDataParser<T, typename std::enable_if<use_custom_serializer<T>::value>::type> : public DataParser {
 public:
-    virtual T parse(JsonPointer v) {
+    virtual T parse(const JsonProxy& v) {
         return T();
     }
 };
@@ -51,7 +51,7 @@ class CustomDataParser : public TypedDataParser<To> {
 public:
     CustomDataParser(Func fn): func{fn} {}
 
-    To parse(JsonPointer v) override {
+    To parse(const JsonProxy& v) override {
         return func(v.get<From>());
     }
 };
@@ -64,16 +64,16 @@ public:
 template <typename T, typename Enable = void>
 class TypedDataSerializer : public DataSerializer {
 public:
-    virtual JsonObject serialize(const T& data) {
-        return JsonObject{data};
+    virtual JsonProxy serialize(const T& data) {
+        return JsonProxy{data};
     }
 };
 
 template <typename T>
 class TypedDataSerializer<T, typename std::enable_if<use_custom_serializer<T>::value>::type> : public DataSerializer {
 public:
-    virtual JsonObject serialize(const T& data) {
-        return JsonObject{};
+    virtual JsonProxy serialize(const T& data) {
+        return JsonProxy{};
     }
 };
 
@@ -83,8 +83,8 @@ class CustomDataSerializer : public TypedDataSerializer<T> {
 public:
     CustomDataSerializer(Func fn): func(fn) {}
 
-    JsonObject serialize(const T& data) override {
-        return JsonObject{func(data)};
+    JsonProxy serialize(const T& data) override {
+        return JsonProxy{func(data)};
     }
 };
 
@@ -92,7 +92,7 @@ public:
 template <>
 class TypedDataParser<TreeNode*> : public DataParser {
 public:
-    virtual TreeNode* parse(JsonPointer v) {
+    virtual TreeNode* parse(const JsonProxy& v) {
         return BiTree::create(v.get<std::vector<std::optional<int>>>());
     }
 };
@@ -100,15 +100,15 @@ public:
 template <>
 class TypedDataSerializer<TreeNode*> : public DataSerializer {
 public:
-    virtual JsonObject serialize(TreeNode* root) {
-        return JsonObject{BiTree::inLevelOrder(root)};
+    virtual JsonProxy serialize(TreeNode* root) {
+        return JsonProxy{BiTree::inLevelOrder(root)};
     }
 };
 
 template <>
 class TypedDataParser<ListNode*> : public DataParser {
 public:
-    virtual ListNode* parse(JsonPointer v) {
+    virtual ListNode* parse(const JsonProxy& v) {
         return ListHelper::create(v.get<std::vector<int>>());
     }
 };
@@ -116,15 +116,15 @@ public:
 template <>
 class TypedDataSerializer<ListNode*> : public DataSerializer {
 public:
-    virtual JsonObject serialize(ListNode* head) {
-        return JsonObject{ListHelper::dump(head)};
+    virtual JsonProxy serialize(ListNode* head) {
+        return JsonProxy{ListHelper::dump(head)};
     }
 };
 
 template <>
 class TypedDataParser<char> : public DataParser {
 public:
-    virtual char parse(JsonPointer v) {
+    virtual char parse(const JsonProxy& v) {
         return v.get<std::string>()[0];
     }
 };
@@ -132,8 +132,8 @@ public:
 template <>
 class TypedDataSerializer<char> : public DataSerializer {
 public:
-    virtual JsonObject serialize(char ch) {
-        return JsonObject{std::string(1, ch)};
+    virtual JsonProxy serialize(char ch) {
+        return JsonProxy{std::string(1, ch)};
     }
 };
 

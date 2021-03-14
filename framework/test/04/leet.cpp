@@ -84,7 +84,7 @@ USE_CUSTOM_SERIAL(Params)
 
 class ParamsParser : public TypedDataParser<Params> {
 public:
-    Params parse(JsonPointer jp) override {
+    Params parse(const JsonProxy& jp) override {
         Params params;
         auto p0 = jp[0].get<vector<vector<int>>>();
         params.persons = p0[0];
