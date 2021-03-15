@@ -9,10 +9,10 @@
 namespace soda::unittest {
 
 namespace nmjson {
-    class JsonObject2;
+    class JsonObject;
 }
 
-using js_obj_t = nmjson::JsonObject2;
+using js_obj_t = nmjson::JsonObject;
 
 template <typename T>
 struct json_proxy_access {
@@ -58,6 +58,14 @@ public:
         return *this;
     }
 
+    template <typename T>
+    void append(const T& t) {
+        auto tail = expandTail();
+        tail = t;
+    }
+
+    void append(const JsonProxy& p);
+
     int size() const;
 
     bool isNull() const;
@@ -69,6 +77,9 @@ public:
     JsonProxy operator[](int index) const;
 
     std::string dump() const;
+
+private:
+    JsonProxy expandTail();
 
 };
 

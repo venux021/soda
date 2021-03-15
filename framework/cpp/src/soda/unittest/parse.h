@@ -3,12 +3,7 @@
 
 #include <type_traits>
 
-#include "soda/leetcode/bitree.h"
-#include "soda/leetcode/list.h"
-
-#include "workdata.h"
-
-using namespace soda::leetcode;
+#include "jsonproxy.h"
 
 namespace soda::unittest {
 
@@ -85,55 +80,6 @@ public:
 
     JsonProxy serialize(const T& data) override {
         return JsonProxy{func(data)};
-    }
-};
-
-
-template <>
-class TypedDataParser<TreeNode*> : public DataParser {
-public:
-    virtual TreeNode* parse(const JsonProxy& v) {
-        return BiTree::create(v.get<std::vector<std::optional<int>>>());
-    }
-};
-
-template <>
-class TypedDataSerializer<TreeNode*> : public DataSerializer {
-public:
-    virtual JsonProxy serialize(TreeNode* root) {
-        return JsonProxy{BiTree::inLevelOrder(root)};
-    }
-};
-
-template <>
-class TypedDataParser<ListNode*> : public DataParser {
-public:
-    virtual ListNode* parse(const JsonProxy& v) {
-        return ListHelper::create(v.get<std::vector<int>>());
-    }
-};
-
-template <>
-class TypedDataSerializer<ListNode*> : public DataSerializer {
-public:
-    virtual JsonProxy serialize(ListNode* head) {
-        return JsonProxy{ListHelper::dump(head)};
-    }
-};
-
-template <>
-class TypedDataParser<char> : public DataParser {
-public:
-    virtual char parse(const JsonProxy& v) {
-        return v.get<std::string>()[0];
-    }
-};
-
-template <>
-class TypedDataSerializer<char> : public DataSerializer {
-public:
-    virtual JsonProxy serialize(char ch) {
-        return JsonProxy{std::string(1, ch)};
     }
 };
 

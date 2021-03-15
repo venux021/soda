@@ -1,0 +1,90 @@
+#ifndef _SODA_UNITTEST_SPETIAL_CONVERT_H_
+#define _SODA_UNITTEST_SPETIAL_CONVERT_H_
+
+#include <string>
+#include <vector>
+
+#include "soda/leetcode/bitree.h"
+#include "soda/leetcode/list.h"
+
+#include "parse.h"
+
+namespace soda::unittest {
+
+using namespace soda::leetcode;
+
+// ---- type: TreeNode* ----
+template <>
+class TypedDataParser<TreeNode*> : public DataParser {
+public:
+    virtual TreeNode* parse(const JsonProxy& v) {
+        return BiTree::create(v.get<std::vector<std::optional<int>>>());
+    }
+};
+template <>
+class TypedDataSerializer<TreeNode*> : public DataSerializer {
+public:
+    virtual JsonProxy serialize(TreeNode* root) {
+        return JsonProxy{BiTree::inLevelOrder(root)};
+    }
+};
+
+// ---- type: ListNode* ----
+template <>
+class TypedDataParser<ListNode*> : public DataParser {
+public:
+    virtual ListNode* parse(const JsonProxy& v) {
+        return ListHelper::create(v.get<std::vector<int>>());
+    }
+};
+template <>
+class TypedDataSerializer<ListNode*> : public DataSerializer {
+public:
+    virtual JsonProxy serialize(ListNode* head) {
+        return JsonProxy{ListHelper::dump(head)};
+    }
+};
+
+// ---- type: char ----
+template <>
+class TypedDataParser<char> : public DataParser {
+public:
+    virtual char parse(const JsonProxy& v) {
+        return v.get<std::string>()[0];
+    }
+};
+template <>
+class TypedDataSerializer<char> : public DataSerializer {
+public:
+    virtual JsonProxy serialize(char ch) {
+        return JsonProxy{std::string(1, ch)};
+    }
+};
+
+// ---- type: std::vector<JsonProxy> ----
+template <>
+class TypedDataParser<std::vector<JsonProxy>> : public DataParser {
+public:
+    virtual std::vector<JsonProxy> parse(const JsonProxy& v) {
+        std::vector<JsonProxy> arr;
+        for (int i = 0; i < v.size(); ++i) {
+            arr.push_back(v[i]);
+        }
+        return arr;
+    }
+};
+template <>
+class TypedDataSerializer<std::vector<JsonProxy>> : public DataSerializer {
+public:
+    virtual JsonProxy serialize(const std::vector<JsonProxy>& arr) {
+        JsonProxy res;
+        for (auto& p : arr) {
+            res.append(p);
+        }
+        return res;
+    }
+};
+
+} // soda::unittest
+
+#endif

@@ -15,7 +15,9 @@ JsonProxy::JsonProxy(const JsonProxy& jp): obj{jp.obj} {}
 
 JsonProxy& JsonProxy::operator=(const JsonProxy& jp)
 {
-    *obj = *jp.obj;
+    if (this != &jp) {
+        *obj = *jp.obj;
+    }
     return *this;
 }
 
@@ -52,6 +54,18 @@ string JsonProxy::dump() const
 bool JsonProxy::operator==(const JsonProxy& p2) const
 {
     return *obj == *p2.obj;
+}
+
+JsonProxy JsonProxy::expandTail()
+{
+    int index = obj->size();
+    obj->append(nullptr);
+    return this->operator[](index);
+}
+
+void JsonProxy::append(const JsonProxy& p)
+{
+    expandTail() = p;
 }
 
 } // namespace soda::unittest
