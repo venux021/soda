@@ -66,13 +66,13 @@ public:
             if (commands[i] == "CBTInserter") {
                 auto treeData = params[i][0].get<vector<optional<int>>>();
                 cb = make_unique<CBTInserter>(TreeFactory::create(treeData));
-                res.emplace_back(nullptr);
+                res.emplace_back(JsonProxy::fromData(nullptr));
             } else if (commands[i] == "insert") {
                 int k = params[i].get<vector<int>>()[0];
-                res.emplace_back(cb->insert(k));
+                res.emplace_back(JsonProxy::fromData(cb->insert(k)));
             } else {
                 auto root = cb->get_root();
-                res.emplace_back(TreeFactory::dump(root));
+                res.emplace_back(JsonProxy::fromData(TreeFactory::dump(root)));
             }
         }
         return res;

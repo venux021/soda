@@ -12,7 +12,7 @@
 
 #include "loader.h"
 #include "parse.h"
-#include "spetial_convert.h"
+#include "special_convert.h"
 #include "workdata.h"
 
 namespace soda::unittest {

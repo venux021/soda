@@ -25,7 +25,7 @@ template <>
 class TypedDataSerializer<TreeNode*> : public DataSerializer {
 public:
     virtual JsonProxy serialize(TreeNode* root) {
-        return JsonProxy{BiTree::inLevelOrder(root)};
+        return JsonProxy::fromData(BiTree::inLevelOrder(root));
     }
 };
 
@@ -41,7 +41,7 @@ template <>
 class TypedDataSerializer<ListNode*> : public DataSerializer {
 public:
     virtual JsonProxy serialize(ListNode* head) {
-        return JsonProxy{ListHelper::dump(head)};
+        return JsonProxy::fromData(ListHelper::dump(head));
     }
 };
 
@@ -57,7 +57,7 @@ template <>
 class TypedDataSerializer<char> : public DataSerializer {
 public:
     virtual JsonProxy serialize(char ch) {
-        return JsonProxy{std::string(1, ch)};
+        return JsonProxy::fromData(std::string(1, ch));
     }
 };
 

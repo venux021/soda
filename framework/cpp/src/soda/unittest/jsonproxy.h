@@ -33,9 +33,17 @@ public:
 
     JsonProxy(const JsonProxy& jp);
 
+    // !! conflict with JsonProxy(const std::string&);
+    // template <typename T>
+    // explicit JsonProxy(const T& t): JsonProxy() {
+    //     set(t);
+    // }
+
     template <typename T>
-    explicit JsonProxy(const T& t): JsonProxy() {
-        set(t);
+    static JsonProxy fromData(const T& t) {
+        JsonProxy jp;
+        jp.set(t);
+        return jp;
     }
 
     JsonProxy& operator=(const JsonProxy& jp);

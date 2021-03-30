@@ -60,7 +60,7 @@ template <typename T, typename Enable = void>
 class TypedDataSerializer : public DataSerializer {
 public:
     virtual JsonProxy serialize(const T& data) {
-        return JsonProxy{data};
+        return JsonProxy::fromData(data);
     }
 };
 
@@ -79,7 +79,7 @@ public:
     CustomDataSerializer(Func fn): func(fn) {}
 
     JsonProxy serialize(const T& data) override {
-        return JsonProxy{func(data)};
+        return JsonProxy::fromData(func(data));
     }
 };
 
