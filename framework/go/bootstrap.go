@@ -3,12 +3,8 @@ package main
 import _ "soda/leetcode"
 import "soda/unittest"
 
-func TEST_ADD(a int, b int) int {
-    return a + b
-}
-
 func main() {
-    work := unittest.CreateWork(TEST_ADD)
+    work := unittest.CreateWork(FUNCTION)
     // work.SetValidator(func(e,r)bool)
     work.CompareSerial = true
     // work.SetArgParser(index, func(s)a)
