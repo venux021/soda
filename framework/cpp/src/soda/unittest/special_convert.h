@@ -45,6 +45,31 @@ public:
     }
 };
 
+// ---- type: vector<ListNode*> ----
+template <>
+class TypedDataParser<std::vector<ListNode*>> : public DataParser {
+public:
+    virtual std::vector<ListNode*> parse(const JsonProxy& v) {
+        std::vector<ListNode*> res;
+        for (int i = 0; i < v.size(); ++i) {
+            res.push_back(ListHelper::create(v[i].get<std::vector<int>>()));
+        }
+        return res;
+    }
+};
+template <>
+class TypedDataSerializer<std::vector<ListNode*>> : public DataSerializer {
+public:
+    virtual JsonProxy serialize(std::vector<ListNode*>& lists) {
+        // return JsonProxy::fromData(ListHelper::dump(head));
+        JsonProxy arr;
+        for (auto L : lists) {
+            arr.append(ListHelper::dump(L));
+        }
+        return arr;
+    }
+};
+
 // ---- type: char ----
 template <>
 class TypedDataParser<char> : public DataParser {
