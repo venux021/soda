@@ -1,4 +1,8 @@
-#include <bits/stdc++.h>
+#ifdef __clang__
+    #include "soda/clang/stdc++.h"
+#else
+    #include <bits/stdc++.h>
+#endif
 #include "soda/leetcode/leetcode.h"
 #include "soda/unittest/work.h"
 
