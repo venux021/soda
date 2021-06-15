@@ -23,6 +23,7 @@ SODA_JSON_ACCESS_TYPE(vector<optional<int>>)
 SODA_JSON_ACCESS_TYPE(vector<string>)
 SODA_JSON_ACCESS_TYPE(vector<vector<string>>)
 SODA_JSON_ACCESS_TYPE(vector<optional<string>>)
+SODA_JSON_ACCESS_TYPE(vector<bool>)
 
 namespace soda::unittest {
 
