@@ -58,12 +58,18 @@ def kill_all_child_processes(ppid):
         time.sleep(0.01)
 
 def build_test_object(lines):
+    new_lines = []
     for i in range(len(lines)):
         if lines[i].startswith('@'):
             # load from file
             filepath = lines[i][1:]
             with open(filepath, 'r') as fp:
-                lines[i] = fp.read().strip()
+                for L in fp:
+                    if L.strip():
+                        new_lines.append(L)
+        else:
+            new_lines.append(lines[i])
+    lines = new_lines
     testobj = {}
     testobj['args'] = list(map(json.loads, lines[:-1]))
     if lines[-1] != '-':
@@ -91,7 +97,7 @@ def parse_input(fp):
             if not line or line[0] == '#':
                 continue
             if line.startswith('}'):
-                yield (config, build_test_object(lines))
+                yield (config or DataConfig.parse(''), build_test_object(lines))
                 status = 0
                 lines = []
                 config = None
