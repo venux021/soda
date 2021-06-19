@@ -43,6 +43,12 @@ case $language in
             bash $framework_dir/$language/work.sh make $1 && do_run "$@"
         else
             bash $framework_dir/$language/work.sh "$@"
+            if [ "$cmd" == "new" ]; then
+                testname=$2
+                testname=$(echo "$testname" | awk '{print tolower($0)}')
+                input_file=${testname}.input
+                [ -e $input_file ] || echo -e '#@braces\n' > $input_file
+            fi
         fi
         ;;
     *)

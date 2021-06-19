@@ -58,6 +58,12 @@ def kill_all_child_processes(ppid):
         time.sleep(0.01)
 
 def build_test_object(lines):
+    for i in range(len(lines)):
+        if lines[i].startswith('@'):
+            # load from file
+            filepath = lines[i][1:]
+            with open(filepath, 'r') as fp:
+                lines[i] = fp.read().strip()
     testobj = {}
     testobj['args'] = list(map(json.loads, lines[:-1]))
     if lines[-1] != '-':
@@ -67,6 +73,35 @@ def build_test_object(lines):
     return testobj
 
 def parse_input(fp):
+    first_line = next(fp)
+    if not first_line.startswith('#@braces'):
+        with open(fp.name, 'r') as fp2:
+            yield from parse_input_legacy(fp2)
+            return
+
+    status = 0
+    lines = []
+    config = None
+    for line in fp:
+        line = line.strip()
+        if status == 0:
+            if line.startswith('{'):
+                status = 1
+        elif status == 1:
+            if not line or line[0] == '#':
+                continue
+            if line.startswith('}'):
+                yield (config, build_test_object(lines))
+                status = 0
+                lines = []
+                config = None
+            elif line[0] == '$':
+                if line.startswith('$config:'):
+                    config = DataConfig.parse(line[len('$config:'):])
+            else:
+                lines.append(line)
+
+def parse_input_legacy(fp):
     status = 0
     lines = []
     config = None
