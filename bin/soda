@@ -47,7 +47,7 @@ case $language in
                 testname=$2
                 testname=$(echo "$testname" | awk '{print tolower($0)}')
                 input_file=${testname}.input
-                [ -e $input_file ] || echo -e '#@braces\n' > $input_file
+                [ -e $input_file ] || echo -e '#@format=case\n' > $input_file
             fi
         fi
         ;;

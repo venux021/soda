@@ -80,34 +80,44 @@ def build_test_object(lines):
 
 def parse_input(fp):
     first_line = next(fp)
-    if not first_line.startswith('#@braces'):
+    if not first_line.startswith('#@format='):
         with open(fp.name, 'r') as fp2:
             yield from parse_input_legacy(fp2)
             return
 
     status = 0
+    args_left = 0
     lines = []
     config = None
     for line in fp:
         line = line.strip()
+        if line.startswith('#'):
+            continue
         if status == 0:
-            if line.startswith('{'):
+            if line.startswith('@case'):
+                fields = line.split(' ')
+                args_left = int(fields[1])
+                config = DataConfig.new()
+                for kv in fields[2:]:
+                    key, value = kv.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+                    config[key] = json.loads(value)
                 status = 1
         elif status == 1:
-            if not line or line[0] == '#':
-                continue
-            if line.startswith('}'):
-                yield (config or DataConfig.parse(''), build_test_object(lines))
-                status = 0
-                lines = []
-                config = None
-            elif line[0] == '$':
-                if line.startswith('$config:'):
-                    config = DataConfig.parse(line[len('$config:'):])
-            else:
+            if args_left >= 0:
+                # include result line
                 lines.append(line)
+                args_left -= 1
+                if args_left == -1:
+                    yield (config, build_test_object(lines))
+                    status = 0
+                    args_left = 0
+                    lines = []
+                    config = None
 
 def parse_input_legacy(fp):
+    print_err('Using legacy format')
     status = 0
     lines = []
     config = None
