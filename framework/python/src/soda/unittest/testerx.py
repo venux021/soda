@@ -96,13 +96,16 @@ def parse_input(fp):
         if status == 0:
             if line.startswith('@case'):
                 fields = line.split(' ')
-                args_total = args_left = int(fields[1])
                 config = DataConfig.new()
-                for kv in fields[2:]:
+                for kv in fields[1:]:
                     key, value = kv.split('=', 1)
                     key = key.strip()
                     value = value.strip()
-                    config[key] = json.loads(value)
+                    if key[0] == '%':
+                        if key == '%args':
+                            args_total = args_left = int(value)
+                    else:
+                        config[key] = json.loads(value)
                 status = 1
         elif status == 1:
             if args_left >= 0:
