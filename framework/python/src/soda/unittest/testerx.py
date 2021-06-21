@@ -86,7 +86,7 @@ def parse_input(fp):
             return
 
     status = 0
-    args_left = 0
+    args_total = args_left = 0
     lines = []
     config = None
     for line in fp:
@@ -96,7 +96,7 @@ def parse_input(fp):
         if status == 0:
             if line.startswith('@case'):
                 fields = line.split(' ')
-                args_left = int(fields[1])
+                args_total = args_left = int(fields[1])
                 config = DataConfig.new()
                 for kv in fields[2:]:
                     key, value = kv.split('=', 1)
@@ -106,13 +106,20 @@ def parse_input(fp):
                 status = 1
         elif status == 1:
             if args_left >= 0:
-                # include result line
-                lines.append(line)
-                args_left -= 1
+                if args_left == args_total and line.startswith('@include'):
+                    incFile = line.split(' ')[1].strip()
+                    print(f'Load test case from {incFile}')
+                    with open(incFile, 'r') as incFp:
+                        lines = list(filter(lambda s: len(s) > 0, map(lambda s: s.strip(), incFp)))
+                    args_left = -1
+                else:
+                    # include result line
+                    lines.append(line)
+                    args_left -= 1
                 if args_left == -1:
                     yield (config, build_test_object(lines))
                     status = 0
-                    args_left = 0
+                    args_total = args_left = 0
                     lines = []
                     config = None
 
