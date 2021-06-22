@@ -78,53 +78,87 @@ def build_test_object(lines):
         testobj['expected'] = None
     return testobj
 
+class LineIterator:
+    def __init__(self, fp):
+        self.fp = fp
+        self.next_line = None
+        self.forward()
+
+    def forward(self):
+        try:
+            self.next_line = next(self.fp)
+        except StopIteration:
+            self.next_line = None
+
+    def hasNext(self):
+        return self.next_line is not None
+
+    def next(self):
+        res = self.next_line
+        self.forward()
+        return res
+
+    def nextContentLine(self):
+        while self.hasNext():
+            t = self.next().strip()
+            if t and not t.startswith('#'):
+                return t
+
+class KV:
+    @classmethod
+    def split(cls, kv_str):
+        kv = kv_str.split('=', 1)
+        return (kv[0].strip(), kv[1].strip())
+
+    @classmethod
+    def value(cls, kv_str):
+        return cls.split(kv_str)[1]
+
+    @classmethod
+    def intValue(cls, kv_str):
+        return int(cls.split(kv_str)[1])
+
+
 def parse_input(fp):
-    first_line = next(fp)
+    lineIter = LineIterator(fp)
+    first_line = lineIter.next()
     if not first_line.startswith('#@format='):
         with open(fp.name, 'r') as fp2:
             yield from parse_input_legacy(fp2)
             return
 
-    status = 0
-    args_total = args_left = 0
-    lines = []
-    config = None
-    for line in fp:
-        line = line.strip()
-        if line.startswith('#'):
+    globalArgs = 0
+    while lineIter.hasNext():
+        line = lineIter.next().strip()
+        if not line or not line.startswith('@'):
             continue
-        if status == 0:
-            if line.startswith('@case'):
-                fields = line.split(' ')
-                config = DataConfig.new()
-                for kv in fields[1:]:
-                    key, value = kv.split('=', 1)
-                    key = key.strip()
-                    value = value.strip()
-                    if key[0] == '%':
-                        if key == '%args':
-                            args_total = args_left = int(value)
-                    else:
-                        config[key] = json.loads(value)
-                status = 1
-        elif status == 1:
-            if args_left >= 0:
-                if args_left == args_total and line.startswith('@include'):
-                    incFile = line.split(' ')[1].strip()
-                    print(f'Load test case from {incFile}')
-                    with open(incFile, 'r') as incFp:
-                        lines = list(filter(lambda s: len(s) > 0, map(lambda s: s.strip(), incFp)))
-                    args_left = -1
+        if line.startswith('@args'):
+            globalArgs = KV.intValue(line)
+        elif line.startswith('@case'):
+            fields = line.split(' ')
+            config = DataConfig.new()
+            numArgs = globalArgs
+            for kv in fields[1:]:
+                key, value = KV.split(kv)
+                if key[0] == '%':
+                    if key == '%args':
+                        numArgs = int(value)
                 else:
-                    # include result line
-                    lines.append(line)
-                    args_left -= 1
-                if args_left == -1:
-                    yield (config, build_test_object(lines))
-                    status = 0
-                    args_total = args_left = 0
-                    lines = []
-                    config = None
+                    config[key] = json.loads(value)
+            lines = []
+            arg1 = lineIter.next()
+            if arg1.startswith('@include'):
+                incFile = KV.value(arg1)
+                print(f'Load test case from {incFile}')
+                with open(incFile, 'r') as incFp:
+                    _content = list(filter(lambda s: len(s) > 0, map(lambda s: s.strip(), incFp)))
+                    lines.extend(_content[:numArgs+1])
+            else:
+                lines.append(arg1)
+                # include result line
+                for i in range(numArgs):
+                    lines.append(lineIter.next())
+            yield (config, build_test_object(lines))
 
 def parse_input_legacy(fp):
     print_err('Using legacy format')
