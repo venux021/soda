@@ -58,18 +58,18 @@ def kill_all_child_processes(ppid):
         time.sleep(0.01)
 
 def build_test_object(lines):
-    new_lines = []
-    for i in range(len(lines)):
-        if lines[i].startswith('@'):
-            # load from file
-            filepath = lines[i][1:]
-            with open(filepath, 'r') as fp:
-                for L in fp:
-                    if L.strip():
-                        new_lines.append(L)
-        else:
-            new_lines.append(lines[i])
-    lines = new_lines
+    # new_lines = []
+    # for i in range(len(lines)):
+    #     if lines[i].startswith('@'):
+    #         # load from file
+    #         filepath = lines[i][1:]
+    #         with open(filepath, 'r') as fp:
+    #             for L in fp:
+    #                 if L.strip():
+    #                     new_lines.append(L)
+    #     else:
+    #         new_lines.append(lines[i])
+    # lines = new_lines
     testobj = {}
     testobj['args'] = list(map(json.loads, lines[:-1]))
     if lines[-1] != '-':
@@ -79,14 +79,17 @@ def build_test_object(lines):
     return testobj
 
 class LineIterator:
-    def __init__(self, fp):
+    def __init__(self, fp, strip=True):
         self.fp = fp
+        self.strip = strip
         self.next_line = None
         self.forward()
 
     def forward(self):
         try:
             self.next_line = next(self.fp)
+            if self.strip:
+                self.next_line = self.next_line.strip()
         except StopIteration:
             self.next_line = None
 
