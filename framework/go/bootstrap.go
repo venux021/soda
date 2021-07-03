@@ -4,7 +4,7 @@ import _ "soda/leetcode"
 import "soda/unittest"
 import "soda/util"
 
-var Logger = util.Logger
+var logger = util.Logger
 
 func main() {
     work := unittest.CreateWork(FUNCTION)
