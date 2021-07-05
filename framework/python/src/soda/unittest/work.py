@@ -50,7 +50,8 @@ class TestWork:
         self.argumentParsers = [None] * len(self.argumentTypes)
         self.resultSerializer = None
         self.resultParser = None
-        self.validator = lambda x, y: x == y
+        self.default_validator = lambda x, y: x == y
+        self.validator = self.default_validator
 
     def setArgumentParser(self, index, parser):
         self.argumentParsers[index] = parser
@@ -75,7 +76,7 @@ class TestWork:
 
         success = True
         if testInput.expected is not None:
-            if self.compareSerial:
+            if self.validator == self.default_validator and self.compareSerial:
                 success = (testInput.expected == resultSerial)
             else:
                 expect = self.fromSerial(testInput.expected, self.returnType, self.resultParser)
